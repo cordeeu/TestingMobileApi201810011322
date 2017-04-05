@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ﻿# MobileApi
 
 ## Status
@@ -16,7 +15,6 @@ The MobileApi app utilizes the following tools:
 
 ## Local Server Settings
 For testing the API, use a tool such as Fiddler, and make sure to configure your IIS Express settings properly. See this StackOverflow post for reference: http://stackoverflow.com/questions/5433786/configure-iis-express-for-external-access-to-vs2010-project.
-=======
+
 # MobileApi
 Simple .Net API for RSF Mobile Applications
->>>>>>> 9b2e6d88f701177e3c5f03fc957ae5267bbf06a6
