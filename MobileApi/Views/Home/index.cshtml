@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Puma App</title>
+</head>
+<body>
+    <div>
+        <img src="~/images/sample-1.jpg">
+    </div>
+    <div>
+        <h2>All Puma Types</h2>
+        <ul id="puma_types" />
+    </div>
+    <div>
+        <h2>Search by ID</h2>
+        <input type="text" id="puma_type_id" size="5" />
+        <input type="button" value="Search" onclick="find();" />
+        <p id="puma_type" />
+    </div>
+
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
+    <script>
+    var uri = '/api/puma_types';
+
+    $(document).ready(function () {
+      // Send an AJAX request
+      $.getJSON(uri)
+          .done(function (data) {
+            // On success, 'data' contains a list of Puma Types.
+            $.each(data, function (key, item) {
+              // Add a list item for the Puma Type.
+              $('<li>', { text: formatItem(item) }).appendTo($('#puma_types'));
+            });
+          });
+    });
+
+    function formatItem(item) {
+      return item.Type;
+    }
+
+    function find() {
+      var id = $('#puma_type_id').val();
+      $.getJSON(uri + '/' + id)
+          .done(function (data) {
+            $('#puma_type').text(formatItem(data));
+          })
+          .fail(function (jqXHR, textStatus, err) {
+            $('#puma_type').text('Error: ' + err);
+          });
+    }
+    </script>
+</body>
+</html>
