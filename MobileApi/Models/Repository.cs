@@ -33,9 +33,9 @@ namespace MobileApi.Models
             return DbSet.Find(id);
         }
 
-        public IEnumerable<PumaTypeImage> GetImages(int resourceId)
+        public IEnumerable<PumaImage> GetImages(int resourceId)
         {
-            IEnumerable<PumaTypeImage> query = mobileApiContext.PumaTypeImages.Where(x => x.PumaTypeId == resourceId);
+            IEnumerable<PumaImage> query = mobileApiContext.PumaImages.Where(x => x.PumaId == resourceId);
             if (query.Any())
             {
                 return query.ToList();
@@ -43,9 +43,9 @@ namespace MobileApi.Models
             return null;
         }
 
-        public async Task<PumaTypeImage> GetImage(int imageId)
+        public async Task<PumaImage> GetImage(int imageId)
         {
-            return await mobileApiContext.PumaTypeImages.FindAsync(imageId);
+            return await mobileApiContext.PumaImages.FindAsync(imageId);
         }
 
     }

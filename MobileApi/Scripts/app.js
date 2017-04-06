@@ -1,9 +1,9 @@
 ﻿var ViewModel = function () {
     var self = this;
-    self.pumaTypes = ko.observableArray();
+    self.pumas = ko.observableArray();
     self.error = ko.observable();
 
-    var booksUri = '/api/puma_types/';
+    var booksUri = '/api/pumas/';
 
     function ajaxHelper(uri, method, data) {
         self.error(''); // Clear error message
@@ -18,14 +18,14 @@
         });
     }
 
-    function getAllPumaTypes() {
-        ajaxHelper(pumaTypesUri, 'GET').done(function (data) {
-            self.pumaTypes(data);
+    function getAllPumas() {
+        ajaxHelper(pumasUri, 'GET').done(function (data) {
+            self.pumas(data);
         });
     }
 
     // Fetch the initial data.
-    getAllPumaTypes();
+    getAllPumas();
 };
 
 ko.applyBindings(new ViewModel());

@@ -8,44 +8,44 @@
         <img src="~/images/sample-1.jpg">
     </div>
     <div>
-        <h2>All Puma Types</h2>
-        <ul id="puma_types" />
+        <h2>All Pumas</h2>
+        <ul id="pumas" />
     </div>
     <div>
         <h2>Search by ID</h2>
-        <input type="text" id="puma_type_id" size="5" />
+        <input type="text" id="puma_id" size="5" />
         <input type="button" value="Search" onclick="find();" />
-        <p id="puma_type" />
+        <p id="puma" />
     </div>
 
     <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
     <script>
-    var uri = '/api/puma_types';
+    var uri = '/api/pumas';
 
     $(document).ready(function () {
       // Send an AJAX request
       $.getJSON(uri)
           .done(function (data) {
-            // On success, 'data' contains a list of Puma Types.
+            // On success, 'data' contains a list of Pumas.
             $.each(data, function (key, item) {
-              // Add a list item for the Puma Type.
-              $('<li>', { text: formatItem(item) }).appendTo($('#puma_types'));
+              // Add a list item for the Puma.
+              $('<li>', { text: formatItem(item) }).appendTo($('#pumas'));
             });
           });
     });
 
     function formatItem(item) {
-      return item.Type;
+      return item.Name;
     }
 
     function find() {
-      var id = $('#puma_type_id').val();
+      var id = $('#puma_id').val();
       $.getJSON(uri + '/' + id)
           .done(function (data) {
-            $('#puma_type').text(formatItem(data));
+            $('#puma').text(formatItem(data));
           })
           .fail(function (jqXHR, textStatus, err) {
-            $('#puma_type').text('Error: ' + err);
+            $('#puma').text('Error: ' + err);
           });
     }
     </script>

@@ -11,53 +11,57 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Net.Http.Headers;
 using System.Linq;
+using System.Web.Http.OData;
 
 namespace MobileApi.Controllers
-{
+{ 
 
     public class BaseController : ApiController
     {
         public MobileApiContext db = new MobileApiContext();
         public string currentRepository;
 
-        [System.Web.Http.Route("api/{repository}")]
-        public IEnumerable<PumaType> GetAll(string repository)
+        // This action accepts no params (other than the repository) and also supports OData querying params
+        // e.g. api/pumas?$top=10 (gets top ten records)
+        // e.g. api/pumas?$filter=Name eq 'Cougar' (returns pumas with name equaling 'Cougar')
+        [EnableQuery]
+        [Route("api/{repository}")] 
+        public IQueryable<Puma> GetPumas()
         {
-            PumaType currentRepository = new PumaType();
-            return currentRepository.GetAll();
+            return db.Pumas.AsQueryable();
         }
 
-        [System.Web.Http.Route("api/{repository}/{resourceId}")]
+        [Route("api/{repository}/{resourceId}")]
         public async Task<IHttpActionResult> Get(int resourceId)
         {
-            PumaType pumaType = await db.PumaTypes.FindAsync(resourceId);
-            if (pumaType == null)
+            Puma puma = await db.Pumas.FindAsync(resourceId);
+            if (puma == null)
             {
                 return NotFound();
             }
 
-            return Ok(pumaType);
+            return Ok(puma);
         }
 
-        [System.Web.Http.Route("api/{repository}/{resourceId}/images")]
-        public IEnumerable<PumaTypeImage> GetImages(int resourceId)
+        [Route("api/{repository}/{resourceId}/images")]
+        public IEnumerable<PumaImage> GetImages(int resourceId)
         {
-            Repository<PumaTypeImage> currentRepository = new Repository<PumaTypeImage>();
+            Repository<PumaImage> currentRepository = new Repository<PumaImage>();
             return currentRepository.GetImages(resourceId);
         }
 
         [System.Web.Http.Route("api/{repository}/{resourceId}/images/{imageId}")]
         public async Task<HttpResponseMessage> GetImage(int resourceId, int imageId)
         {
-            Repository<PumaTypeImage> currentRepository = new Repository<PumaTypeImage>();
-            PumaTypeImage pumaTypeImage = await currentRepository.GetImage(imageId);
-            if (pumaTypeImage == null)
+            Repository<PumaImage> currentRepository = new Repository<PumaImage>();
+            PumaImage pumaImage = await currentRepository.GetImage(imageId);
+            if (pumaImage == null)
             {
                 //return NotFound();
             }
 
             var result = new HttpResponseMessage(HttpStatusCode.OK);
-            var directory = "~/images/" + resourceId + "/" + pumaTypeImage.ImageFilename;
+            var directory = "~/images/" + resourceId + "/" + pumaImage.ImageFilename;
             String filePath = HostingEnvironment.MapPath(directory);
             FileStream fileStream = new FileStream(filePath, FileMode.Open);
             Image image = Image.FromStream(fileStream);

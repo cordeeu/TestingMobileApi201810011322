@@ -3,27 +3,27 @@ namespace MobileApi.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class Pumas : DbMigration
+    public partial class Initial : DbMigration
     {
         public override void Up()
         {
             CreateTable(
-                "dbo.PumaTypeImages",
+                "dbo.PumaImages",
                 c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
-                        PumaTypeId = c.Int(nullable: false),
+                        PumaId = c.Int(nullable: false),
                         ImageFilename = c.String(),
                         Credit = c.String(),
                     })
                 .PrimaryKey(t => t.Id);
             
             CreateTable(
-                "dbo.PumaTypes",
+                "dbo.Pumas",
                 c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
-                        Type = c.String(),
+                        Name = c.String(),
                         Description = c.String(),
                     })
                 .PrimaryKey(t => t.Id);
@@ -32,8 +32,8 @@ namespace MobileApi.Migrations
         
         public override void Down()
         {
-            DropTable("dbo.PumaTypes");
-            DropTable("dbo.PumaTypeImages");
+            DropTable("dbo.Pumas");
+            DropTable("dbo.PumaImages");
         }
     }
 }

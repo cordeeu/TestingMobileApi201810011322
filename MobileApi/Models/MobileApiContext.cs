@@ -20,8 +20,8 @@ namespace MobileApi.Models
             this.Database.Log = s => System.Diagnostics.Debug.WriteLine(s);
         }
 
-        public System.Data.Entity.DbSet<MobileApi.Models.PumaType> PumaTypes { get; set; }
-        public System.Data.Entity.DbSet<MobileApi.Models.PumaTypeImage> PumaTypeImages { get; set; }
+        public System.Data.Entity.DbSet<MobileApi.Models.Puma> Pumas { get; set; }
+        public System.Data.Entity.DbSet<MobileApi.Models.PumaImage> PumaImages { get; set; }
 
     }
 }
