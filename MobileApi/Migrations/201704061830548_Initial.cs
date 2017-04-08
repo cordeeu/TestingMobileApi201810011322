@@ -7,7 +7,7 @@ namespace MobileApi.Migrations
     {
         public override void Up()
         {
-            CreateTable(
+            /*CreateTable(
                 "dbo.PumaImages",
                 c => new
                     {
@@ -26,14 +26,14 @@ namespace MobileApi.Migrations
                         Name = c.String(),
                         Description = c.String(),
                     })
-                .PrimaryKey(t => t.Id);
+                .PrimaryKey(t => t.Id);*/
             
         }
         
         public override void Down()
         {
-            DropTable("dbo.Pumas");
-            DropTable("dbo.PumaImages");
+          /*  DropTable("dbo.Pumas");
+            DropTable("dbo.PumaImages");*/
         }
     }
 }

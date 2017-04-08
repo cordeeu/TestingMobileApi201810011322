@@ -15,7 +15,10 @@ using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
 using MobileApi.Models;
 using MobileApi.Providers;
+using System.Web.Script.Serialization;
 using MobileApi.Results;
+using System.Data;
+using System.Data.OleDb;
 
 namespace MobileApi.Controllers
 {
