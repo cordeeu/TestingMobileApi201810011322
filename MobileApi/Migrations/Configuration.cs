@@ -6,14 +6,14 @@ namespace MobileApi.Migrations
     using System.Linq;
     using MobileApi.Models;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<MobileApiContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<WoodyPlantsMobileApiContext>
     {
         public Configuration()
         {
           /*  AutomaticMigrationsEnabled = false;*/
         }
 
-        protected override void Seed(MobileApiContext context)
+        protected override void Seed(WoodyPlantsMobileApiContext context)
         {
         /*    // Seed the database
             context.Pumas.AddOrUpdate(

@@ -7,8 +7,8 @@ using System.Web;
 
 namespace MobileApi.Models
 {
-    [Table("plant", Schema = "plant")]
-    public class Plant
+    [Table("plants", Schema = "plant")]
+    public class WoodyPlant
     {
         [Key]
         [Column("plant_id")]
@@ -33,7 +33,7 @@ namespace MobileApi.Models
     }
 
     [Table("other_common_names", Schema = "plant")]
-    public class OtherCommonName
+    public class OtherCommonNameWoody
     {
         [Key]
         [Column("other_common_name_id")]
@@ -43,11 +43,11 @@ namespace MobileApi.Models
 
         public string other_common_name { get; set; }
 
-        public virtual Plant plant { get; set; }
+        public virtual WoodyPlant plant { get; set; }
     }
 
     [Table("scientific_name", Schema = "plant")]
-    public class ScientificName
+    public class ScientificNameWoody
     {
         [Key]
         [Column("scientific_name_id")]
@@ -63,12 +63,12 @@ namespace MobileApi.Models
 
         public string scientific_name_meaning { get; set; }
 
-        public virtual Plant plant { get; set; }
+        public virtual WoodyPlant plant { get; set; }
     }
 
 
     [Table("synonyms", Schema = "plant")]
-    public class Synonym
+    public class SynonymWoody
     {
         [Key]
         [Column("synonym_id")]
@@ -78,12 +78,12 @@ namespace MobileApi.Models
 
         public string synonym { get; set; }
 
-        public virtual Plant plant { get; set; }
+        public virtual WoodyPlant plant { get; set; }
     }
 
 
     [Table("identifications", Schema = "plant")]
-    public class Identification
+    public class IdentificationWoody
     {
         [Key]
         [Column("identification_id")]
@@ -117,12 +117,12 @@ namespace MobileApi.Models
 
         public string leaf_shape { get; set; }
 
-        public virtual Plant plant { get; set; }
+        public virtual WoodyPlant plant { get; set; }
     }
 
 
     [Table("ecologies", Schema = "plant")]
-    public class Ecology
+    public class EcologyWoody
     {
         [Key]
         [Column("ecology_id")]
@@ -156,12 +156,12 @@ namespace MobileApi.Models
 
         public string leaf_shape { get; set; }
 
-        public virtual Plant plant { get; set; }
+        public virtual WoodyPlant plant { get; set; }
     }
 
 
     [Table("landscapings", Schema = "plant")]
-    public class Landscaping
+    public class LandscapingWoody
     {
         [Key]
         [Column("landscaping_id")]
@@ -183,12 +183,12 @@ namespace MobileApi.Models
 
         public string availability { get; set; }
 
-        public virtual Plant plant { get; set; }
+        public virtual WoodyPlant plant { get; set; }
     }
 
 
     [Table("human_connections", Schema = "plant")]
-    public class HumanConnection
+    public class HumanConnectionWoody
     {
         [Key]
         [Column("landscaping_id")]
@@ -204,11 +204,11 @@ namespace MobileApi.Models
 
         public string other { get; set; }
 
-        public virtual Plant plant { get; set; }
+        public virtual WoodyPlant plant { get; set; }
     }
 
     [Table("images", Schema = "plant")]
-    public class Image
+    public class ImageWoody
     {
         [Key]
         [Column("image_id")]
@@ -220,11 +220,11 @@ namespace MobileApi.Models
 
         public string high_res_path { get; set; }
 
-        public virtual Plant plant { get; set; }
+        public virtual WoodyPlant plant { get; set; }
     }
 
     [Table("locations", Schema = "plant")]
-    public class Location
+    public class LocationWoody
     {
         [Key]
         [Column("location_id")]
@@ -236,6 +236,6 @@ namespace MobileApi.Models
 
         public string county { get; set; }
 
-        public virtual Plant plant { get; set; }
+        public virtual WoodyPlant plant { get; set; }
     }
 }

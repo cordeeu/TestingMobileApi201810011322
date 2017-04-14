@@ -70,7 +70,7 @@
 
     function getData() {
       
-        $.getJSON('/api/uploadData')
+        $.getJSON('api/wetland')
             .done(function (data) {
                 $('#puma').text(formatItem(data));
             })
