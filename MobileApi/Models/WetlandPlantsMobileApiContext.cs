@@ -22,14 +22,14 @@ namespace MobileApi.Models
 
         public DbSet<WetlandPlant> Plants { get; set; }
         public DbSet<ImagesWetland> ImagesWetland { get; set; }
-        public DbSet<SimilarSpeciesWetland> SimilarSpeciesWetland { get; set; }
-        public DbSet<CountyPlantWetland> CountyPlantWetland { get; set; }
-        public DbSet<ReferenceWetland> ReferenceWetland { get; set; }
-        public DbSet<FruitWetland> FruitWetland { get; set; }
-        public DbSet<DivisionWetland> DivisionWetland { get; set; }
-        public DbSet<ShapeWetland> ShapeWetland { get; set; }
-        public DbSet<ArrangementWetland> ArrangementWetland { get; set; }
-        public DbSet<SizeWetland> SizeWetland { get; set; }
-        public DbSet<RegionWetland> RegionWetland { get; set; }
+        //public DbSet<SimilarSpeciesWetland> SimilarSpeciesWetland { get; set; }
+        //public DbSet<CountyPlantWetland> CountyPlantWetland { get; set; }
+        //public DbSet<ReferenceWetland> ReferenceWetland { get; set; }
+        //public DbSet<FruitWetland> FruitWetland { get; set; }
+        //public DbSet<DivisionWetland> DivisionWetland { get; set; }
+        //public DbSet<ShapeWetland> ShapeWetland { get; set; }
+        //public DbSet<ArrangementWetland> ArrangementWetland { get; set; }
+        //public DbSet<SizeWetland> SizeWetland { get; set; }
+        //public DbSet<RegionWetland> RegionWetland { get; set; }
     }
 }

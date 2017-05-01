@@ -43,9 +43,12 @@ namespace MobileApi.Controllers
         [Route("api/wetland")]
         public IQueryable<WetlandPlant> GetWetlandPlants()
         {
-            DbSet<WetlandPlant> allPlants = wetlandDb.Plants;
-
-            var count = allPlants.ToList();
+            wetlandDb.Configuration.ProxyCreationEnabled = false;
+            //DbSet<WetlandPlant> allPlants = wetlandDb.Plants;
+            List<WetlandPlant> allPlants = wetlandDb.Plants.Include(x => x.Images).ToList();
+                //.Include(x=>x.SimilarSpeciesWetland).Include(x=>x.CountyPlantWetland)
+                //.Include(x=>x.FruitWetland).Include(x=>x.DivisionWetland).Include(x=>x.ShapeWetland).Include(x=>x.ArrangementWetland)
+                //.Include(x=>x.SizeWetland).Include(x=>x.RegionWetland).ToList();
 
             return allPlants.AsQueryable();
         }
