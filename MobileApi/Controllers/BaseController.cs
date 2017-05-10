@@ -17,6 +17,7 @@ using System.Data.OleDb;
 using System.Web.Script.Serialization;
 using System.Web;
 using System.Data.Entity;
+using Ionic.Zip;
 
 namespace MobileApi.Controllers
 { 
@@ -35,7 +36,6 @@ namespace MobileApi.Controllers
         public IQueryable<WoodyPlant> GetWoodyPlants()
         {
             DbSet<WoodyPlant> allPlants = woodyDb.Plants;
-
             return allPlants.AsQueryable();
         }
 
@@ -75,36 +75,58 @@ namespace MobileApi.Controllers
 
                return Ok(puma);
            }
+           */
 
-           [Route("api/{repository}/{resourceId}/images")]
-           public IEnumerable<PumaImage> GetImages(int resourceId)
+            // Get zipped images
+           [Route("api/wetland/images_zipped")]
+           public HttpResponseMessage GetImagesZip()
            {
-               Repository<PumaImage> currentRepository = new Repository<PumaImage>();
-               return currentRepository.GetImages(resourceId);
+                //var result = new HttpResponseMessage(HttpStatusCode.OK);
+                var directory = "~/Resources/Images/wetlands/images.zip";
+                String filePath = HostingEnvironment.MapPath(directory);
+                using (ZipFile zip = ZipFile.Read(filePath))
+                {
+                    var pushStreamContent = new PushStreamContent((stream, content, context) =>
+                    {
+                        zip.Save(stream);
+                        stream.Close();
+                    }, "application/zip");
+
+                    HttpResponseMessage response = new HttpResponseMessage();
+                    response.StatusCode = HttpStatusCode.OK;
+                    response.Content = pushStreamContent;
+                    response.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") { FileName = "images.zip" };
+
+                    return response;
+                }
+            
            }
-
-           [System.Web.Http.Route("api/{repository}/{resourceId}/images/{imageId}")]
-           public async Task<HttpResponseMessage> GetImage(int resourceId, int imageId)
+           
+           [Route("api/wetland/images/{imageId}")]
+           public IHttpActionResult GetImage(int imageId)
            {
-               Repository<PumaImage> currentRepository = new Repository<PumaImage>();
-               PumaImage pumaImage = await currentRepository.GetImage(imageId);
-               if (pumaImage == null)
+
+               ImagesWetland wetlandImage = wetlandDb.ImagesWetland.Where(b => b.imageid == imageId).FirstOrDefault();
+               if (wetlandImage == null)
                {
-                   //return NotFound();
+                    return NotFound();
                }
+               else
+               {
+                    var result = new HttpResponseMessage(HttpStatusCode.OK);
+                    var directory = "~/Resources/Images/wetlands/" + wetlandImage.filename;
+                    String filePath = HostingEnvironment.MapPath(directory);
+                    FileStream fileStream = new FileStream(filePath, FileMode.Open);
+                    Image image = Image.FromStream(fileStream);
+                    MemoryStream memoryStream = new MemoryStream();
+                    image.Save(memoryStream, ImageFormat.Jpeg);
+                    result.Content = new ByteArrayContent(memoryStream.ToArray());
+                    result.Content.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
 
-               var result = new HttpResponseMessage(HttpStatusCode.OK);
-               var directory = "~/images/" + resourceId + "/" + pumaImage.ImageFilename;
-               String filePath = HostingEnvironment.MapPath(directory);
-               FileStream fileStream = new FileStream(filePath, FileMode.Open);
-               Image image = Image.FromStream(fileStream);
-               MemoryStream memoryStream = new MemoryStream();
-               image.Save(memoryStream, ImageFormat.Jpeg);
-               result.Content = new ByteArrayContent(memoryStream.ToArray());
-               result.Content.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
-
-               return result;
-           }*/
+                    return Ok(result);
+                }
+               
+           }
 
 
         // GET api/Account/UploadCsvFile
