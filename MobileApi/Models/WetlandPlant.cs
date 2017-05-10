@@ -349,6 +349,17 @@ namespace MobileApi.Models
         public virtual WetlandPlant WetlandPlant { get; set; }
     }
 
-
+    [Table("settings", Schema = "wetland")]
+    public class WetlandSetting
+    {
+        [Key]
+        [Column("settingid")]
+        public int settingid { get; set; }
+        public string name { get; set; }
+        public DateTime? valuetimestamp { get; set; }
+        public string valuetext { get; set; }
+        public decimal? valueamount { get; set; }
+        public bool? valuebool { get; set; }
+    }
 
 }

@@ -53,6 +53,17 @@ namespace MobileApi.Controllers
             return allPlants.AsQueryable();
         }
 
+        [Route("api/wetland_settings/{settingName}")]
+        public IHttpActionResult GetWetlandSetting(string settingName)
+        {
+            WetlandSetting setting = wetlandDb.WetlandSettings.Where(b => b.name == settingName).FirstOrDefault();
+            if (setting == null)
+            {
+                return NotFound();
+            }
+            return Ok(setting);
+        }
+
         /*   [Route("api/{repository}/{resourceId}")]
            public async Task<IHttpActionResult> Get(int resourceId)
            {

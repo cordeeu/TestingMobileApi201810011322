@@ -21,6 +21,7 @@ namespace MobileApi.Models
         }
 
         public DbSet<WetlandPlant> Plants { get; set; }
+        public DbSet<WetlandSetting> WetlandSettings { get; set; }
         public DbSet<ImagesWetland> ImagesWetland { get; set; }
         //public DbSet<SimilarSpeciesWetland> SimilarSpeciesWetland { get; set; }
         //public DbSet<CountyPlantWetland> CountyPlantWetland { get; set; }
