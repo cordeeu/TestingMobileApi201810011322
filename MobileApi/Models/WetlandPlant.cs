@@ -360,6 +360,7 @@ namespace MobileApi.Models
         public string valuetext { get; set; }
         public decimal? valueamount { get; set; }
         public bool? valuebool { get; set; }
+        public long? valueint { get; set; }
     }
 
 }

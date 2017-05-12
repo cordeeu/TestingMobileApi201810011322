@@ -64,6 +64,13 @@ namespace MobileApi.Controllers
             return Ok(setting);
         }
 
+        [Route("api/wetland_settings/images")]
+        public List<WetlandSetting> GetWetlandImageZipFileSettings()
+        {
+            List<WetlandSetting> wetlandImageZipFileSettings = wetlandDb.WetlandSettings.Where(b => b.name == "ImagesZipFile").ToList();
+            return wetlandImageZipFileSettings;
+        }
+
         /*   [Route("api/{repository}/{resourceId}")]
            public async Task<IHttpActionResult> Get(int resourceId)
            {
@@ -77,12 +84,12 @@ namespace MobileApi.Controllers
            }
            */
 
-            // Get zipped images
-           [Route("api/wetland/images_zipped")]
-           public HttpResponseMessage GetImagesZip()
+        // Get zipped images
+        [Route("api/wetland/image_zip_files/{fileName}")]
+           public HttpResponseMessage GetImagesZip(string fileName)
            {
-                //var result = new HttpResponseMessage(HttpStatusCode.OK);
-                var directory = "~/Resources/Images/wetlands/images.zip";
+                
+                var directory = "~/Resources/Images/wetlands/" + fileName + ".zip";
                 String filePath = HostingEnvironment.MapPath(directory);
                 using (ZipFile zip = ZipFile.Read(filePath))
                 {
@@ -95,7 +102,7 @@ namespace MobileApi.Controllers
                     HttpResponseMessage response = new HttpResponseMessage();
                     response.StatusCode = HttpStatusCode.OK;
                     response.Content = pushStreamContent;
-                    response.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") { FileName = "images.zip" };
+                    response.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") { FileName = fileName + ".zip" };
 
                     return response;
                 }
