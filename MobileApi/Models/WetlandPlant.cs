@@ -100,24 +100,24 @@ namespace MobileApi.Models
 
         [DataMember]
         public virtual ICollection<ImagesWetland> Images { get; set; }
-        //[DataMember]
-        //public virtual ICollection<SimilarSpeciesWetland> SimilarSpeciesWetland { get; set; }
-        //[DataMember]
-        //public virtual IList<CountyPlantWetland> CountyPlantWetland { get; set; }
-        //[DataMember]
-        //public virtual IList<ReferenceWetland> ReferenceWetland { get; set; }
-        //[DataMember]
-        //public virtual IList<FruitWetland> FruitWetland { get; set; }
-        //[DataMember]
-        //public virtual IList<DivisionWetland> DivisionWetland { get; set; }
-        //[DataMember]
-        //public virtual IList<ShapeWetland> ShapeWetland { get; set; }
-        //[DataMember]
-        //public virtual IList<ArrangementWetland> ArrangementWetland { get; set; }
-        //[DataMember]
-        //public virtual IList<SizeWetland> SizeWetland { get; set; }
-        //[DataMember]
-        //public virtual IList<RegionWetland> RegionWetland { get; set; }
+        [DataMember]
+        public virtual ICollection<SimilarSpeciesWetland> SimilarSpeciesWetland { get; set; }
+        [DataMember]
+        public virtual ICollection<CountyPlantWetland> CountyPlantWetland { get; set; }
+        [DataMember]
+        public virtual ICollection<ReferenceWetland> ReferenceWetland { get; set; }
+        [DataMember]
+        public virtual ICollection<FruitWetland> FruitWetland { get; set; }
+        [DataMember]
+        public virtual ICollection<DivisionWetland> DivisionWetland { get; set; }
+        [DataMember]
+        public virtual ICollection<ShapeWetland> ShapeWetland { get; set; }
+        [DataMember]
+        public virtual ICollection<ArrangementWetland> ArrangementWetland { get; set; }
+        [DataMember]
+        public virtual ICollection<SizeWetland> SizeWetland { get; set; }
+        [DataMember]
+        public virtual ICollection<RegionWetland> RegionWetland { get; set; }
     }
 
     [DataContract(IsReference = true)]
@@ -161,7 +161,6 @@ namespace MobileApi.Models
         public int id { get; set; }
 
         [DataMember]
-        [ForeignKey("plantid")]
         public int plantid { get; set; }
 
         [DataMember]
@@ -191,12 +190,12 @@ namespace MobileApi.Models
         public int county_id { get; set; }
 
         [DataMember]
-        [ForeignKey("plantid")]
         public int plantid { get; set; }
 
         [DataMember]
         public string name { get; set; }
 
+        [ForeignKey("plantid")]
         [DataMember]
         public virtual WetlandPlant WetlandPlant { get; set; }
     }
@@ -212,11 +211,10 @@ namespace MobileApi.Models
         public int referenceid { get; set; }
 
         [DataMember]
-        public int id { get; set; }
+        public int plantid { get; set; }
 
         [DataMember]
-        [ForeignKey("plantid")]
-        public int plantid { get; set; }
+        public int id { get; set; }
 
         [DataMember]
         [Column("reference")]
@@ -225,6 +223,7 @@ namespace MobileApi.Models
         [DataMember]
         public string fullcitation { get; set; }
 
+        [ForeignKey("plantid")]
         [DataMember]
         public virtual WetlandPlant WetlandPlant { get; set; }
     }
@@ -239,12 +238,12 @@ namespace MobileApi.Models
         public int fruitid { get; set; }
 
         [DataMember]
-        [ForeignKey("plantid")]
         public int plantid { get; set; }
 
         [DataMember]
         public int valueid { get; set; }
 
+        [ForeignKey("plantid")]
         [DataMember]
         public virtual WetlandPlant WetlandPlant { get; set; }
     }
@@ -259,12 +258,12 @@ namespace MobileApi.Models
         public int divisionid { get; set; }
 
         [DataMember]
-        [ForeignKey("plantid")]
         public int plantid { get; set; }
 
         [DataMember]
         public int valueid { get; set; }
 
+        [ForeignKey("plantid")]
         [DataMember]
         public virtual WetlandPlant WetlandPlant { get; set; }
     }
@@ -279,12 +278,12 @@ namespace MobileApi.Models
         public int shapeid { get; set; }
 
         [DataMember]
-        [ForeignKey("plantid")]
         public int plantid { get; set; }
 
         [DataMember]
         public int valueid { get; set; }
 
+        [ForeignKey("plantid")]
         [DataMember]
         public virtual WetlandPlant WetlandPlant { get; set; }
     }
@@ -298,13 +297,14 @@ namespace MobileApi.Models
         [Column("arrangementid")]
         public int arrangementid { get; set; }
 
+
         [DataMember]
-        [ForeignKey("plantid")]
         public int plantid { get; set; }
 
         [DataMember]
         public int valueid { get; set; }
 
+        [ForeignKey("plantid")]
         [DataMember]
         public virtual WetlandPlant WetlandPlant { get; set; }
     }
@@ -318,13 +318,14 @@ namespace MobileApi.Models
         [Column("sizeid")]
         public int sizeid { get; set; }
 
+
         [DataMember]
-        [ForeignKey("plantid")]
         public int plantid { get; set; }
 
         [DataMember]
         public int valueid { get; set; }
 
+        [ForeignKey("plantid")]
         [DataMember]
         public virtual WetlandPlant WetlandPlant { get; set; }
     }
@@ -339,12 +340,12 @@ namespace MobileApi.Models
         public int regionid { get; set; }
 
         [DataMember]
-        [ForeignKey("plantid")]
         public int plantid { get; set; }
 
         [DataMember]
         public int valueid { get; set; }
 
+        [ForeignKey("plantid")]
         [DataMember]
         public virtual WetlandPlant WetlandPlant { get; set; }
     }
