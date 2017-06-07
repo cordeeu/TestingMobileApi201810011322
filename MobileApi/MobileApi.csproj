@@ -307,6 +307,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\AuthenticationTokenAttribute.cs" />
     <Compile Include="Helpers\ImageHelper.cs" />
     <Compile Include="Migrations\201704061830548_Initial.cs" />
     <Compile Include="Migrations\201704061830548_Initial.Designer.cs">
@@ -334,17 +335,6 @@
     <Content Include="Global.asax" />
     <None Include="README.md" />
     <None Include="Properties\PublishProfiles\MobileApiPublish.pubxml" />
-    <Content Include="Resources\Images\wetlands\ACCA4_1.jpg" />
-    <Content Include="Resources\Images\wetlands\ACCA4_2.jpg" />
-    <Content Include="Resources\Images\wetlands\ACCO4_1.jpg" />
-    <Content Include="Resources\Images\wetlands\ACCO4_icon.jpg" />
-    <Content Include="Resources\Images\wetlands\ACNE2_1.jpg" />
-    <Content Include="Resources\Images\wetlands\ACNE2_2.jpg" />
-    <Content Include="Resources\Images\wetlands\ACNE2_3.jpg" />
-    <Content Include="Resources\Images\wetlands\ACNE2_icon.jpg" />
-    <Content Include="Resources\Images\wetlands\ADCA_1.jpg" />
-    <Content Include="Resources\Images\wetlands\AGDE2_icon.jpg" />
-    <Content Include="Resources\Images\wetlands\AGTE3_1.jpg" />
     <Content Include="Views\Home\index.cshtml" />
     <Content Include="Scripts\app.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -371,7 +361,6 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Images\wetlands\images20170511.zip" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />

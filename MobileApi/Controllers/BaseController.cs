@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Web.Http;
 using MobileApi.Models;
+using MobileApi.Helpers;
 using System.Threading.Tasks;
 using System.Web.Hosting;
 using System.Net.Http;
@@ -18,6 +19,7 @@ using System.Web.Script.Serialization;
 using System.Web;
 using System.Data.Entity;
 using Ionic.Zip;
+using System.Reflection;
 
 namespace MobileApi.Controllers
 { 
@@ -28,9 +30,6 @@ namespace MobileApi.Controllers
         public WetlandPlantsMobileApiContext wetlandDb = new WetlandPlantsMobileApiContext();
         public string currentRepository;
 
-        // This action accepts no params (other than the repository) and also supports OData querying params
-        // e.g. api/pumas?$top=10 (gets top ten records)
-        // e.g. api/pumas?$filter=Name eq 'Cougar' (returns pumas with name equaling 'Cougar')
         [EnableQuery]
         [Route("api/woody")] 
         public IQueryable<WoodyPlant> GetWoodyPlants()
@@ -39,7 +38,10 @@ namespace MobileApi.Controllers
             return allPlants.AsQueryable();
         }
 
-        [EnableQuery]
+        // This action accepts no params (other than the repository) and also supports OData querying params
+        // e.g. api/wetland?$top=10 (gets top ten records)
+        // e.g. api/wetland?$filter=commonname eq 'Acer' (returns pumas with name equaling 'Acer')
+        [EnableQuery, AuthenticationTokenWetlands]
         [Route("api/wetland")]
         public IQueryable<WetlandPlant> GetWetlandPlants()
         {
@@ -53,6 +55,7 @@ namespace MobileApi.Controllers
             return allPlants.AsQueryable();
         }
 
+        [AuthenticationTokenWetlands]
         [Route("api/wetland_settings/{settingName}")]
         public IHttpActionResult GetWetlandSetting(string settingName)
         {
@@ -64,6 +67,7 @@ namespace MobileApi.Controllers
             return Ok(setting);
         }
 
+        [AuthenticationTokenWetlands]
         [Route("api/wetland_settings/images")]
         public List<WetlandSetting> GetWetlandImageZipFileSettings()
         {
@@ -85,12 +89,12 @@ namespace MobileApi.Controllers
            */
 
         // Get zipped images
+        [AuthenticationTokenWetlands]
         [Route("api/wetland/image_zip_files/{fileName}")]
            public HttpResponseMessage GetImagesZip(string fileName)
            {
-                
-                var directory = "~/Resources/Images/wetlands/" + fileName + ".zip";
-                String filePath = HostingEnvironment.MapPath(directory);
+                // var filePath = "C:\\Users\\Tim\\Documents\\Visual Studio 2015\\Projects\\MobileApiImages\\Wetlands\\" + fileName + ".zip";
+                var filePath = "C:\\Users\\Tim\\Documents\\Visual Studio 2015\\Projects\\MobileApiImages\\Wetlands\\" + fileName + ".zip";
                 using (ZipFile zip = ZipFile.Read(filePath))
                 {
                     var pushStreamContent = new PushStreamContent((stream, content, context) =>
@@ -108,8 +112,9 @@ namespace MobileApi.Controllers
                 }
             
            }
-           
-           [Route("api/wetland/images/{imageId}")]
+
+        [AuthenticationTokenWetlands]
+        [Route("api/wetland/images/{imageId}")]
            public IHttpActionResult GetImage(int imageId)
            {
 
