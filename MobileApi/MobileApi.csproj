@@ -330,9 +330,13 @@
     <Content Include="Areas\HelpPage\HelpPage.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="DataFolder\wetlands_data.js" />
+    <Content Include="DataFolder\wetlands_data_Copy.js" />
     <Content Include="favicon.ico" />
     <Content Include="Resources\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
+    <Content Include="DataFolder\Copy of Plant Database Woody.xlsx" />
+    <Content Include="DataFolder\wetlands_data.zip" />
     <None Include="README.md" />
     <None Include="Properties\PublishProfiles\MobileApiPublish.pubxml" />
     <Content Include="Views\Home\index.cshtml" />
