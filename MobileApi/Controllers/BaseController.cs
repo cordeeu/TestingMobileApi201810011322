@@ -22,6 +22,7 @@ using Ionic.Zip;
 using Newtonsoft.Json;
 using System.Text;
 using Newtonsoft.Json.Linq;
+using System.Diagnostics;
 
 namespace MobileApi.Controllers
 { 
@@ -95,8 +96,8 @@ namespace MobileApi.Controllers
         [Route("api/wetland/image_zip_files/{fileName}")]
            public HttpResponseMessage GetImagesZip(string fileName)
            {
-                // var filePath = "C:\\Users\\Tim\\Documents\\Visual Studio 2015\\Projects\\MobileApiImages\\Wetlands\\" + fileName + ".zip";
-                var filePath = "C:\\Users\\Tim\\Documents\\Visual Studio 2015\\Projects\\MobileApiImages\\Wetlands\\" + fileName + ".zip";
+                var filePath = (Debugger.IsAttached == true) ? "C:\\Users\\Tim\\Documents\\Visual Studio 2015\\Projects\\MobileApiImages\\Wetlands\\" + fileName + ".zip" : "~/Resources/Images/" + fileName + ".zip";
+            
                 using (ZipFile zip = ZipFile.Read(filePath))
                 {
                     var pushStreamContent = new PushStreamContent((stream, content, context) =>
@@ -213,9 +214,7 @@ namespace MobileApi.Controllers
                 }
             }
 
-            catch (Exception e) {
-
-               
+            catch (Exception e) {               
 
             }
 
@@ -822,7 +821,7 @@ namespace MobileApi.Controllers
             OleDbConnection oleExcelConnection = default(OleDbConnection);
             IList<object> plants = new List<object>();
             IList<KeyValuePair<String, Int32>> idNamePair = new List<KeyValuePair<String, Int32>>();//Need to have id as number because names are way too long
-            Int32 currentId = 0;
+            //Int32 currentId = 0;
             Int32 uniqueIdNum = 1;
 
             sConnection = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + appRoot + "/plant_db.xlsx" + ";Extended Properties=\"Excel 12.0;HDR=No;IMEX=1\"";
