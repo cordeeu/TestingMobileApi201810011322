@@ -96,8 +96,8 @@ namespace MobileApi.Controllers
         [Route("api/wetland/image_zip_files/{fileName}")]
            public HttpResponseMessage GetImagesZip(string fileName)
            {
-                var filePath = (Debugger.IsAttached == true) ? "C:\\Users\\Tim\\Documents\\Visual Studio 2015\\Projects\\MobileApiImages\\Wetlands\\" + fileName + ".zip" : "~/Resources/Images/" + fileName + ".zip";
-            
+                var directory = (Debugger.IsAttached == true) ? "C:\\Users\\Tim\\Documents\\Visual Studio 2015\\Projects\\MobileApiImages\\Wetlands\\" + fileName + ".zip" : "~/Resources/Images/" + fileName + ".zip";
+                String filePath = HostingEnvironment.MapPath(directory);
                 using (ZipFile zip = ZipFile.Read(filePath))
                 {
                     var pushStreamContent = new PushStreamContent((stream, content, context) =>
