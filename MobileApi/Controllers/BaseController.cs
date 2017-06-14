@@ -50,7 +50,7 @@ namespace MobileApi.Controllers
         {
             wetlandDb.Configuration.ProxyCreationEnabled = false;
             //DbSet<WetlandPlant> allPlants = wetlandDb.Plants;
-            List<WetlandPlant> allPlants = wetlandDb.Plants.Include(x => x.Images).ToList();
+            List<WetlandPlant> allPlants = wetlandDb.Plants.Include(x => x.Images).Include(x => x.References).ToList();
                 //.Include(x=>x.SimilarSpeciesWetland).Include(x=>x.CountyPlantWetland)
                 //.Include(x=>x.FruitWetland).Include(x=>x.DivisionWetland).Include(x=>x.ShapeWetland).Include(x=>x.ArrangementWetland)
                 //.Include(x=>x.SizeWetland).Include(x=>x.RegionWetland).ToList();
@@ -214,8 +214,8 @@ namespace MobileApi.Controllers
                 }
             }
 
-            catch (Exception e) {               
-
+            catch (Exception e) {
+                Console.WriteLine("Error {0}", e);
             }
 
             return null;
@@ -646,7 +646,7 @@ namespace MobileApi.Controllers
                     objList.Add(newObj);
             }
 
-            newPlant.ReferenceWetland = objList;
+            newPlant.References = objList;
         }
 
         private void setReferenceWetlandAttribute(ReferenceWetland newObj, JProperty property)

@@ -105,7 +105,7 @@ namespace MobileApi.Models
         [DataMember]
         public virtual ICollection<CountyPlantWetland> CountyPlantWetland { get; set; }
         [DataMember]
-        public virtual ICollection<ReferenceWetland> ReferenceWetland { get; set; }
+        public virtual ICollection<ReferenceWetland> References { get; set; }
         [DataMember]
         public virtual ICollection<FruitWetland> FruitWetland { get; set; }
         [DataMember]
