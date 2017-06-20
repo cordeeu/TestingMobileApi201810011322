@@ -50,7 +50,7 @@ namespace MobileApi.Controllers
         {
             wetlandDb.Configuration.ProxyCreationEnabled = false;
             //DbSet<WetlandPlant> allPlants = wetlandDb.Plants;
-            List<WetlandPlant> allPlants = wetlandDb.Plants.Include(x => x.Images).Include(x => x.References).ToList();
+            List<WetlandPlant> allPlants = wetlandDb.Plants.Include(x => x.Images).Include(x => x.References).Include(x => x.SimilarSpecies).ToList();
                 //.Include(x=>x.SimilarSpeciesWetland).Include(x=>x.CountyPlantWetland)
                 //.Include(x=>x.FruitWetland).Include(x=>x.DivisionWetland).Include(x=>x.ShapeWetland).Include(x=>x.ArrangementWetland)
                 //.Include(x=>x.SizeWetland).Include(x=>x.RegionWetland).ToList();
@@ -730,7 +730,7 @@ namespace MobileApi.Controllers
                 objList.Add(newObj);
             }
 
-            newPlant.SimilarSpeciesWetland = objList;
+            newPlant.SimilarSpecies = objList;
         }
 
         private void setSimilarSpeciesWetlandAttribute(SimilarSpeciesWetland newObj, JProperty property)

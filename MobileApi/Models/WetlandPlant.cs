@@ -103,7 +103,7 @@ namespace MobileApi.Models
         [DataMember]
         public virtual ICollection<ImagesWetland> Images { get; set; }
         [DataMember]
-        public virtual ICollection<SimilarSpeciesWetland> SimilarSpeciesWetland { get; set; }
+        public virtual ICollection<SimilarSpeciesWetland> SimilarSpecies { get; set; }
         [DataMember]
         public virtual ICollection<CountyPlantWetland> CountyPlantWetland { get; set; }
         [DataMember]
