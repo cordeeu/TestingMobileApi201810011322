@@ -228,6 +228,9 @@ namespace MobileApi.Controllers
                 case "id":
                     newPlant.id = int.Parse(property.Value.ToString());
                     break;
+                case "sections":
+                    newPlant.sections = property.Value.ToString();
+                    break;
                 case "scinameauthor":
                     newPlant.scinameauthor = property.Value.ToString();
                     break;

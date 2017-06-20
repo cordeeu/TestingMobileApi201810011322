@@ -20,6 +20,8 @@ namespace MobileApi.Models
         [DataMember]
         public int id { get; set; }
         [DataMember]
+        public string sections { get; set; }
+        [DataMember]
         public string scinameauthor { get; set; }
         [DataMember]
         public string scinamenoauthor { get; set; }
