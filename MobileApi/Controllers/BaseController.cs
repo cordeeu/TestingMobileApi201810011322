@@ -221,6 +221,101 @@ namespace MobileApi.Controllers
             return null;
         }
 
+        // GET api/Account/UploadCsvFile
+        [HttpGet]
+        [Route("api/uploadDataWetlandsGlossary")]
+        public async Task<IHttpActionResult> UploadDataWetlandsGlossaryAsync()
+        {
+
+            string appRoot = HttpContext.Current.Server.MapPath("~");
+            string filename = appRoot + "/DataFolder/glossary.js";
+            char[] result;
+            StringBuilder builder = new StringBuilder();
+
+            IList<WetlandGlossary> wetlandGlossaries = new List<WetlandGlossary>();
+
+            using (StreamReader reader = File.OpenText(filename))
+            {
+                result = new char[reader.BaseStream.Length];
+                await reader.ReadAsync(result, 0, (int)reader.BaseStream.Length);
+            }
+
+            foreach (char c in result)
+            {
+
+                builder.Append(c);
+
+            }
+
+
+            JsonTextReader readers = new JsonTextReader(new StringReader(builder.ToString()));
+            JObject obj = null;
+
+            try
+            {
+                //Loading json data with json text reader
+                while (readers.Read())
+                {
+                    if (readers.TokenType == JsonToken.StartObject)
+                    {
+
+                        obj = JObject.Load(readers);
+
+                    }
+                }
+
+
+                if (obj.HasValues)
+                {
+
+                    var listOfAllPlants = (JArray)obj["glossary"];
+
+                    //Each one of these is new Wetland plant
+                    foreach (JObject value in listOfAllPlants)
+                    {
+                        WetlandGlossary newGlossary = new WetlandGlossary();
+
+                        foreach (var property in value.Properties())
+                        {                            
+                            setGlossaryAttribute(newGlossary, property);
+                        }
+
+                        wetlandGlossaries.Add(newGlossary);
+                        wetlandDb.WetlandGlossaries.Add(newGlossary);
+                        wetlandDb.SaveChanges();
+                    }
+
+
+                    //  wetlandDb.Plants.AddRange(wetlandPlants);
+                    //  wetlandDb.Plants.SaveChanges();
+                }
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine("Error {0}", e);
+            }
+
+            return null;
+        }
+
+        private void setGlossaryAttribute(WetlandGlossary newGlossary, JProperty property)
+        {
+            switch (property.Name.ToLower())
+            {
+                case "id":
+                    newGlossary.id = int.Parse(property.Value.ToString());
+                    break;
+                case "name":
+                    newGlossary.name = property.Value.ToString();
+                    break;
+                case "definition":
+                    newGlossary.definition = property.Value.ToString();
+                    break;
+            }
+
+        }
+
         private void setPlantAttribute(WetlandPlant newPlant, JProperty property)
         {
             switch (property.Name.ToLower())

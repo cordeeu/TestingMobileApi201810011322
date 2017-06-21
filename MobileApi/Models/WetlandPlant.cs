@@ -366,4 +366,19 @@ namespace MobileApi.Models
         public long? valueint { get; set; }
     }
 
+
+    [Table("glossary", Schema = "wetland")]
+    public class WetlandGlossary
+    {
+        [Key]
+        [Column("glossaryid")]
+        public int glossaryid { get; set; }
+        public int id { get; set; }
+        public string name { get; set; }
+        public string definition { get; set; }
+
+    }
+
+
+
 }
