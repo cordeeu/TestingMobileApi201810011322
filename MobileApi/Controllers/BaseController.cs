@@ -78,6 +78,14 @@ namespace MobileApi.Controllers
             return wetlandImageZipFileSettings;
         }
 
+        [AuthenticationTokenWetlands]
+        [Route("api/wetland_glossary")]
+        public List<WetlandGlossary> GetWetlandGlossary()
+        {
+            List<WetlandGlossary> wetlandGlossary = wetlandDb.WetlandGlossary.ToList();
+            return wetlandGlossary;
+        }
+
         /*   [Route("api/{repository}/{resourceId}")]
            public async Task<IHttpActionResult> Get(int resourceId)
            {
@@ -281,7 +289,7 @@ namespace MobileApi.Controllers
                         }
 
                         wetlandGlossaries.Add(newGlossary);
-                        wetlandDb.WetlandGlossaries.Add(newGlossary);
+                        wetlandDb.WetlandGlossary.Add(newGlossary);
                         wetlandDb.SaveChanges();
                     }
 
