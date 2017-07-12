@@ -104,7 +104,7 @@ namespace MobileApi.Controllers
         [Route("api/wetland/image_zip_files/{fileName}")]
            public HttpResponseMessage GetImagesZip(string fileName)
            {
-                var directory = (Debugger.IsAttached == true) ? "C:\\Users\\Tim\\Documents\\Visual Studio 2015\\Projects\\MobileApiImages\\Wetlands\\" + fileName + ".zip" : "~/Resources/Images/" + fileName + ".zip";
+                var directory = (Debugger.IsAttached == true) ? "C:\\Users\\Tim\\Documents\\Visual Studio 2015\\Projects\\MobileApiImages\\Wetlands\\" + fileName + ".zip" : "~/Resources/Images/Wetlands/" + fileName + ".zip";
                 String filePath = HostingEnvironment.MapPath(directory);
                 using (ZipFile zip = ZipFile.Read(filePath))
                 {
@@ -124,33 +124,48 @@ namespace MobileApi.Controllers
             
            }
 
-        [AuthenticationTokenWetlands]
-        [Route("api/wetland/images/{imageId}")]
-           public IHttpActionResult GetImage(int imageId)
-           {
+        //[AuthenticationTokenWetlands]
+        [Route("api/wetland/images/{Id}")]
+        public HttpResponseMessage GetImage(int Id)
+        {
 
-               ImagesWetland wetlandImage = wetlandDb.ImagesWetland.Where(b => b.imageid == imageId).FirstOrDefault();
-               if (wetlandImage == null)
-               {
-                    return NotFound();
-               }
-               else
-               {
-                    var result = new HttpResponseMessage(HttpStatusCode.OK);
-                    var directory = "~/Resources/Images/wetlands/" + wetlandImage.filename;
-                    String filePath = HostingEnvironment.MapPath(directory);
-                    FileStream fileStream = new FileStream(filePath, FileMode.Open);
-                    Image image = Image.FromStream(fileStream);
-                    MemoryStream memoryStream = new MemoryStream();
-                    image.Save(memoryStream, ImageFormat.Jpeg);
-                    result.Content = new ByteArrayContent(memoryStream.ToArray());
-                    result.Content.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
+            ImagesWetland wetlandImage = wetlandDb.ImagesWetland.FirstOrDefault(b => b.id == Id);
+            if (wetlandImage == null)
+            {
+                return this.Request.CreateResponse(HttpStatusCode.NotFound, "Image not found");
+            }
+            else
+            {
+                var result = new HttpResponseMessage(HttpStatusCode.OK);
+                var directory = "~/Resources/Images/Wetlands/" + wetlandImage.filename;
+                String filePath = HostingEnvironment.MapPath(directory);
+                FileStream fileStream = new FileStream(filePath, FileMode.Open);
+                Image image = Image.FromStream(fileStream);
+                MemoryStream memoryStream = new MemoryStream();
+                image.Save(memoryStream, ImageFormat.Jpeg);
+                result.Content = new ByteArrayContent(memoryStream.ToArray());
+                result.Content.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
 
-                    return Ok(result);
-                }
+                return result;
+            }
                
-           }
+        }
 
+        //[AuthenticationTokenWetlands]
+        [Route("api/wetland/image_icons/{filename}")]
+        public HttpResponseMessage GetImageIcon(string filename)
+        {
+            var result = new HttpResponseMessage(HttpStatusCode.OK);
+            var directory = "~/Resources/Images/Wetlands/" + filename + "_icon.jpg";
+            String filePath = HostingEnvironment.MapPath(directory);
+            FileStream fileStream = new FileStream(filePath, FileMode.Open);
+            Image image = Image.FromStream(fileStream);
+            MemoryStream memoryStream = new MemoryStream();
+            image.Save(memoryStream, ImageFormat.Jpeg);
+            result.Content = new ByteArrayContent(memoryStream.ToArray());
+            result.Content.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
+            return result;
+        }
 
         // GET api/Account/UploadCsvFile
         [HttpGet]
