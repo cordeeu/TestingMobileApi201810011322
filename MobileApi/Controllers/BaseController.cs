@@ -136,16 +136,8 @@ namespace MobileApi.Controllers
             }
             else
             {
-                var result = new HttpResponseMessage(HttpStatusCode.OK);
-                var directory = "~/Resources/Images/Wetlands/" + wetlandImage.filename;
-                String filePath = HostingEnvironment.MapPath(directory);
-                FileStream fileStream = new FileStream(filePath, FileMode.Open);
-                Image image = Image.FromStream(fileStream);
-                MemoryStream memoryStream = new MemoryStream();
-                image.Save(memoryStream, ImageFormat.Jpeg);
-                result.Content = new ByteArrayContent(memoryStream.ToArray());
-                result.Content.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
-
+                var filePath = "~/Resources/Images/Wetlands/" + wetlandImage.filename;
+                var result = GetImageFile(filePath);
                 return result;
             }
                
@@ -155,15 +147,17 @@ namespace MobileApi.Controllers
         [Route("api/wetland/image_icons/{filename}")]
         public HttpResponseMessage GetImageIcon(string filename)
         {
-            var result = new HttpResponseMessage(HttpStatusCode.OK);
-            var directory = "~/Resources/Images/Wetlands/" + filename + "_icon.jpg";
-            String filePath = HostingEnvironment.MapPath(directory);
-            FileStream fileStream = new FileStream(filePath, FileMode.Open);
-            Image image = Image.FromStream(fileStream);
-            MemoryStream memoryStream = new MemoryStream();
-            image.Save(memoryStream, ImageFormat.Jpeg);
-            result.Content = new ByteArrayContent(memoryStream.ToArray());
-            result.Content.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
+            var filePath = "~/Resources/Images/Wetlands/" + filename + "_icon.jpg";
+            var result = GetImageFile(filePath);
+            return result;
+        }
+
+        //[AuthenticationTokenWetlands]
+        [Route("api/wetland/range_images/{filename}")]
+        public HttpResponseMessage GetRangeImage(string filename)
+        {
+            var filePath = "~/Resources/Images/Wetlands/" + filename + ".png";
+            var result = GetImageFile(filePath);
             return result;
         }
 
@@ -320,6 +314,22 @@ namespace MobileApi.Controllers
             }
 
             return null;
+        }
+
+        private HttpResponseMessage GetImageFile(string filePath)
+        {
+            HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK);
+            String fileLocation = HostingEnvironment.MapPath(filePath);
+            using (FileStream fileStream = new FileStream(fileLocation, FileMode.Open))
+            {
+                Image image = Image.FromStream(fileStream);
+                MemoryStream memoryStream = new MemoryStream();
+                image.Save(memoryStream, ImageFormat.Jpeg);
+                result.Content = new ByteArrayContent(memoryStream.ToArray());
+                result.Content.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
+            }
+
+            return result;
         }
 
         private void setGlossaryAttribute(WetlandGlossary newGlossary, JProperty property)
