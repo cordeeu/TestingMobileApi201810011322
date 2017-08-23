@@ -21,16 +21,7 @@ namespace MobileApi.Models
         }
 
         public DbSet<WoodyPlant> Plants { get; set; }
-        public DbSet<ImagesWetland> Images { get; set; }
-        public DbSet<SimilarSpeciesWetland> SimalarSpecies { get; set; }
-        public DbSet<CountyPlantWetland> CountyPlants { get; set; }
-        public DbSet<ReferenceWetland> References { get; set; }
-        public DbSet<FruitWetland> Fruits { get; set; }
-        public DbSet<DivisionWetland> Divisions { get; set; }
-        public DbSet<ShapeWetland> Shapes { get; set; }
-        public DbSet<ArrangementWetland> Arrangements { get; set; }
-        public DbSet<SizeWetland> Sizes { get; set; }
-        public DbSet<RegionWetland> Regions { get; set; }
+        public DbSet<ImageWoody> Images { get; set; }
 
     }
 }

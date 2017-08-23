@@ -338,6 +338,7 @@
     <Content Include="Global.asax" />
     <Content Include="DataFolder\Copy of Plant Database Woody.xlsx" />
     <Content Include="DataFolder\wetlands_data.zip" />
+    <Content Include="DataFolder\woody_plant_db.xlsx" />
     <None Include="README.md" />
     <None Include="Properties\PublishProfiles\MobileApiPublish.pubxml" />
     <Content Include="Views\Home\index.cshtml" />

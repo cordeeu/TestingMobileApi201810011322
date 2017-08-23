@@ -238,7 +238,7 @@ namespace MobileApi.Controllers
             return null;
         }
 
-        // GET api/Account/UploadCsvFile
+        // GET api/uploadDataWetlandsGlossary
         [HttpGet]
         [Route("api/uploadDataWetlandsGlossary")]
         public async Task<IHttpActionResult> UploadDataWetlandsGlossaryAsync()
@@ -937,9 +937,8 @@ namespace MobileApi.Controllers
 
          }
 
-
-
-        // GET api/Account/UploadCsvFile
+        // GET api/uploadData
+        [HttpGet]
         [Route("api/uploadData")]
         public IHttpActionResult UploadData()
         {
@@ -950,12 +949,11 @@ namespace MobileApi.Controllers
             OleDbCommand oleExcelCommand = default(OleDbCommand);
             OleDbDataReader oleExcelReader = default(OleDbDataReader);
             OleDbConnection oleExcelConnection = default(OleDbConnection);
-            IList<object> plants = new List<object>();
             IList<KeyValuePair<String, Int32>> idNamePair = new List<KeyValuePair<String, Int32>>();//Need to have id as number because names are way too long
             //Int32 currentId = 0;
             Int32 uniqueIdNum = 1;
 
-            sConnection = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + appRoot + "/plant_db.xlsx" + ";Extended Properties=\"Excel 12.0;HDR=No;IMEX=1\"";
+            sConnection = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + appRoot + "/DataFolder/woody_plant_db.xlsx" + ";Extended Properties=\"Excel 12.0;HDR=No;IMEX=1\"";
 
             oleExcelConnection = new OleDbConnection(sConnection);
             oleExcelConnection.Open();
@@ -984,93 +982,92 @@ namespace MobileApi.Controllers
                 {
                     if (!firstRecord)
                     {
-                        plants.Add(new
+                        WoodyPlant newPlant = new WoodyPlant
                         {
-                            plantId = oleExcelReader.GetValue(0),
-                            commonFN = oleExcelReader.GetValue(1),
-                            scientinficFN = oleExcelReader.GetValue(2),
-                            family = oleExcelReader.GetValue(3),
-                            family2 = oleExcelReader.GetValue(4),
-                            commonName = oleExcelReader.GetValue(5),
-                            scientificNameWeber = oleExcelReader.GetValue(6),
-                            subspecies = oleExcelReader.GetValue(7),
-                            iety = oleExcelReader.GetValue(8),
-                            forma = oleExcelReader.GetValue(9),
-                            familyAckerfield = oleExcelReader.GetValue(10),
-                            scientificNameAckerField = oleExcelReader.GetValue(11),
-                            ackerFieldPage = oleExcelReader.GetValue(12),
-                            weber4thWestern = oleExcelReader.GetValue(13),
-                            weber4thPage = oleExcelReader.GetValue(14),
-                            commonNameSecondary = oleExcelReader.GetValue(15),
-                            derivation = oleExcelReader.GetValue(16),
-                            scientificNameOther = oleExcelReader.GetValue(17),
-                            scientificNameMeaning = oleExcelReader.GetValue(18),
-                            keyCharacteristics = oleExcelReader.GetValue(19),
-                            flowerType = oleExcelReader.GetValue(20),
-                            flowerColor = oleExcelReader.GetValue(21),
-                            leafType = oleExcelReader.GetValue(22),
-                            seasonOfBloom = oleExcelReader.GetValue(23),
-                            growthForm = oleExcelReader.GetValue(24),
-                            monocot = oleExcelReader.GetValue(25),
-                            monoecious = oleExcelReader.GetValue(26),
-                            lifeZone = oleExcelReader.GetValue(27),
-                            edibility = oleExcelReader.GetValue(28),
-                            toxicity = oleExcelReader.GetValue(29),
-                            landscapingUse = oleExcelReader.GetValue(30),
-                            matureHeight = oleExcelReader.GetValue(31),
-                            matureSpread = oleExcelReader.GetValue(32),
-                            siteRequirements = oleExcelReader.GetValue(33),
-                            soilRequirements = oleExcelReader.GetValue(34),
-                            moistureRequirements = oleExcelReader.GetValue(35),
-                            ecologicalRelationships = oleExcelReader.GetValue(36),
-                            frequency = oleExcelReader.GetValue(37),
-                            endemicLocation = oleExcelReader.GetValue(38),
-                            alien = oleExcelReader.GetValue(39),
-                            comments = oleExcelReader.GetValue(40),
-                            habitat = oleExcelReader.GetValue(41),
-                            culti = oleExcelReader.GetValue(42),
-                            fiber = oleExcelReader.GetValue(43),
-                            otherUses = oleExcelReader.GetValue(44),
-                            fruitColor = oleExcelReader.GetValue(45),
-                            fruitType = oleExcelReader.GetValue(46),
-                            print = oleExcelReader.GetValue(47),
-                            familyCharacteristics = oleExcelReader.GetValue(48),
-                            flowerShape = oleExcelReader.GetValue(49),
-                            flowerSymmetry = oleExcelReader.GetValue(50),
-                            flowerCluster = oleExcelReader.GetValue(51),
-                            flowerSize = oleExcelReader.GetValue(52),
-                            petalNumber = oleExcelReader.GetValue(53),
-                            leafShape = oleExcelReader.GetValue(54),
-                            flowerStructure = oleExcelReader.GetValue(55),
-                            weedManagement = oleExcelReader.GetValue(56),
-                            legalStatus = oleExcelReader.GetValue(57),
-                            livestock = oleExcelReader.GetValue(58),
-                            falcon12 = oleExcelReader.GetValue(59),
-                            tellerCounty = oleExcelReader.GetValue(60),
-                            greenMt12 = oleExcelReader.GetValue(61),
-                            reynolds12 = oleExcelReader.GetValue(62),
-                            bear12 = oleExcelReader.GetValue(63),
-                            goldenGate = oleExcelReader.GetValue(64),
-                            custerCounty = oleExcelReader.GetValue(65),
-                            southValley = oleExcelReader.GetValue(66),
-                            deerCreek = oleExcelReader.GetValue(67),
-                            plainCc = oleExcelReader.GetValue(68),
-                            maloitPark = oleExcelReader.GetValue(69),
-                            vailNc = oleExcelReader.GetValue(70),
-                            lovelandPass = oleExcelReader.GetValue(71),
-                            noNameCreek = oleExcelReader.GetValue(72),
-                            guanellaPass = oleExcelReader.GetValue(73),
-                            southPlattePark = oleExcelReader.GetValue(74),
-                            roxborough = oleExcelReader.GetValue(75),
-                            castlewood = oleExcelReader.GetValue(76),
-                            highPlains = oleExcelReader.GetValue(77),
-                            dbg = oleExcelReader.GetValue(78),
-                            grassesAtGreenMtn = oleExcelReader.GetValue(79),
-                            scientificMeaningAckerField = oleExcelReader.GetValue(80),
-                            eastPortal = oleExcelReader.GetValue(81),
-                            mesaCounty = oleExcelReader.GetValue(82),
-                            lmncMay = oleExcelReader.GetValue(83),
-                        });
+                            plant_imported_id = Convert.ToInt32(oleExcelReader.GetValue(0)),
+                            family = oleExcelReader.GetValue(1).ToString(),
+                            scientificNameWeber = oleExcelReader.GetValue(2).ToString(),
+                            leafType = oleExcelReader.GetValue(3).ToString(),
+                            leafShape = oleExcelReader.GetValue(4).ToString(),
+                            growthForm = oleExcelReader.GetValue(5).ToString(),
+                            growthDuration = oleExcelReader.GetValue(6).ToString(),
+                            scientificNameOther = oleExcelReader.GetValue(7).ToString(),
+                            commonName = oleExcelReader.GetValue(8).ToString(),
+                            commonNameSecondary = oleExcelReader.GetValue(9).ToString(),
+                            scientificNameMeaningWeber = oleExcelReader.GetValue(10).ToString(),
+                            plantClass = oleExcelReader.GetValue(11).ToString(),
+                            plantSubClass = oleExcelReader.GetValue(12).ToString(),
+                            origin = oleExcelReader.GetValue(13).ToString(),
+                            weedManagement = oleExcelReader.GetValue(14).ToString(),
+                            edibility = oleExcelReader.GetValue(15).ToString(),
+                            livestock = oleExcelReader.GetValue(16).ToString(),
+                            toxicity = oleExcelReader.GetValue(17).ToString(),
+                            ecologicalRelationships = oleExcelReader.GetValue(18).ToString(),
+                            frequency = oleExcelReader.GetValue(19).ToString(),
+                            habitat = oleExcelReader.GetValue(20).ToString(),
+                            scientificNameNelson = oleExcelReader.GetValue(21).ToString(),
+                            scientificNameMeaningNelson = oleExcelReader.GetValue(22).ToString(),
+                            seasonOfBloom = oleExcelReader.GetValue(23).ToString(),
+                            familyCharacteristics = oleExcelReader.GetValue(24).ToString(),
+                            flowerSymmetry = oleExcelReader.GetValue(25).ToString(),
+                            flowerCluster = oleExcelReader.GetValue(26).ToString(),
+                            flowerShape = oleExcelReader.GetValue(27).ToString(),
+                            commonNameDerivation = oleExcelReader.GetValue(28).ToString(),
+                            landscapingCultivar = oleExcelReader.GetValue(29).ToString(),
+                            flowerColor = oleExcelReader.GetValue(30).ToString(),
+                            fruitColor = oleExcelReader.GetValue(31).ToString(),
+                            availability = oleExcelReader.GetValue(32).ToString(),
+                            keyCharacteristics = oleExcelReader.GetValue(33).ToString(),
+                            lifeZone = oleExcelReader.GetValue(34).ToString(),
+                            endemicLocation = oleExcelReader.GetValue(35).ToString(),
+                            landscapingUse = oleExcelReader.GetValue(36).ToString(),
+                            matureHeight = oleExcelReader.GetValue(37).ToString(),
+                            matureSpread = oleExcelReader.GetValue(38).ToString(),
+                            lightRequirements = oleExcelReader.GetValue(39).ToString(),
+                            soilRequirements = oleExcelReader.GetValue(40).ToString(),
+                            fiber = oleExcelReader.GetValue(41).ToString(),
+                            otherInformation = oleExcelReader.GetValue(42).ToString(),
+                            flowerSize = oleExcelReader.GetValue(43).ToString(),
+                            petalNumber = oleExcelReader.GetValue(44).ToString(),
+                            flowerStructure = oleExcelReader.GetValue(45).ToString(),
+                            moistureRequirements = oleExcelReader.GetValue(46).ToString(),
+                            pronunciation = oleExcelReader.GetValue(47).ToString(),
+                            fruitType = oleExcelReader.GetValue(48).ToString(),
+                            subspecies = oleExcelReader.GetValue(49).ToString(),
+                            variety = oleExcelReader.GetValue(50).ToString(),
+                            forma = oleExcelReader.GetValue(51).ToString(),
+                            legalStatus = oleExcelReader.GetValue(52).ToString(),
+                            guanellaPass = oleExcelReader.GetValue(53).ToString(),
+                            plainCc = oleExcelReader.GetValue(54).ToString(),
+                            noNameCreek = oleExcelReader.GetValue(55).ToString(),
+                            maloitPark = oleExcelReader.GetValue(56).ToString(),
+                            vailNc = oleExcelReader.GetValue(57).ToString(),
+                            lovelandPass = oleExcelReader.GetValue(58).ToString(),
+                            roxborough = oleExcelReader.GetValue(59).ToString(),
+                            castlewood = oleExcelReader.GetValue(60).ToString(),
+                            custerCounty = oleExcelReader.GetValue(61).ToString(),
+                            dbg = oleExcelReader.GetValue(62).ToString(),
+                            grassesAtGreenMtn = oleExcelReader.GetValue(63).ToString(),
+                            eastPortal = oleExcelReader.GetValue(64).ToString(),
+                            mesaCounty = oleExcelReader.GetValue(65).ToString(),
+                            tellerCounty = oleExcelReader.GetValue(66).ToString(),
+                            goldenGate = oleExcelReader.GetValue(67).ToString(),
+                            southPlattePark = oleExcelReader.GetValue(68).ToString(),
+                            greenMt = oleExcelReader.GetValue(69).ToString(),
+                            reynolds = oleExcelReader.GetValue(70).ToString(),
+                            grassesManual = oleExcelReader.GetValue(71).ToString(),
+                            falcon = oleExcelReader.GetValue(72).ToString(),
+                            lookoutMt = oleExcelReader.GetValue(73).ToString(),
+                            southValley = oleExcelReader.GetValue(74).ToString(),
+                            deerCreek = oleExcelReader.GetValue(75).ToString(),
+                            lairOTheBear = oleExcelReader.GetValue(76).ToString(),
+                            print = oleExcelReader.GetValue(77).ToString(),
+                            highPlains = oleExcelReader.GetValue(78).ToString(),
+                            shrubs = oleExcelReader.GetValue(79).ToString()
+                        };
+                        woodyDb.Plants.Add(newPlant);
+                        woodyDb.SaveChanges();
+                        Debug.WriteLine("{0}: {1}", newPlant.plant_id, newPlant.scientificNameWeber);
 
                         uniqueIdNum++;
                     }

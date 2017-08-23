@@ -3,33 +3,182 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Web;
 
 namespace MobileApi.Models
 {
-    [Table("plants", Schema = "plant")]
+    [DataContract(IsReference = true)]
+    [Table("plants", Schema = "woody")]
     public class WoodyPlant
     {
         [Key]
         [Column("plant_id")]
+        [DataMember]
         public int plant_id { get; set; }
-
+        [DataMember]
         public int plant_imported_id { get; set; }
-     
-        public string common_name { get; set; }
+        [DataMember]
+        public string family { get; set; }
+        [DataMember]
+        public string scientificNameWeber { get; set; }
+        [DataMember]
+        public string leafType { get; set; }
+        [DataMember]
+        public string leafShape { get; set; }
+        [DataMember]
+        public string growthForm { get; set; }
+        [DataMember]
+        public string growthDuration { get; set; }
+        [DataMember]
+        public string scientificNameOther { get; set; }
+        [DataMember]
+        public string commonName { get; set; }
+        [DataMember]
+        public string commonNameSecondary { get; set; }
+        [DataMember]
+        public string scientificNameMeaningWeber { get; set; }
+        [DataMember]
+        public string plantClass { get; set; }
+        [DataMember]
+        public string plantSubClass { get; set; }
+        [DataMember]
+        public string origin { get; set; }
+        [DataMember]
+        public string weedManagement { get; set; }
+        [DataMember]
+        public string edibility { get; set; }
+        [DataMember]
+        public string livestock { get; set; }
+        [DataMember]
+        public string toxicity { get; set; }
+        [DataMember]
+        public string ecologicalRelationships { get; set; }
+        [DataMember]
+        public string frequency { get; set; }
+        [DataMember]
+        public string habitat { get; set; }
+        [DataMember]
+        public string scientificNameNelson { get; set; }
+        [DataMember]
+        public string scientificNameMeaningNelson { get; set; }
+        [DataMember]
+        public string seasonOfBloom { get; set; }
+        [DataMember]
+        public string familyCharacteristics { get; set; }
+        [DataMember]
+        public string flowerSymmetry { get; set; }
+        [DataMember]
+        public string flowerCluster { get; set; }
+        [DataMember]
+        public string flowerShape { get; set; }
+        [DataMember]
+        public string commonNameDerivation { get; set; }
+        [DataMember]
+        public string landscapingCultivar { get; set; }
+        [DataMember]
+        public string flowerColor { get; set; }
+        [DataMember]
+        public string fruitColor { get; set; }
+        [DataMember]
+        public string availability { get; set; }
+        [DataMember]
+        public string keyCharacteristics { get; set; }
+        [DataMember]
+        public string lifeZone { get; set; }
+        [DataMember]
+        public string endemicLocation { get; set; }
+        [DataMember]
+        public string landscapingUse { get; set; }
+        [DataMember]
+        public string matureHeight { get; set; }
+        [DataMember]
+        public string matureSpread { get; set; }
+        [DataMember]
+        public string lightRequirements { get; set; }
+        [DataMember]
+        public string soilRequirements { get; set; }
+        [DataMember]
+        public string fiber { get; set; }
+        [DataMember]
+        public string otherInformation { get; set; }
+        [DataMember]
+        public string flowerSize { get; set; }
+        [DataMember]
+        public string petalNumber { get; set; }
+        [DataMember]
+        public string flowerStructure { get; set; }
+        [DataMember]
+        public string moistureRequirements { get; set; }
+        [DataMember]
+        public string pronunciation { get; set; }
+        [DataMember]
+        public string fruitType { get; set; }
+        [DataMember]
+        public string subspecies { get; set; }
+        [DataMember]
+        public string variety { get; set; }
+        [DataMember]
+        public string forma { get; set; }
+        [DataMember]
+        public string legalStatus { get; set; }
+        [DataMember]
+        public string guanellaPass { get; set; }
+        [DataMember]
+        public string plainCc { get; set; }
+        [DataMember]
+        public string noNameCreek { get; set; }
+        [DataMember]
+        public string maloitPark { get; set; }
+        [DataMember]
+        public string vailNc { get; set; }
+        [DataMember]
+        public string lovelandPass { get; set; }
+        [DataMember]
+        public string roxborough { get; set; }
+        [DataMember]
+        public string castlewood { get; set; }
+        [DataMember]
+        public string custerCounty { get; set; }
+        [DataMember]
+        public string dbg { get; set; }
+        [DataMember]
+        public string grassesAtGreenMtn { get; set; }
+        [DataMember]
+        public string eastPortal { get; set; }
+        [DataMember]
+        public string mesaCounty { get; set; }
+        [DataMember]
+        public string tellerCounty { get; set; }
+        [DataMember]
+        public string goldenGate { get; set; }
+        [DataMember]
+        public string southPlattePark { get; set; }
+        [DataMember]
+        public string greenMt { get; set; }
+        [DataMember]
+        public string reynolds { get; set; }
+        [DataMember]
+        public string grassesManual { get; set; }
+        [DataMember]
+        public string falcon { get; set; }
+        [DataMember]
+        public string lookoutMt { get; set; }
+        [DataMember]
+        public string southValley { get; set; }
+        [DataMember]
+        public string deerCreek { get; set; }
+        [DataMember]
+        public string lairOTheBear { get; set; }
+        [DataMember]
+        public string print { get; set; }
+        [DataMember]
+        public string highPlains { get; set; }
+        [DataMember]
+        public string shrubs { get; set; }
 
-         public string common_family_name { get; set; }
-
-         public string scientific_family_name { get; set; }
-
-           public string family_name_meaning { get; set; }
-
-           public string family_characteristics { get; set; }
-   
-        public string classification { get; set; }
-
-        public string sub_class { get; set; }
-
+        [DataMember]
+        public virtual ICollection<ImageWoody> Images { get; set; }
     }
 
     [Table("other_common_names", Schema = "plant")]
@@ -207,19 +356,23 @@ namespace MobileApi.Models
         public virtual WoodyPlant plant { get; set; }
     }
 
+    [DataContract(IsReference = true)]
     [Table("images", Schema = "plant")]
     public class ImageWoody
     {
         [Key]
-        [Column("image_id")]
-        public int image_id { get; set; }
+        [Column("imageId")]
+        [DataMember]
+        public int imageId { get; set; }
+        [DataMember]
+        public int plantId { get; set; }
+        [DataMember]
+        public string loResPath { get; set; }
+        [DataMember]
+        public string highResPath { get; set; }
 
-        public int plant_id { get; set; }
-
-        public string lo_res_path { get; set; }
-
-        public string high_res_path { get; set; }
-
+        [ForeignKey("plantId")]
+        [DataMember]
         public virtual WoodyPlant plant { get; set; }
     }
 
