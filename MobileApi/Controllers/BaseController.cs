@@ -32,14 +32,7 @@ namespace MobileApi.Controllers
         public WoodyPlantsMobileApiContext woodyDb = new WoodyPlantsMobileApiContext();
         public WetlandPlantsMobileApiContext wetlandDb = new WetlandPlantsMobileApiContext();
         public string currentRepository;
-
-        [EnableQuery]
-        [Route("api/woody")] 
-        public IQueryable<WoodyPlant> GetWoodyPlants()
-        {
-            DbSet<WoodyPlant> allPlants = woodyDb.Plants;
-            return allPlants.AsQueryable();
-        }
+       
 
         // This action accepts no params (other than the repository) and also supports OData querying params
         // e.g. api/wetland?$top=10 (gets top ten records)
@@ -57,6 +50,17 @@ namespace MobileApi.Controllers
 
             return allPlants.AsQueryable();
         }
+
+        [EnableQuery, AuthenticationTokenWetlands]
+        [Route("api/woody")]
+        public IQueryable<WoodyPlant> GetWoodyPlants()
+        {
+            woodyDb.Configuration.ProxyCreationEnabled = false;
+            List<WoodyPlant> allPlants = woodyDb.Plants.ToList();
+                //.Include(x => x.Images).ToList();
+            return allPlants.AsQueryable();
+        }
+
 
         [AuthenticationTokenWetlands]
         [Route("api/wetland_settings/{settingName}")]
