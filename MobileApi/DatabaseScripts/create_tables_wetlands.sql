@@ -201,3 +201,21 @@ CREATE TABLE wetland.regions(
 ALTER TABLE wetland.regions OWNER TO "PlantOwner";
 GRANT SELECT ON wetland.regions TO "PlantUser";
 
+/*
+ * Standalone glossary table, not connected to plants
+ */
+CREATE TABLE wetland.glossary(
+	glossaryid serial NOT NULL,
+	id integer NOT NULL,
+	name text,
+	definition text, 
+  CONSTRAINT glossaryid_pk PRIMARY KEY (glossaryid)
+)
+WITH (
+  OIDS=FALSE
+);
+  
+ALTER TABLE wetland.glossary OWNER TO "PlantOwner";
+GRANT SELECT ON wetland.glossary TO "PlantUser";
+
+

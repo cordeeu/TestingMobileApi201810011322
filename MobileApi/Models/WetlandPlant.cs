@@ -101,6 +101,18 @@ namespace MobileApi.Models
         public string duration { get; set; }
 
         [DataMember]
+        public string color { get; set; }
+
+        [DataMember]
+        public string leafdivision { get; set; }
+
+        [DataMember]
+        public string leafarrangement { get; set; }
+
+        [DataMember]
+        public string plantsize { get; set; }
+
+        [DataMember]
         public virtual ICollection<ImagesWetland> Images { get; set; }
         [DataMember]
         public virtual ICollection<SimilarSpeciesWetland> SimilarSpecies { get; set; }
