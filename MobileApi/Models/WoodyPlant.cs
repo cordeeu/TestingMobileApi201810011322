@@ -391,4 +391,18 @@ namespace MobileApi.Models
 
         public virtual WoodyPlant plant { get; set; }
     }
+
+    [Table("settings", Schema = "woody")]
+    public class WoodySetting
+    {
+        [Key]
+        [Column("settingid")]
+        public int settingid { get; set; }
+        public string name { get; set; }
+        public DateTime? valuetimestamp { get; set; }
+        public string valuetext { get; set; }
+        public decimal? valueamount { get; set; }
+        public bool? valuebool { get; set; }
+        public long? valueint { get; set; }
+    }
 }

@@ -22,6 +22,6 @@ namespace MobileApi.Models
 
         public DbSet<WoodyPlant> Plants { get; set; }
         public DbSet<ImageWoody> Images { get; set; }
-
+        public DbSet<WoodySetting> WoodySettings { get; set; }
     }
 }
