@@ -8,6 +8,7 @@ using System.Web.Hosting;
 using System.Net.Http;
 using System.Net;
 using System.IO;
+using NetTopologySuite.IO;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Net.Http.Headers;
@@ -23,6 +24,10 @@ using Newtonsoft.Json;
 using System.Text;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
+using NetTopologySuite.IO.GML2;
+using NetTopologySuite.Geometries;
+using MobileApi.Models.projection;
+
 
 namespace MobileApi.Controllers
 { 
@@ -243,6 +248,197 @@ namespace MobileApi.Controllers
         }
 
         // GET api/uploadDataWetlandsGlossary
+        [HttpGet]
+        [Route("api/uploadShapefile")]
+        public async Task<IHttpActionResult> UploadShapefile()
+        {
+
+            String appRoot = HttpContext.Current.Server.MapPath("~");
+            String uploadDir = appRoot + "/DataFolder/";
+                String filePath = appRoot + "/DataFolder/wetland_county_shp.zip";
+
+            try
+                {
+
+                String shapefileName = extractZipFile(filePath, uploadDir);
+                String path = Path.Combine(uploadDir, shapefileName);
+
+
+                using (ShapefileDataReader reader = Shapefile.CreateDataReader(Path.Combine(uploadDir, shapefileName), new GeometryFactory()))
+                {
+                    // String projectionWkt = readProjection(Path.Combine(uploadDir, shapefileName));
+                    String projectionWkt = readProjection(Path.Combine(uploadDir, shapefileName));
+
+                    Int16 recordNumber = 1;
+                    IList<String> names = new List<String>();
+                    IList<GeoAPI.Geometries.IGeometry> allGeos = new List<GeoAPI.Geometries.IGeometry>();
+
+                    Int32 areaOrdinal = getFieldOrdinal(reader, "");
+                    Int32 nameOrdinal = getFieldOrdinal(reader, "");
+
+
+                    // while (shapefileReader.Read())
+                    //  {
+                    String mecator2 = "Mercator_2SP";
+                    String mecator1 = "Mercator_1SP";
+                    GeoAPI.Geometries.IGeometry geometry = reader.Geometry;
+
+                    var values = reader.GetValue(0);
+
+                    allGeos.Add(geometry);
+
+
+
+
+                }
+
+            }
+
+                catch (Exception exc)
+                {
+ 
+                }
+
+
+            return null;
+            
+        }
+
+        /// <summary>
+        /// Extracts the contents of a zip file and returns the
+        /// name of the Shapefile, if one exists.
+        /// </summary>
+        /// <param name="zipFilePath"></param>
+        /// <returns></returns>
+        private String extractZipFile(String zipFilePath, String extractPath)
+        {
+            String shapefileName = String.Empty;
+
+            using (ZipFile zipFile = new ZipFile(zipFilePath))
+            {
+
+                foreach (ZipEntry entry in zipFile)
+                {
+                    if (entry.FileName.ToLower().EndsWith(".shp") ||
+                         entry.FileName.ToLower().EndsWith(".prj") ||
+                         entry.FileName.ToLower().EndsWith(".dbf"))
+                    {
+                        entry.Extract(extractPath, ExtractExistingFileAction.OverwriteSilently);
+                    }
+
+                    if (entry.FileName.EndsWith(".shp"))
+                    {
+                        shapefileName = entry.FileName;
+                    }
+                }
+            }
+
+            return shapefileName;
+        }
+
+        private Int32 getFieldOrdinal(ShapefileDataReader shapefileReader, String field)
+        {
+            Int32 ordinal = -1;
+
+            try
+            {
+                ordinal = shapefileReader.GetOrdinal(field.Trim());
+            }
+            catch
+            {
+                // throw an error only if the user specified a column
+                if (!String.IsNullOrEmpty(field.Trim()))
+                {
+
+                }
+            }
+
+            return ordinal;
+        }
+
+
+        private String readProjection(String shapefile)
+        {
+            using (StreamReader reader = new StreamReader(shapefile.ToLower().Replace(".shp", ".prj")))
+            {
+                return reader.ReadToEnd();
+            }
+        }
+
+        private void AddFromShapefile(ShapefileDataReader shapefileReader, String projectionWkt)
+        {
+            Int16 recordNumber = 1;
+            IList<String> names = new List<String>();
+            IList<GeoAPI.Geometries.IGeometry> allGeos = new List<GeoAPI.Geometries.IGeometry>();
+
+            Int32 areaOrdinal = getFieldOrdinal(shapefileReader, "");
+            Int32 nameOrdinal = getFieldOrdinal(shapefileReader, "");
+
+           // while (shapefileReader.Read())
+          //  {
+                String mecator2 = "Mercator_2SP";
+                String mecator1 = "Mercator_1SP";
+                GeoAPI.Geometries.IGeometry geometry = shapefileReader.Geometry;
+
+                if (!projectionWkt.Contains(mecator1) || projectionWkt.Contains(mecator2))
+                {
+                    ProjectionUtil.ConvertToGCSWGS84(geometry, projectionWkt);
+
+                    ProjectionUtil.ConvertToGCSWGS84(geometry);
+
+                    ProjectionUtil.ConvertGCSWGS84ToGoogleMercator(geometry);
+                }
+
+                allGeos.Add(geometry);
+
+                if ((geometry is MultiPolygon))
+                {
+
+                    GeometryCollection newGeoC = (GeometryCollection)geometry;
+
+                    foreach (GeoAPI.Geometries.IGeometry polyGeo in newGeoC.Geometries)
+                    {
+
+                        GeoAPI.Geometries.IGeometry clone = (GeoAPI.Geometries.IGeometry)geometry.Clone();
+                        ProjectionUtil.ConvertToGCSWGS84(clone);
+                        recordNumber++;
+
+                    }
+                }
+
+                else
+                {
+                    GeoAPI.Geometries.IGeometry clone = (GeoAPI.Geometries.IGeometry)geometry.Clone();
+                    ProjectionUtil.ConvertToGCSWGS84(clone);
+                    ProjectionUtil.ConvertToGCSWGS84(clone);
+                    ProjectionUtil.ConvertGCSWGS84ToNorthAmericanAlbersEqualArea(clone);
+
+                    if ((clone is NetTopologySuite.Geometries.Point))
+                    {
+                       
+                    }
+
+                    if ((clone is MultiPoint))
+                    {
+                       
+                    }
+
+                    String name = (nameOrdinal > -1)
+                                           ? shapefileReader.GetString(nameOrdinal)
+                                           : String.Format("Project Activity Area {0}", recordNumber);
+                    if (names.Contains(name))
+                                           name = name + "_" + recordNumber;
+                    
+                    else
+                                            names.Add(name);
+                    
+                }
+         //   }
+
+
+        }
+
+        // GET api/Account/UploadCsvFile
         [HttpGet]
         [Route("api/uploadDataWetlandsGlossary")]
         public async Task<IHttpActionResult> UploadDataWetlandsGlossaryAsync()

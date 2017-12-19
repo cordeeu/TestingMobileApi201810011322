@@ -70,7 +70,16 @@
 
     function getData() {
       
-        $.getJSON('api/uploadDataWetlandsGlossary')
+      /*  $.getJSON('api/uploadDataWetlandsGlossary')
+            .done(function (data) {
+                $('#puma').text(formatItem(data));
+            })
+            .fail(function (jqXHR, textStatus, err) {
+                $('#puma').text('Error: ' + err);
+            });*/
+
+
+        $.getJSON('api/uploadShapefile')
             .done(function (data) {
                 $('#puma').text(formatItem(data));
             })
