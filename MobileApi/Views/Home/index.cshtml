@@ -1,91 +1,63 @@
 ﻿<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Puma App</title>
+    <title>Mobile API</title>
 </head>
+
+
 <body>
-    <div>
-        <img src="~/images/sample-1.jpg">
-    </div>
-    <div>
-        <h2>All Pumas</h2>
+    @{
+        string dynamicUrl = HttpContext.Current.Request.Url.Host +":" +HttpContext.Current.Request.Url.Port;
+        string dynamicUrl2 = HttpContext.Current.Request.Url.AbsoluteUri;
+
+        }
+    <div style="margin-bottom:30px">
+        <h2>Mobile Database API</h2>
         <ul id="pumas" />
     </div>
-    <div>
-        <h2>Search by ID</h2>
-        <input type="text" id="puma_id" size="5" />
-        <input type="button" value="Search" onclick="find();" />
-        <p id="puma" />
-    </div>
 
-    <div>
-        <h2>Sync Data</h2>
-        <input type="button" value="Sync" onclick="getData();" />
+    <div style="padding:10px">
+        <div style="margin-bottom:10px">
+            <h2>Login To Update Data</h2>
+            <label>Key</label>
+            <input id="api_key_in" type="text" placeholder="API KEY" style="margin-right:10px" />
+            <input type="button" value="Submit" onclick="validateKey();" />
+        </div>
     </div>
-
 
     <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
     <script>
-        var uri = '/api/pumas';
-    
+        var dynUrl = "@dynamicUrl";
 
-    $(document).ready(function () {
-      // Send an AJAX request
-      $.getJSON(uri)
-          .done(function (data) {
-            // On success, 'data' contains a list of Pumas.
-            $.each(data, function (key, item) {
-              // Add a list item for the Puma.
-              $('<li>', { text: formatItem(item) }).appendTo($('#pumas'));
+
+
+        function validateKey() {
+
+            var keyInput = $('#api_key_in').val();
+
+            $.get("@dynamicUrl" + "/Home/ValidateKey", { key: keyInput }, function (data) {
+                alert("Data: " + data);
             });
-          });
-
-        // Send an AJAX request
-      $.getJSON(uri)
-          .done(function (data) {
-              // On success, 'data' contains a list of Pumas.
-              $.each(data, function (key, item) {
-                  // Add a list item for the Puma.
-                  $('<li>', { text: formatItem(item) }).appendTo($('#pumas'));
-              });
-          });
 
 
-    });
+            $.get("@dynamicUrl" + "/Home/Index2");
 
-    function formatItem(item) {
-      return item.Name;
-    }
+            $.ajax({
+                type: "GET",
+                url: "@dynamicUrl"+"/Home/ValidateKey", // the method we are calling
+                contentType: "application/json; charset=utf-8",
+                data: { key: keyInput },
+                dataType: "json",
+                success: function (result) {
+                    console.log(result);
+                },
+                error: function (result) {
+                    console.log("@dynamicUrl"+"/Home/ValidateKey");
 
-    function find() {
-      var id = $('#puma_id').val();
-      $.getJSON(uri + '/' + id)
-          .done(function (data) {
-            $('#puma').text(formatItem(data));
-          })
-          .fail(function (jqXHR, textStatus, err) {
-            $('#puma').text('Error: ' + err);
-          });
-    }
-
-    function getData() {
-      
-      /*  $.getJSON('api/uploadDataWetlandsGlossary')
-            .done(function (data) {
-                $('#puma').text(formatItem(data));
-            })
-            .fail(function (jqXHR, textStatus, err) {
-                $('#puma').text('Error: ' + err);
-            });*/
-
-
-        $.getJSON('api/uploadShapefile')
-            .done(function (data) {
-                $('#puma').text(formatItem(data));
-            })
-            .fail(function (jqXHR, textStatus, err) {
-                $('#puma').text('Error: ' + err);
+                    console.log(result);
+                }
             });
+
     }
     </script>
 </body>

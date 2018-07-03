@@ -36,27 +36,42 @@ namespace MobileApi.Controllers
     {
         public WoodyPlantsMobileApiContext woodyDb = new WoodyPlantsMobileApiContext();
         public WetlandPlantsMobileApiContext wetlandDb = new WetlandPlantsMobileApiContext();
+        public FlowerPlantsMobileApiContext flowerDb= new FlowerPlantsMobileApiContext();
         public string currentRepository;
+
        
 
         // This action accepts no params (other than the repository) and also supports OData querying params
         // e.g. api/wetland?$top=10 (gets top ten records)
         // e.g. api/wetland?$filter=commonname eq 'Acer' (returns pumas with name equaling 'Acer')
-        [EnableQuery, AuthenticationTokenWetlands]
+        [EnableQuery]
         [Route("api/wetland")]
         public IQueryable<WetlandPlant> GetWetlandPlants()
         {
             wetlandDb.Configuration.ProxyCreationEnabled = false;
             //DbSet<WetlandPlant> allPlants = wetlandDb.Plants;
-            List<WetlandPlant> allPlants = wetlandDb.Plants.Include(x => x.Images).Include(x => x.References).Include(x => x.SimilarSpecies).ToList();
-                //.Include(x=>x.SimilarSpeciesWetland).Include(x=>x.CountyPlantWetland)
-                //.Include(x=>x.FruitWetland).Include(x=>x.DivisionWetland).Include(x=>x.ShapeWetland).Include(x=>x.ArrangementWetland)
-                //.Include(x=>x.SizeWetland).Include(x=>x.RegionWetland).ToList();
+            List<WetlandPlant> allPlants = wetlandDb.Plants.Include(x => x.Images).Include(x => x.References).Include(x => x.SimilarSpecies).Include(x => x.FruitWetland).Include(x => x.DivisionWetland).Include(x => x.ShapeWetland).Include(x => x.ArrangementWetland).Include(x => x.SizeWetland).Include(x => x.CountyPlantWetland).Include(x => x.SizeWetland).Include(x => x.RegionWetland).ToList().ToList();
+
 
             return allPlants.AsQueryable();
         }
 
-        [EnableQuery, AuthenticationTokenWetlands]
+        [EnableQuery]
+        [Route("api/wetland/fruits")]
+        public IQueryable<FruitWetland> GetWetlandFruits()
+        {
+            wetlandDb.Configuration.ProxyCreationEnabled = false;
+            //DbSet<WetlandPlant> allPlants = wetlandDb.Plants;
+            List<FruitWetland> allFruits = wetlandDb.FruitWetland.Include(x => x.WetlandPlant).ToList();
+            //.Include(x=>x.SimilarSpeciesWetland).Include(x=>x.CountyPlantWetland)
+            //
+            //.Include(x=>x.SizeWetland).Include(x=>x.RegionWetland).ToList();
+
+            return allFruits.AsQueryable();
+        }
+
+
+        [EnableQuery]
         [Route("api/woody")]
         public IQueryable<WoodyPlant> GetWoodyPlants()
         {
@@ -66,8 +81,18 @@ namespace MobileApi.Controllers
             return allPlants.AsQueryable();
         }
 
+        [EnableQuery]
+        [Route("api/flower")]
+        public IQueryable<Flower> GetFlowerPlants()
+        {
+            flowerDb.Configuration.ProxyCreationEnabled = false;
+            List<Flower> allPlants = flowerDb.Plants.ToList();
+            //.Include(x => x.Images).ToList();
+            return allPlants.AsQueryable();
+        }
 
-        [AuthenticationTokenWetlands]
+
+        [EnableQuery]
         [Route("api/wetland_settings/{settingName}")]
         public IHttpActionResult GetWetlandSetting(string settingName)
         {
@@ -79,7 +104,31 @@ namespace MobileApi.Controllers
             return Ok(setting);
         }
 
-        [AuthenticationTokenWetlands]
+        [EnableQuery]
+        [Route("api/woody_settings/{settingName}")]
+        public IHttpActionResult GetWoodySetting(string settingName)
+        {
+            WoodySetting setting = woodyDb.WoodySettings.Where(b => b.name == settingName).FirstOrDefault();
+            if (setting == null)
+            {
+                return NotFound();
+            }
+            return Ok(setting);
+        }
+
+        [EnableQuery]
+        [Route("api/flower_settings/{settingName}")]
+        public IHttpActionResult GetFlowerSetting(string settingName)
+        {
+            FlowerSetting setting = flowerDb.FlowerSettings.Where(b => b.name == settingName).FirstOrDefault();
+            if (setting == null)
+            {
+                return NotFound();
+            }
+            return Ok(setting);
+        }
+
+        [EnableQuery]
         [Route("api/wetland_settings/images")]
         public List<WetlandSetting> GetWetlandImageZipFileSettings()
         {
@@ -87,7 +136,7 @@ namespace MobileApi.Controllers
             return wetlandImageZipFileSettings;
         }
 
-        [AuthenticationTokenWetlands]
+        [EnableQuery]
         [Route("api/wetland_glossary")]
         public List<WetlandGlossary> GetWetlandGlossary()
         {
@@ -109,11 +158,11 @@ namespace MobileApi.Controllers
            */
 
         // Get zipped images
-        [AuthenticationTokenWetlands]
+      
         [Route("api/wetland/image_zip_files/{fileName}")]
            public HttpResponseMessage GetImagesZip(string fileName)
            {
-                var directory = (Debugger.IsAttached == true) ? "C:\\Users\\Tim\\Documents\\Visual Studio 2015\\Projects\\MobileApiImages\\Wetlands\\" + fileName + ".zip" : "~/Resources/Images/Wetlands/" + fileName + ".zip";
+                var directory = (Debugger.IsAttached == true) ? "C:\\Users\\kbrown\\Documents\\Visual Studio 2017\\Projects\\" + fileName + ".zip" : "~/Resources/Images/Wetlands/" + fileName + ".zip";
                 String filePath = HostingEnvironment.MapPath(directory);
                 using (ZipFile zip = ZipFile.Read(filePath))
                 {
@@ -133,7 +182,55 @@ namespace MobileApi.Controllers
             
            }
 
+        [Route("api/woody/image_zip_files/{fileName}")]
+        public HttpResponseMessage GetImagesZipWoody(string fileName)
+        {
+            var directory = (Debugger.IsAttached == true) ? "C:\\Users\\kbrown\\Documents\\Visual Studio 2017\\Projects\\" + fileName + ".zip" : "~/Resources/Images/Woody/" + fileName + ".zip";
+            String filePath = HostingEnvironment.MapPath(directory);
+            using (ZipFile zip = ZipFile.Read(filePath))
+            {
+                var pushStreamContent = new PushStreamContent((stream, content, context) =>
+                {
+                    zip.Save(stream);
+                    stream.Close();
+                }, "application/zip");
+
+                HttpResponseMessage response = new HttpResponseMessage();
+                response.StatusCode = HttpStatusCode.OK;
+                response.Content = pushStreamContent;
+                response.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") { FileName = fileName + ".zip" };
+
+                return response;
+            }
+
+        }
+
+
+        [Route("api/flower/image_zip_files/{fileName}")]
+        public HttpResponseMessage GetImagesZipFlower(string fileName)
+        {
+            var directory = (Debugger.IsAttached == true) ? "C:\\Users\\kbrown\\Documents\\Visual Studio 2017\\Projects\\" + fileName + ".zip" : "~/Resources/Images/Flower/" + fileName + ".zip";
+            String filePath = HostingEnvironment.MapPath(directory);
+            using (ZipFile zip = ZipFile.Read(filePath))
+            {
+                var pushStreamContent = new PushStreamContent((stream, content, context) =>
+                {
+                    zip.Save(stream);
+                    stream.Close();
+                }, "application/zip");
+
+                HttpResponseMessage response = new HttpResponseMessage();
+                response.StatusCode = HttpStatusCode.OK;
+                response.Content = pushStreamContent;
+                response.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") { FileName = fileName + ".zip" };
+
+                return response;
+            }
+
+        }
+
         //[AuthenticationTokenWetlands]
+        [EnableQuery]
         [Route("api/wetland/images/{Id}")]
         public HttpResponseMessage GetImage(int Id)
         {
@@ -149,10 +246,36 @@ namespace MobileApi.Controllers
                 var result = GetImageFile(filePath);
                 return result;
             }
-               
+        }
+
+
+        [Route("api/wetland/image_name/{filename}")]
+        public HttpResponseMessage GetImageByFileName(string filename)
+        {
+            var filePath = "~/Resources/Images/Wetlands/" + filename + ".jpg";
+            var result = GetImageFile(filePath);
+            return result;
+        }
+    
+
+        [Route("api/woody/image_name/{filename}")]
+        public HttpResponseMessage GetImageByFileNameWoody(string filename)
+        {
+            var filePath = "~/Resources/Images/Woody/" + filename + ".jpg";
+            var result = GetImageFile(filePath);
+            return result;
+        }
+
+        [Route("api/flower/image_name/{filename}")]
+        public HttpResponseMessage GetImageByFileNameFlower(string filename)
+        {
+            var filePath = "~/Resources/Images/Flower/" + filename + ".jpg";
+            var result = GetImageFile(filePath);
+            return result;
         }
 
         //[AuthenticationTokenWetlands]
+
         [Route("api/wetland/image_icons/{filename}")]
         public HttpResponseMessage GetImageIcon(string filename)
         {
@@ -170,14 +293,30 @@ namespace MobileApi.Controllers
             return result;
         }
 
+        [Route("api/woody/range_images/{filename}")]
+        public HttpResponseMessage GetRangeImageWoody(string filename)
+        {
+            var filePath = "~/Resources/Images/Woody/" + filename + ".png";
+            var result = GetImageFile(filePath);
+            return result;
+        }
+
+        [Route("api/flower/range_images/{filename}")]
+        public HttpResponseMessage GetRangeImageFlower(string filename)
+        {
+            var filePath = "~/Resources/Images/Flower/" + filename + ".png";
+            var result = GetImageFile(filePath);
+            return result;
+        }
+
         // GET api/Account/UploadCsvFile
         [HttpGet]
         [Route("api/uploadDataWetlands")]
-        public async Task<IHttpActionResult> UploadDataWetlandsAsync()
+        public Task<IHttpActionResult> UploadDataWetlandsAsync()
         {
 
             string appRoot = HttpContext.Current.Server.MapPath("~");
-            string filename = appRoot + "/DataFolder/wetlands_data_Copy.js";
+            string filename = appRoot + "/DataFolder/wetland_data_6.js";
             char[] result;
             StringBuilder builder = new StringBuilder();
 
@@ -186,7 +325,7 @@ namespace MobileApi.Controllers
             using (StreamReader reader = File.OpenText(filename))
             {
                 result = new char[reader.BaseStream.Length];
-                await reader.ReadAsync(result, 0, (int)reader.BaseStream.Length);
+                 reader.Read(result, 0, (int)reader.BaseStream.Length);
             }
 
             foreach (char c in result)
@@ -230,13 +369,21 @@ namespace MobileApi.Controllers
                         }
 
                         wetlandPlants.Add(newPlant);
-                        wetlandDb.Plants.Add(newPlant);
-                        wetlandDb.SaveChanges();
+                        try
+                        {
+                            wetlandDb.Plants.Add(newPlant);
+                            wetlandDb.SaveChanges();
+                        }
+                        catch (Exception e) {
+
+
+                        }
+             
                     }
 
 
-                  //  wetlandDb.Plants.AddRange(wetlandPlants);
-                  //  wetlandDb.Plants.SaveChanges();
+             //       wetlandDb.Plants.AddRange(wetlandPlants);
+               //     wetlandDb.SaveChanges();
                 }
             }
 
@@ -252,57 +399,13 @@ namespace MobileApi.Controllers
         [Route("api/uploadShapefile")]
         public async Task<IHttpActionResult> UploadShapefile()
         {
-
-            String appRoot = HttpContext.Current.Server.MapPath("~");
-            String uploadDir = appRoot + "/DataFolder/";
-                String filePath = appRoot + "/DataFolder/wetland_county_shp.zip";
-
-            try
-                {
-
-                String shapefileName = extractZipFile(filePath, uploadDir);
-                String path = Path.Combine(uploadDir, shapefileName);
-
-
-                using (ShapefileDataReader reader = Shapefile.CreateDataReader(Path.Combine(uploadDir, shapefileName), new GeometryFactory()))
-                {
-                    // String projectionWkt = readProjection(Path.Combine(uploadDir, shapefileName));
-                    String projectionWkt = readProjection(Path.Combine(uploadDir, shapefileName));
-
-                    Int16 recordNumber = 1;
-                    IList<String> names = new List<String>();
-                    IList<GeoAPI.Geometries.IGeometry> allGeos = new List<GeoAPI.Geometries.IGeometry>();
-
-                    Int32 areaOrdinal = getFieldOrdinal(reader, "");
-                    Int32 nameOrdinal = getFieldOrdinal(reader, "");
-
-
-                    // while (shapefileReader.Read())
-                    //  {
-                    String mecator2 = "Mercator_2SP";
-                    String mecator1 = "Mercator_1SP";
-                    GeoAPI.Geometries.IGeometry geometry = reader.Geometry;
-
-                    var values = reader.GetValue(0);
-
-                    allGeos.Add(geometry);
-
-
-
-
-                }
-
-            }
-
-                catch (Exception exc)
-                {
- 
-                }
-
-
+            
             return null;
             
         }
+
+
+
 
         /// <summary>
         /// Extracts the contents of a zip file and returns the
@@ -1140,7 +1243,7 @@ namespace MobileApi.Controllers
         // GET api/uploadData
         [HttpGet]
         [Route("api/uploadData")]
-        public IHttpActionResult UploadData()
+        public async Task<IHttpActionResult> UploadData()
         {
             string appRoot = HttpContext.Current.Server.MapPath("~");
             string sSheetName = "Sheet1";
@@ -1153,131 +1256,114 @@ namespace MobileApi.Controllers
             //Int32 currentId = 0;
             Int32 uniqueIdNum = 1;
 
-            sConnection = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + appRoot + "/DataFolder/woody_plant_db.xlsx" + ";Extended Properties=\"Excel 12.0;HDR=No;IMEX=1\"";
-
-            oleExcelConnection = new OleDbConnection(sConnection);
-            oleExcelConnection.Open();
-
-            dtTablesList = oleExcelConnection.GetSchema("Tables");
-
-            if (dtTablesList.Rows.Count > 0)
-            {
-                sSheetName = dtTablesList.Rows[0]["TABLE_NAME"].ToString();
-            }
-
-            dtTablesList.Clear();
-            dtTablesList.Dispose();
-
-
-            if (!string.IsNullOrEmpty(sSheetName))
+            try
             {
 
-                oleExcelCommand = oleExcelConnection.CreateCommand();
-                oleExcelCommand.CommandText = "Select * From [" + sSheetName + "]";
-                oleExcelCommand.CommandType = CommandType.Text;
-                oleExcelReader = oleExcelCommand.ExecuteReader();
+                sConnection = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + appRoot + "/DataFolder/woody_plant_db_June_2018.xlsx" + ";Extended Properties=\"Excel 12.0;HDR=No;IMEX=1\"";
 
-                var firstRecord = true;
-                while (oleExcelReader.Read())
+                oleExcelConnection = new OleDbConnection(sConnection);
+                oleExcelConnection.Open();
+
+
+                dtTablesList = oleExcelConnection.GetSchema("Tables");
+
+                if (dtTablesList.Rows.Count > 0)
                 {
-                    if (!firstRecord)
-                    {
-                        WoodyPlant newPlant = new WoodyPlant
-                        {
-                            plant_imported_id = Convert.ToInt32(oleExcelReader.GetValue(0)),
-                            family = oleExcelReader.GetValue(1).ToString(),
-                            scientificNameWeber = oleExcelReader.GetValue(2).ToString(),
-                            leafType = oleExcelReader.GetValue(3).ToString(),
-                            leafShape = oleExcelReader.GetValue(4).ToString(),
-                            growthForm = oleExcelReader.GetValue(5).ToString(),
-                            growthDuration = oleExcelReader.GetValue(6).ToString(),
-                            scientificNameOther = oleExcelReader.GetValue(7).ToString(),
-                            commonName = oleExcelReader.GetValue(8).ToString(),
-                            commonNameSecondary = oleExcelReader.GetValue(9).ToString(),
-                            scientificNameMeaningWeber = oleExcelReader.GetValue(10).ToString(),
-                            plantClass = oleExcelReader.GetValue(11).ToString(),
-                            plantSubClass = oleExcelReader.GetValue(12).ToString(),
-                            origin = oleExcelReader.GetValue(13).ToString(),
-                            weedManagement = oleExcelReader.GetValue(14).ToString(),
-                            edibility = oleExcelReader.GetValue(15).ToString(),
-                            livestock = oleExcelReader.GetValue(16).ToString(),
-                            toxicity = oleExcelReader.GetValue(17).ToString(),
-                            ecologicalRelationships = oleExcelReader.GetValue(18).ToString(),
-                            frequency = oleExcelReader.GetValue(19).ToString(),
-                            habitat = oleExcelReader.GetValue(20).ToString(),
-                            scientificNameNelson = oleExcelReader.GetValue(21).ToString(),
-                            scientificNameMeaningNelson = oleExcelReader.GetValue(22).ToString(),
-                            seasonOfBloom = oleExcelReader.GetValue(23).ToString(),
-                            familyCharacteristics = oleExcelReader.GetValue(24).ToString(),
-                            flowerSymmetry = oleExcelReader.GetValue(25).ToString(),
-                            flowerCluster = oleExcelReader.GetValue(26).ToString(),
-                            flowerShape = oleExcelReader.GetValue(27).ToString(),
-                            commonNameDerivation = oleExcelReader.GetValue(28).ToString(),
-                            landscapingCultivar = oleExcelReader.GetValue(29).ToString(),
-                            flowerColor = oleExcelReader.GetValue(30).ToString(),
-                            fruitColor = oleExcelReader.GetValue(31).ToString(),
-                            availability = oleExcelReader.GetValue(32).ToString(),
-                            keyCharacteristics = oleExcelReader.GetValue(33).ToString(),
-                            lifeZone = oleExcelReader.GetValue(34).ToString(),
-                            endemicLocation = oleExcelReader.GetValue(35).ToString(),
-                            landscapingUse = oleExcelReader.GetValue(36).ToString(),
-                            matureHeight = oleExcelReader.GetValue(37).ToString(),
-                            matureSpread = oleExcelReader.GetValue(38).ToString(),
-                            lightRequirements = oleExcelReader.GetValue(39).ToString(),
-                            soilRequirements = oleExcelReader.GetValue(40).ToString(),
-                            fiber = oleExcelReader.GetValue(41).ToString(),
-                            otherInformation = oleExcelReader.GetValue(42).ToString(),
-                            flowerSize = oleExcelReader.GetValue(43).ToString(),
-                            petalNumber = oleExcelReader.GetValue(44).ToString(),
-                            flowerStructure = oleExcelReader.GetValue(45).ToString(),
-                            moistureRequirements = oleExcelReader.GetValue(46).ToString(),
-                            pronunciation = oleExcelReader.GetValue(47).ToString(),
-                            fruitType = oleExcelReader.GetValue(48).ToString(),
-                            subspecies = oleExcelReader.GetValue(49).ToString(),
-                            variety = oleExcelReader.GetValue(50).ToString(),
-                            forma = oleExcelReader.GetValue(51).ToString(),
-                            legalStatus = oleExcelReader.GetValue(52).ToString(),
-                            guanellaPass = oleExcelReader.GetValue(53).ToString(),
-                            plainCc = oleExcelReader.GetValue(54).ToString(),
-                            noNameCreek = oleExcelReader.GetValue(55).ToString(),
-                            maloitPark = oleExcelReader.GetValue(56).ToString(),
-                            vailNc = oleExcelReader.GetValue(57).ToString(),
-                            lovelandPass = oleExcelReader.GetValue(58).ToString(),
-                            roxborough = oleExcelReader.GetValue(59).ToString(),
-                            castlewood = oleExcelReader.GetValue(60).ToString(),
-                            custerCounty = oleExcelReader.GetValue(61).ToString(),
-                            dbg = oleExcelReader.GetValue(62).ToString(),
-                            grassesAtGreenMtn = oleExcelReader.GetValue(63).ToString(),
-                            eastPortal = oleExcelReader.GetValue(64).ToString(),
-                            mesaCounty = oleExcelReader.GetValue(65).ToString(),
-                            tellerCounty = oleExcelReader.GetValue(66).ToString(),
-                            goldenGate = oleExcelReader.GetValue(67).ToString(),
-                            southPlattePark = oleExcelReader.GetValue(68).ToString(),
-                            greenMt = oleExcelReader.GetValue(69).ToString(),
-                            reynolds = oleExcelReader.GetValue(70).ToString(),
-                            grassesManual = oleExcelReader.GetValue(71).ToString(),
-                            falcon = oleExcelReader.GetValue(72).ToString(),
-                            lookoutMt = oleExcelReader.GetValue(73).ToString(),
-                            southValley = oleExcelReader.GetValue(74).ToString(),
-                            deerCreek = oleExcelReader.GetValue(75).ToString(),
-                            lairOTheBear = oleExcelReader.GetValue(76).ToString(),
-                            print = oleExcelReader.GetValue(77).ToString(),
-                            highPlains = oleExcelReader.GetValue(78).ToString(),
-                            shrubs = oleExcelReader.GetValue(79).ToString()
-                        };
-                        woodyDb.Plants.Add(newPlant);
-                        woodyDb.SaveChanges();
-                        Debug.WriteLine("{0}: {1}", newPlant.plant_id, newPlant.scientificNameWeber);
-
-                        uniqueIdNum++;
-                    }
-
-                    firstRecord = false;
+                    sSheetName = dtTablesList.Rows[0]["TABLE_NAME"].ToString();
                 }
 
-                oleExcelReader.Close();
+                dtTablesList.Clear();
+                dtTablesList.Dispose();
+
+
+                if (!string.IsNullOrEmpty(sSheetName))
+                {
+
+                    oleExcelCommand = oleExcelConnection.CreateCommand();
+                    oleExcelCommand.CommandText = "Select * From [" + sSheetName + "]";
+                    oleExcelCommand.CommandType = CommandType.Text;
+                    oleExcelReader = oleExcelCommand.ExecuteReader();
+
+                    var firstRecord = true;
+                    while (oleExcelReader.Read())
+                    {
+                        if (!firstRecord)
+                        {
+                            WoodyPlant newPlant = new WoodyPlant
+                            {
+                                plant_imported_id = Convert.ToInt32(oleExcelReader.GetValue(0)),//
+                                family = oleExcelReader.GetValue(1).ToString(),//
+                                commonName = oleExcelReader.GetValue(2).ToString(),//
+                                scientificNameWeber = oleExcelReader.GetValue(3).ToString(),//
+                                commonNameSecondary = oleExcelReader.GetValue(4).ToString(),//
+                                derivation = oleExcelReader.GetValue(5).ToString(),//
+                                scientificNameOther = oleExcelReader.GetValue(6).ToString(),//
+                                scientificNameMeaning = oleExcelReader.GetValue(7).ToString(),//
+                                keyCharacteristics = oleExcelReader.GetValue(8).ToString(),//
+                                flowerColor = oleExcelReader.GetValue(9).ToString(),//
+                                leafType = oleExcelReader.GetValue(10).ToString(),//
+                                seasonOfBloom = oleExcelReader.GetValue(11).ToString(),//
+                                monoecious = oleExcelReader.GetValue(12).ToString(),//
+                                lifeZone = oleExcelReader.GetValue(13).ToString(),//
+                                edibility = oleExcelReader.GetValue(14).ToString(),//
+                                toxicity = oleExcelReader.GetValue(15).ToString(),//
+                                landscapingUse = oleExcelReader.GetValue(16).ToString(),//
+                                matureHeight = oleExcelReader.GetValue(17).ToString(),//
+                                matureSpread = oleExcelReader.GetValue(18).ToString(),//
+                                siteRequirements = oleExcelReader.GetValue(19).ToString(),//
+                                soilRequirements = oleExcelReader.GetValue(20).ToString(),//
+                                moistureRequirements = oleExcelReader.GetValue(21).ToString(),//
+                                ecologicalRelationships = oleExcelReader.GetValue(21).ToString(),//
+                                frequency = oleExcelReader.GetValue(23).ToString(),//
+                                endemicLocation = oleExcelReader.GetValue(24).ToString(),//
+                                alien = oleExcelReader.GetValue(25).ToString(),//
+                                comments = oleExcelReader.GetValue(26).ToString(),//
+                                habitat = oleExcelReader.GetValue(27).ToString(),//
+                                cultivar = oleExcelReader.GetValue(28).ToString(),//
+                                fiber = oleExcelReader.GetValue(29).ToString(),//
+                                otherUses = oleExcelReader.GetValue(30).ToString(),//
+                                availability = oleExcelReader.GetValue(31).ToString(),//
+                                fruitColor = oleExcelReader.GetValue(32).ToString(),//
+                                fruitType = oleExcelReader.GetValue(33).ToString(),//
+                                familyCharacteristics = oleExcelReader.GetValue(34).ToString(),//
+                                flowerShape = oleExcelReader.GetValue(35).ToString(),//
+                                flowerSymmetry = oleExcelReader.GetValue(36).ToString(),//
+                                flowerCluster = oleExcelReader.GetValue(37).ToString(),//
+                                flowerSize = oleExcelReader.GetValue(38).ToString(),//
+                                petalNumber = oleExcelReader.GetValue(39).ToString(),//
+                                leafShape = oleExcelReader.GetValue(40).ToString(),//
+                                flowerStructure = oleExcelReader.GetValue(41).ToString(),//
+                                weedManagement = oleExcelReader.GetValue(42).ToString(),//
+                                leafArrangement = oleExcelReader.GetValue(43).ToString(),//
+                                twigTexture = oleExcelReader.GetValue(44).ToString(),//
+                                barkTexture = oleExcelReader.GetValue(45).ToString(),//
+                                barkDescription = oleExcelReader.GetValue(46).ToString(),//
+                                flowerDescription = oleExcelReader.GetValue(47).ToString(),//
+                                fruitDescription = oleExcelReader.GetValue(48).ToString(),//
+                                imageNames = oleExcelReader.GetValue(49).ToString(),//
+                            };
+
+                            woodyDb.Plants.Add(newPlant);
+                            woodyDb.SaveChanges();
+                            Debug.WriteLine("{0}: {1}", newPlant.plant_id, newPlant.scientificNameWeber);
+
+                            uniqueIdNum++;
+                        }
+
+                        firstRecord = false;
+                    }
+
+                    oleExcelReader.Close();
+                }
+                oleExcelConnection.Close();
             }
-            oleExcelConnection.Close();
+            catch (Exception e)
+            {
+
+
+                Debug.WriteLine("{0}: {1}", e.Message);
+            }
+
 
             JavaScriptSerializer systemSerializer = new JavaScriptSerializer();
             systemSerializer.MaxJsonLength = Int32.MaxValue;
@@ -1285,6 +1371,114 @@ namespace MobileApi.Controllers
             return null;
         }
 
+
+        [HttpGet]
+        [Route("api/uploadDataFlower")]
+        public async Task<IHttpActionResult> UploadDataFlower()
+        {
+            string appRoot = HttpContext.Current.Server.MapPath("~");
+            string sSheetName = "Sheet1";
+            string sConnection = null;
+            DataTable dtTablesList = default(DataTable);
+            OleDbCommand oleExcelCommand = default(OleDbCommand);
+            OleDbDataReader oleExcelReader = default(OleDbDataReader);
+            OleDbConnection oleExcelConnection = default(OleDbConnection);
+            IList<KeyValuePair<String, Int32>> idNamePair = new List<KeyValuePair<String, Int32>>();//Need to have id as number because names are way too long
+            //Int32 currentId = 0;
+            Int32 uniqueIdNum = 1;
+
+            try
+            {
+                sConnection = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + appRoot + "/DataFolder/flowers_db.xlsx" + ";Extended Properties=\"Excel 12.0;HDR=No;IMEX=1\"";
+
+                oleExcelConnection = new OleDbConnection(sConnection);
+                oleExcelConnection.Open();
+
+
+                dtTablesList = oleExcelConnection.GetSchema("Tables");
+
+                if (dtTablesList.Rows.Count > 0)
+                {
+                    sSheetName = dtTablesList.Rows[0]["TABLE_NAME"].ToString();
+                }
+
+                dtTablesList.Clear();
+                dtTablesList.Dispose();
+
+
+                if (!string.IsNullOrEmpty(sSheetName))
+                {
+
+                    oleExcelCommand = oleExcelConnection.CreateCommand();
+                    oleExcelCommand.CommandText = "Select * From [" + sSheetName + "]";
+                    oleExcelCommand.CommandType = CommandType.Text;
+                    oleExcelReader = oleExcelCommand.ExecuteReader();
+
+                    var firstRecord = true;
+                    while (oleExcelReader.Read())
+                    {
+                        if (!firstRecord)
+                        {
+                            Flower newPlant = new Flower
+                            {
+                                id = Convert.ToInt32(oleExcelReader.GetValue(0)),//
+                                familyScientific = oleExcelReader.GetValue(1).ToString(),//
+                                familyScientific2 = oleExcelReader.GetValue(2).ToString(),//
+                                familyCommon = oleExcelReader.GetValue(3).ToString(),//
+                                genusSpeciesWeber = oleExcelReader.GetValue(4).ToString(),//
+                                genusSpeciesAckerfield = oleExcelReader.GetValue(5).ToString(),//
+                                genusWeber = oleExcelReader.GetValue(6).ToString(),//
+                                speciesWeber = oleExcelReader.GetValue(7).ToString(),//
+                                genusAckerfield = oleExcelReader.GetValue(8).ToString(),//
+                                commonName1 = oleExcelReader.GetValue(9).ToString(),//
+                                commonName2 = oleExcelReader.GetValue(10).ToString(),//
+                                color = oleExcelReader.GetValue(11).ToString(),//
+                                month = oleExcelReader.GetValue(12).ToString(),//
+                                zone = oleExcelReader.GetValue(13).ToString(),//
+                                origin = oleExcelReader.GetValue(14).ToString(),//
+                                noxious = oleExcelReader.GetValue(15).ToString(),//
+                                description = oleExcelReader.GetValue(16).ToString(),//
+                                similar = oleExcelReader.GetValue(17).ToString(),//
+                                photos = oleExcelReader.GetValue(18).ToString(),//
+                                thumbnail = oleExcelReader.GetValue(19).ToString(),//
+                            };
+
+                            try
+                            {
+                                flowerDb.Plants.Add(newPlant);
+                            }
+                            catch (Exception e)
+                            {
+
+
+                                Debug.WriteLine("{0}: {1}", e.Message);
+                            }
+                            flowerDb.SaveChanges();
+                            Debug.WriteLine("{0}: {1}", newPlant.plant_id, newPlant.familyScientific);
+
+                            uniqueIdNum++;
+                        }
+
+                        firstRecord = false;
+                    }
+
+                    oleExcelReader.Close();
+                }
+                oleExcelConnection.Close();
+            }
+            catch (Exception e)
+            {
+
+
+                Debug.WriteLine("{0}: {1}", e.Message);
+            }
+
+
+            JavaScriptSerializer systemSerializer = new JavaScriptSerializer();
+            systemSerializer.MaxJsonLength = Int32.MaxValue;
+
+            return null;
+        }
 
 
     }

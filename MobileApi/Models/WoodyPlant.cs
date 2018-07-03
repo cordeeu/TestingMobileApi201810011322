@@ -33,9 +33,13 @@ namespace MobileApi.Models
         [DataMember]
         public string scientificNameOther { get; set; }
         [DataMember]
+        public string scientificNameMeaning { get; set; }
+        [DataMember]
         public string commonName { get; set; }
         [DataMember]
         public string commonNameSecondary { get; set; }
+        [DataMember]
+        public string derivation { get; set; }
         [DataMember]
         public string scientificNameMeaningWeber { get; set; }
         [DataMember]
@@ -46,6 +50,14 @@ namespace MobileApi.Models
         public string origin { get; set; }
         [DataMember]
         public string weedManagement { get; set; }
+        [DataMember]
+        public string leafArrangement { get; set; }
+        [DataMember]
+        public string twigTexture { get; set; }
+        [DataMember]
+        public string barkTexture { get; set; }
+        [DataMember]
+        public string barkDescription { get; set; }
         [DataMember]
         public string edibility { get; set; }
         [DataMember]
@@ -75,7 +87,7 @@ namespace MobileApi.Models
         [DataMember]
         public string commonNameDerivation { get; set; }
         [DataMember]
-        public string landscapingCultivar { get; set; }
+        public string cultivar { get; set; }
         [DataMember]
         public string flowerColor { get; set; }
         [DataMember]
@@ -85,9 +97,15 @@ namespace MobileApi.Models
         [DataMember]
         public string keyCharacteristics { get; set; }
         [DataMember]
+        public string monoecious { get; set; }
+        [DataMember]
         public string lifeZone { get; set; }
         [DataMember]
         public string endemicLocation { get; set; }
+        [DataMember]
+        public string alien { get; set; }
+        [DataMember]
+        public string comments { get; set; }
         [DataMember]
         public string landscapingUse { get; set; }
         [DataMember]
@@ -99,9 +117,11 @@ namespace MobileApi.Models
         [DataMember]
         public string soilRequirements { get; set; }
         [DataMember]
+        public string siteRequirements { get; set; }
+        [DataMember]
         public string fiber { get; set; }
         [DataMember]
-        public string otherInformation { get; set; }
+        public string otherUses { get; set; }
         [DataMember]
         public string flowerSize { get; set; }
         [DataMember]
@@ -176,6 +196,12 @@ namespace MobileApi.Models
         public string highPlains { get; set; }
         [DataMember]
         public string shrubs { get; set; }
+        [DataMember]
+        public string flowerDescription { get; set; }
+        [DataMember]
+        public string fruitDescription { get; set; }
+        [DataMember]
+        public string imageNames { get; set; }
 
         [DataMember]
         public virtual ICollection<ImageWoody> Images { get; set; }
@@ -392,6 +418,8 @@ namespace MobileApi.Models
         public virtual WoodyPlant plant { get; set; }
     }
 
+
+
     [Table("settings", Schema = "woody")]
     public class WoodySetting
     {
@@ -405,4 +433,5 @@ namespace MobileApi.Models
         public bool? valuebool { get; set; }
         public long? valueint { get; set; }
     }
+
 }
