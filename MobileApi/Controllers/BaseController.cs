@@ -1259,7 +1259,7 @@ namespace MobileApi.Controllers
             try
             {
 
-                sConnection = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + appRoot + "/DataFolder/woody_plant_db_June_2018.xlsx" + ";Extended Properties=\"Excel 12.0;HDR=No;IMEX=1\"";
+                sConnection = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + appRoot + "/DataFolder/Updated Woody Plant App.xlsx" + ";Extended Properties=\"Excel 12.0;HDR=No;IMEX=1\"";
 
                 oleExcelConnection = new OleDbConnection(sConnection);
                 oleExcelConnection.Open();
@@ -1313,7 +1313,7 @@ namespace MobileApi.Controllers
                                 siteRequirements = oleExcelReader.GetValue(19).ToString(),//
                                 soilRequirements = oleExcelReader.GetValue(20).ToString(),//
                                 moistureRequirements = oleExcelReader.GetValue(21).ToString(),//
-                                ecologicalRelationships = oleExcelReader.GetValue(21).ToString(),//
+                                ecologicalRelationships = oleExcelReader.GetValue(22).ToString(),//
                                 frequency = oleExcelReader.GetValue(23).ToString(),//
                                 endemicLocation = oleExcelReader.GetValue(24).ToString(),//
                                 alien = oleExcelReader.GetValue(25).ToString(),//
