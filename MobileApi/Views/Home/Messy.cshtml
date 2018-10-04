@@ -1,0 +1,109 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Mobile API</title>
+</head>
+
+
+<body>
+    @{
+        string dynamicUrl = HttpContext.Current.Request.Url.Host + ":" + HttpContext.Current.Request.Url.Port;
+        string dynamicUrl2 = HttpContext.Current.Request.Url.AbsoluteUri;
+
+    }
+    <div style="margin-bottom:30px">
+        <h2>Mobile Database API</h2>
+        <ul id="pumas" />
+    </div>
+
+    <div class="row">
+        <section>
+            <form method="post" enctype="multipart/form-data"
+                  asp-controller="UploadFiles" asp-action="Index">
+                <div class="form-group">
+                    <div class="col-md-10">
+                        <p>Upload one or more files using this form:</p>
+                        <input id="api_file_in" type="file" name="files" multiple /> <!--remove MULTIPLE for single file upload-->
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-10">
+                        <input type="submit" value="Upload" onclick="doSumpIn()" />
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+
+    <div class="row">
+
+
+    @using (Html.BeginForm("Index", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <input type="file" name="file" />
+        <input type="submit" value="OK"/>
+    }
+    </div>
+
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
+    <script>
+        var dynUrl = "@dynamicUrl";
+
+
+
+    function doSumpIn()
+    {
+        if (IsPost)
+        {
+
+            //var fileInput = $('#api_file_in').val();
+            //var fileInput = $('#api_file_in').val();
+            FileUpload fileInput = $('#api_file_in');
+
+            //var fileInput = $('#api_file_in').get(0);
+
+            $.ajax({
+                type: "GET",
+                url: "/Home/UploadFile", // the method we are calling
+                contentType: "application/json; charset=utf-8",
+                data: {fileUpload: fileInput},
+                dataType: "json",
+                success: function (msg) {
+                    console.log("WIN :"+ fileInput);
+                },
+                error: function (msg) {
+                    console.log("FAIL :" + fileInput);
+                    //console.log(msg);
+                }
+            });
+        }
+
+        }
+        function doSuckIt() {
+            if (IsPost) {
+
+                //var fileInput = $('#api_file_in').val();
+                var fileInput = $('#api_file_in').val();
+
+                //var fileInput = $('#api_file_in').get(0);
+
+                $.ajax({
+                    type: "GET",
+                    url: "/Home/UploadFile", // the method we are calling
+                    contentType: "application/json; charset=utf-8",
+                    data: { fileUpload: fileInput },
+                    dataType: "json",
+                    success: function (msg) {
+                        console.log("WIN :" + fileInput);
+                    },
+                    error: function (msg) {
+                        console.log("FAIL :" + fileInput);
+                        //console.log(msg);
+                    }
+                });
+            }
+
+        }
+    </script>
+</body>
+</html>
