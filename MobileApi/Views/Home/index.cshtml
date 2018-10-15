@@ -15,7 +15,7 @@
         <h2>Mobile Database API</h2>
         <ul id="pumas" />
 
-        <p>Upload one or more files using this form:</p>
+        <p>Upload database file:</p>
         @using (Html.BeginForm("AddFileUploads", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
         {
             <input type="file" name="file" />

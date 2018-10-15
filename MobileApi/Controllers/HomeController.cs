@@ -28,7 +28,7 @@ namespace MobileApi.Controllers
                 // extract only the filename
                 var fileName = Path.GetFileName(file.FileName);
                 // store the file inside ~/App_Data/uploads folder
-                var path = Path.Combine(Server.MapPath("~/App_Data/uploads"), fileName);
+                var path = Path.Combine(Server.MapPath("~/App_Data/"), fileName);
                 file.SaveAs(path);
             }
             // redirect back to the index action to show the form once again

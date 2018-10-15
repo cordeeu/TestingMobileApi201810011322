@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Mobile API</title>
+</head>
+
+
+<body>
+    @{
+        string dynamicUrl = HttpContext.Current.Request.Url.Host +":" +HttpContext.Current.Request.Url.Port;
+        string dynamicUrl2 = HttpContext.Current.Request.Url.AbsoluteUri;
+
+        }
+    <div style="margin-bottom:30px">
+        <h2>Mobile Database API</h2>
+        <ul id="pumas" />
+    </div>
+
+    <div style="padding:10px">
+        <div style="margin-bottom:10px">
+            <h2>Login To Update Data</h2>
+            <label>Key</label>
+            <input id="api_key_in" type="text" placeholder="API KEY" style="margin-right:10px" />
+            <input type="button" value="Submit" onclick="validateKey();" />
+        </div>
+    </div>
+
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
+    <script>
+        var dynUrl = "@dynamicUrl";
+
+
+
+        function validateKey() {
+
+            var keyInput = $('#api_key_in').val();
+
+            $.get("@dynamicUrl" + "/Home/ValidateKey", { key: keyInput }, function (data) {
+                alert("Data: " + data);
+            });
+
+
+            $.get("@dynamicUrl" + "/Home/Index2");
+
+            $.ajax({
+                type: "GET",
+                url: "/Home/ValidateKey", // the method we are calling
+                contentType: "application/json; charset=utf-8",
+                data: { key: keyInput },
+                dataType: "json",
+                success: function (result) {
+                    console.log("win :"+keyInput);
+                },
+                error: function (result) {
+                    console.log("Fail :" + keyInput);
+
+                   // console.log(result);
+                }
+            });
+
+    }
+    </script>
+</body>
+</html>
