@@ -28,18 +28,14 @@ using NetTopologySuite.IO.GML2;
 using NetTopologySuite.Geometries;
 using MobileApi.Models.projection;
 
-
 namespace MobileApi.Controllers
 { 
-
     public class BaseController : ApiController
     {
         public WoodyPlantsMobileApiContext woodyDb = new WoodyPlantsMobileApiContext();
         public WetlandPlantsMobileApiContext wetlandDb = new WetlandPlantsMobileApiContext();
         public FlowerPlantsMobileApiContext flowerDb= new FlowerPlantsMobileApiContext();
         public string currentRepository;
-
-       
 
         // This action accepts no params (other than the repository) and also supports OData querying params
         // e.g. api/wetland?$top=10 (gets top ten records)
@@ -51,8 +47,6 @@ namespace MobileApi.Controllers
             wetlandDb.Configuration.ProxyCreationEnabled = false;
             //DbSet<WetlandPlant> allPlants = wetlandDb.Plants;
             List<WetlandPlant> allPlants = wetlandDb.Plants.Include(x => x.Images).Include(x => x.References).Include(x => x.SimilarSpecies).Include(x => x.FruitWetland).Include(x => x.DivisionWetland).Include(x => x.ShapeWetland).Include(x => x.ArrangementWetland).Include(x => x.SizeWetland).Include(x => x.CountyPlantWetland).Include(x => x.SizeWetland).Include(x => x.RegionWetland).ToList().ToList();
-
-
             return allPlants.AsQueryable();
         }
 
@@ -66,10 +60,8 @@ namespace MobileApi.Controllers
             //.Include(x=>x.SimilarSpeciesWetland).Include(x=>x.CountyPlantWetland)
             //
             //.Include(x=>x.SizeWetland).Include(x=>x.RegionWetland).ToList();
-
             return allFruits.AsQueryable();
         }
-
 
         [EnableQuery]
         [Route("api/woody")]
@@ -144,21 +136,7 @@ namespace MobileApi.Controllers
             return wetlandGlossary;
         }
 
-        /*   [Route("api/{repository}/{resourceId}")]
-           public async Task<IHttpActionResult> Get(int resourceId)
-           {
-               Puma puma = await db.Pumas.FindAsync(resourceId);
-               if (puma == null)
-               {
-                   return NotFound();
-               }
-
-               return Ok(puma);
-           }
-           */
-
         // Get zipped images
-      
         [Route("api/wetland/image_zip_files/{fileName}")]
            public HttpResponseMessage GetImagesZip(string fileName)
            {
@@ -204,7 +182,6 @@ namespace MobileApi.Controllers
             }
 
         }
-
 
         [Route("api/flower/image_zip_files/{fileName}")]
         public HttpResponseMessage GetImagesZipFlower(string fileName)
@@ -256,7 +233,6 @@ namespace MobileApi.Controllers
             var result = GetImageFile(filePath);
             return result;
         }
-    
 
         [Route("api/woody/image_name/{filename}")]
         public HttpResponseMessage GetImageByFileNameWoody(string filename)
@@ -275,7 +251,6 @@ namespace MobileApi.Controllers
         }
 
         //[AuthenticationTokenWetlands]
-
         [Route("api/wetland/image_icons/{filename}")]
         public HttpResponseMessage GetImageIcon(string filename)
         {
@@ -314,12 +289,10 @@ namespace MobileApi.Controllers
         [Route("api/uploadDataWetlands")]
         public Task<IHttpActionResult> UploadDataWetlandsAsync()
         {
-
             string appRoot = HttpContext.Current.Server.MapPath("~");
             string filename = appRoot + "/DataFolder/wetland_data_6.js";
             char[] result;
             StringBuilder builder = new StringBuilder();
-
             IList<WetlandPlant> wetlandPlants = new List<WetlandPlant>();
 
             using (StreamReader reader = File.OpenText(filename))
@@ -327,14 +300,10 @@ namespace MobileApi.Controllers
                 result = new char[reader.BaseStream.Length];
                  reader.Read(result, 0, (int)reader.BaseStream.Length);
             }
-
             foreach (char c in result)
             {
-
                     builder.Append(c);
-                
             }
-
 
             JsonTextReader readers = new JsonTextReader(new StringReader(builder.ToString()));
             JObject obj = null;
@@ -403,9 +372,6 @@ namespace MobileApi.Controllers
             return null;
             
         }
-
-
-
 
         /// <summary>
         /// Extracts the contents of a zip file and returns the
@@ -1259,7 +1225,9 @@ namespace MobileApi.Controllers
             try
             {
 
-                sConnection = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + appRoot + "/DataFolder/Updated Woody Plant App.xlsx" + ";Extended Properties=\"Excel 12.0;HDR=No;IMEX=1\"";
+                sConnection = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + appRoot + "/DataFolder/WoodyPlantDB.xlsx" + ";Extended Properties=\"Excel 12.0;HDR=No;IMEX=1\"";
+                //sConnection = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + "C:\\Temp\\UpdatedWoodyPlantApp.xlsx" + ";Extended Properties=\"Excel 12.0;HDR=No;IMEX=1\"";
+
 
                 oleExcelConnection = new OleDbConnection(sConnection);
                 oleExcelConnection.Open();

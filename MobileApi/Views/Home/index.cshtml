@@ -16,7 +16,8 @@
         <ul id="pumas" />
 
         <p>Upload database file:</p>
-        @using (Html.BeginForm("AddFileUploads", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        <!--using (Html.BeginForm("AddFileUploads", "Home", FormMethod.Post, new { enctype = "multipart/form-data" })) -->
+        @using (Html.BeginForm("UploadData", "api", FormMethod.Get, new { enctype = "multipart/form-data" }))
         {
             <input type="file" name="file" />
             <br>

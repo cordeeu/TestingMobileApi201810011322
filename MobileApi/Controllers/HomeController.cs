@@ -21,7 +21,6 @@ namespace MobileApi.Controllers
         public ActionResult AddFileUploads(HttpPostedFileBase file)
         {
             Boolean fileOK = false;
-
             // Verify that the user selected a file
             if (file != null && file.ContentLength > 0)
             {
@@ -38,8 +37,6 @@ namespace MobileApi.Controllers
         [HttpGet]
         public ActionResult UploadFile_Verify(FileUpload fileUpload)
         {
-
-
             Boolean fileOK = false;
             String path = Server.MapPath("~/UploadedImages/");
             Label label1=new Label();
@@ -76,11 +73,7 @@ namespace MobileApi.Controllers
             {
                 label1.Text = "Cannot accept files of this type.";
             }
-
                 return null;
         }
-
-
-
     }
 }
