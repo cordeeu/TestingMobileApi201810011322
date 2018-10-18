@@ -3,26 +3,57 @@
 <head>
     <title>Mobile API</title>
 </head>
-
-
 <body>
-    @{
-        string dynamicUrl = HttpContext.Current.Request.Url.Host + ":" + HttpContext.Current.Request.Url.Port;
-        string dynamicUrl2 = HttpContext.Current.Request.Url.AbsoluteUri;
-
-    }
     <div style="margin-bottom:30px">
         <h2>Mobile Database API</h2>
-        <ul id="pumas" />
-
-        <p>Upload database file:</p>
-        <!--using (Html.BeginForm("AddFileUploads", "Home", FormMethod.Post, new { enctype = "multipart/form-data" })) -->
-        @using (Html.BeginForm("UploadData", "api", FormMethod.Get, new { enctype = "multipart/form-data" }))
+        <!--ul id="pumas" /-->
+        <p>Upload DATABASE file:</p>
+        <!--using (Html.BeginForm("UploadData", "api", FormMethod.Get, new { enctype = "multipart/form-data" }))-->
+        @using (Html.BeginForm("UploadFiles", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
         {
-            <input type="file" name="file" />
+            <input type="file" name="uploadFile" />
+            <input type="radio" name="fileType" value="WoodyPlant" />
+            <text>Woody Plant </text>
+            <input type="radio" name="fileType" value="Wetland" />
+            <text>Wetland </text>
             <br>
             <input type="submit" value="Upload" />
         }
     </div>
+    <div>
+        <p id="errorBasic" style="color:red;display:none"><b>*NOTE: </b>Database uploads must be non-empty .xlsx excel files</p>
+    </div>
+
+
+
+
+    <!--RANDOM TESTING****************************************************************************************************************************************-->
+    <br><br><br><br>
+    <div style="margin-bottom:30px">
+        <h2>TESTING</h2>
+        <p>Upload database file:</p>
+        <!--using (Html.BeginForm("UploadData", "api", FormMethod.Get, new { enctype = "multipart/form-data" }))-->
+        @using (Html.BeginForm("Testing", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <input type="file" name="file" />
+            <input type="text" name="fileType" />
+            <br>
+            <input type="submit" value="TEST" onclick="errorMessageShow()" />
+        }
+        <button onclick="errorMessageShow()">TestingShowBasicError</button>
+    </div>
+
+    <script>
+        function errorMessageShow() {
+            var x = document.getElementById("errorBasic");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
+        }
+    </script>
+
 </body>
+
 </html>

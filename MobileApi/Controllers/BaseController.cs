@@ -83,7 +83,6 @@ namespace MobileApi.Controllers
             return allPlants.AsQueryable();
         }
 
-
         [EnableQuery]
         [Route("api/wetland_settings/{settingName}")]
         public IHttpActionResult GetWetlandSetting(string settingName)
@@ -224,7 +223,6 @@ namespace MobileApi.Controllers
                 return result;
             }
         }
-
 
         [Route("api/wetland/image_name/{filename}")]
         public HttpResponseMessage GetImageByFileName(string filename)
@@ -1156,7 +1154,6 @@ namespace MobileApi.Controllers
             }
         }
 
-
         private void populateWetlandImages(WetlandPlant newPlant, JToken value)
         {
             ICollection<ImagesWetland> images = new List<ImagesWetland>();
@@ -1224,15 +1221,11 @@ namespace MobileApi.Controllers
 
             try
             {
-
                 sConnection = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + appRoot + "/DataFolder/WoodyPlantDB.xlsx" + ";Extended Properties=\"Excel 12.0;HDR=No;IMEX=1\"";
                 //sConnection = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + "C:\\Temp\\UpdatedWoodyPlantApp.xlsx" + ";Extended Properties=\"Excel 12.0;HDR=No;IMEX=1\"";
 
-
                 oleExcelConnection = new OleDbConnection(sConnection);
                 oleExcelConnection.Open();
-
-
                 dtTablesList = oleExcelConnection.GetSchema("Tables");
 
                 if (dtTablesList.Rows.Count > 0)
