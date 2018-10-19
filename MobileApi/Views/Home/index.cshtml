@@ -12,12 +12,26 @@
         @using (Html.BeginForm("UploadFiles", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
         {
             <input type="file" name="uploadFile" />
-            <input type="radio" name="fileType" value="WoodyPlant" />
+            <input type="radio" name="dbType" value="WoodyPlant" />
             <text>Woody Plant </text>
-            <input type="radio" name="fileType" value="Wetland" />
+            <input type="radio" name="dbType" value="Wetland" />
             <text>Wetland </text>
             <br>
             <input type="submit" value="Upload" />
+
+        }
+        <br /><br />
+        <p>Revert DATABASE file:</p>
+        <!--using (Html.BeginForm("UploadData", "api", FormMethod.Get, new { enctype = "multipart/form-data" }))-->
+        @using (Html.BeginForm("RevertDatabase", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <input type="radio" name="dbType" value="WoodyPlant" />
+            <text>Woody Plant </text>
+            <input type="radio" name="dbType" value="Wetland" />
+            <text>Wetland </text>
+            <br>
+            <input type="submit" value="Revert" />
+
         }
     </div>
     <div>
@@ -36,7 +50,7 @@
         @using (Html.BeginForm("Testing", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
         {
             <input type="file" name="file" />
-            <input type="text" name="fileType" />
+            <input type="text" name="dbType" />
             <br>
             <input type="submit" value="TEST" onclick="errorMessageShow()" />
         }
