@@ -1202,6 +1202,119 @@ namespace MobileApi.Controllers
             }
 
          }
+        private string[] GetWoodyAttributeOrder() {
+            string[] woodyAttributeOrder =
+                {
+                "plant_imported_id",
+                "family",
+                "commonName",
+                "scientificNameWeber",
+                "commonNameSecondary",
+                "derivation",
+                "scientificNameOther",
+                "scientificNameMeaning",
+                "keyCharacteristics",
+                "flowerColor",
+                "leafType",
+                "seasonOfBloom",
+                "monoecious",
+                "lifeZone",
+                "edibility",
+                "toxicity",
+                "landscapingUse",
+                "matureHeight",
+                "matureSpread",
+                "siteRequirements",
+                "soilRequirements",
+                "moistureRequirements",
+                "ecologicalRelationships",
+                "frequency",
+                "endemicLocation",
+                "alien",
+                "comments",
+                "habitat",
+                "cultivar",
+                "fiber",
+                "otherUses",
+                "availability",
+                "fruitColor",
+                "fruitType",
+                "familyCharacteristics",
+                "flowerShape",
+                "flowerSymmetry",
+                "flowerCluster",
+                "flowerSize",
+                "petalNumber",
+                "leafShape",
+                "flowerStructure",
+                "weedManagement",
+                "leafArrangement",
+                "twigTexture",
+                "barkTexture",
+                "barkDescription",
+                "flowerDescription",
+                "fruitDescription",
+                "imageNames"
+                };
+            return woodyAttributeOrder;
+        }
+        private string[] GetWoodyAttributeOrder(WoodyPlant woodyPlant)
+        {
+            string[] woodyAttributeOrder =
+                {
+                "plant_imported_id",
+                "family",
+                "commonName",
+                "scientificNameWeber",
+                "commonNameSecondary",
+                "derivation",
+                "scientificNameOther",
+                "scientificNameMeaning",
+                "keyCharacteristics",
+                "flowerColor",
+                "leafType",
+                "seasonOfBloom",
+                "monoecious",
+                "lifeZone",
+                "edibility",
+                "toxicity",
+                "landscapingUse",
+                "matureHeight",
+                "matureSpread",
+                "siteRequirements",
+                "soilRequirements",
+                "moistureRequirements",
+                "ecologicalRelationships",
+                "frequency",
+                "endemicLocation",
+                "alien",
+                "comments",
+                "habitat",
+                "cultivar",
+                "fiber",
+                "otherUses",
+                "availability",
+                "fruitColor",
+                "fruitType",
+                "familyCharacteristics",
+                "flowerShape",
+                "flowerSymmetry",
+                "flowerCluster",
+                "flowerSize",
+                "petalNumber",
+                "leafShape",
+                "flowerStructure",
+                "weedManagement",
+                "leafArrangement",
+                "twigTexture",
+                "barkTexture",
+                "barkDescription",
+                "flowerDescription",
+                "fruitDescription",
+                "imageNames"
+                };
+            return woodyAttributeOrder;
+        }
 
         // GET api/uploadData
         [HttpGet]
@@ -1211,6 +1324,7 @@ namespace MobileApi.Controllers
             string appRoot = HttpContext.Current.Server.MapPath("~");
             string sSheetName = "Sheet1";
             string sConnection = null;
+            string[] plantOrder = GetWoodyAttributeOrder();
             DataTable dtTablesList = default(DataTable);
             OleDbCommand oleExcelCommand = default(OleDbCommand);
             OleDbDataReader oleExcelReader = default(OleDbDataReader);
@@ -1250,6 +1364,7 @@ namespace MobileApi.Controllers
                     {
                         if (!firstRecord)
                         {
+                            /*
                             WoodyPlant newPlant = new WoodyPlant
                             {
                                 plant_imported_id = Convert.ToInt32(oleExcelReader.GetValue(0)),//
@@ -1303,6 +1418,18 @@ namespace MobileApi.Controllers
                                 fruitDescription = oleExcelReader.GetValue(48).ToString(),//
                                 imageNames = oleExcelReader.GetValue(49).ToString(),//
                             };
+                            */
+                            WoodyPlant newPlant = new WoodyPlant();
+                            string plantAttrib = plantOrder[0];
+                            string woodyAtrribVal;
+                            newPlant.GetType().GetProperty(plantAttrib).SetValue(newPlant, Convert.ToInt32(oleExcelReader.GetValue(0)), null);
+                            for (int i = 1; i < plantOrder.Length; i++)
+                            {
+                                plantAttrib = plantOrder[i];
+                                woodyAtrribVal = oleExcelReader.GetValue(i).ToString();
+                                newPlant.GetType().GetProperty(plantAttrib).SetValue(newPlant, woodyAtrribVal, null);
+                            }
+
 
                             woodyDb.Plants.Add(newPlant);
                             woodyDb.SaveChanges();
@@ -1321,7 +1448,8 @@ namespace MobileApi.Controllers
             catch (Exception e)
             {
 
-
+                oleExcelReader.Close();
+                oleExcelConnection.Close();
                 Debug.WriteLine("{0}: {1}", e.Message);
             }
 
