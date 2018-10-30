@@ -1,10 +1,14 @@
-﻿using System;
+﻿using MobileApi.Models;
+using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.OleDb;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
 using System.Web.UI.WebControls;
 
 namespace MobileApi.Controllers
@@ -12,6 +16,9 @@ namespace MobileApi.Controllers
     public class HomeController : Controller
     {
         HttpPostedFileBase uploadFile;
+        public WoodyPlantsMobileApiContext woodyDb = new WoodyPlantsMobileApiContext();
+        public WoodyPlant[] woodyPlantCollection;
+       
 
         public ActionResult Index()
         {
@@ -26,36 +33,41 @@ namespace MobileApi.Controllers
 
 
             this.uploadFile = uploadFile;//maybe shouldnt be using a global variable?
+            Boolean uploadSuccess=false;
+            if (DBFile_Verify()){
 
-            if (UploadFile_Verify()){
-
-                string[] dbSavePaths=AssignDBFileSavePaths(dbType);
+                string[] dbFilePaths=AssignDBFileSavePaths(dbType, Path.GetExtension(uploadFile.FileName).ToLower());
 
                 try
                 {
-                    uploadFile.SaveAs(dbSavePaths[0]); //create TEMP file
-                    System.IO.File.Copy(dbSavePaths[1], dbSavePaths[2], true); //copy current DB to archive folder
+                    ////////////////uploadFile.SaveAs(dbSavePaths[2]); //create TEMP file
+                    uploadFile.SaveAs(dbFilePaths[0]); //create ARCHIVE file
+                    //////////////System.IO.File.Copy(dbSavePaths[1], dbSavePaths[0], true); //copy current DB to archive folder
+                    uploadSuccess=UploadData(dbFilePaths[0]);
                 }
                 catch (IOException e)
                 {
-                    Debug.WriteLine("failed to save or copy  " + e);
+                    Debug.WriteLine("failed to save or copy upload " + e);
                 }
-                uploadFile.SaveAs(dbSavePaths[1]);
+                /////////////////uploadFile.SaveAs(dbSavePaths[1]);
+                
             }
             else {
-            //TODO: return "INCORRECT UPLOAD" to view
+            //TODO: return "empty or incorrect file extension" to view
             }
 
-            BaseController baseController = new BaseController();
-            baseController.UploadData();
-
+            if (uploadSuccess) {
+                //TODO: return a successful dude
+            }
+            ////////////BaseController baseController = new BaseController();
+            ///////////////baseControllerUploadData();
 
             // redirect back to the index action to show the form once again
             return RedirectToAction("Index");
         }
 
         [HttpGet]
-        public Boolean UploadFile_Verify()
+        public Boolean DBFile_Verify()
         {
             Boolean fileOK = false;
             if (uploadFile != null&&uploadFile.ContentLength>0)
@@ -80,7 +92,7 @@ namespace MobileApi.Controllers
         [HttpPost]
         public ActionResult RevertDatabase(string dbType)
         {
-            string[] dbSavePaths = AssignDBFileSavePaths(dbType);
+            string[] dbSavePaths = AssignDBFileSavePaths(dbType,".xlsx");
             try
             {
                 System.IO.File.Copy(dbSavePaths[2], dbSavePaths[1], true); //copy current DB to archive folder
@@ -96,7 +108,7 @@ namespace MobileApi.Controllers
         }
 
         [HttpGet]
-        public string[] AssignDBFileSavePaths(string dbType)
+        public string[] AssignDBFileSavePaths(string dbType,string fileExt)
         {
             /*  assumed:  
              *     dbType does not include '/'
@@ -112,52 +124,127 @@ namespace MobileApi.Controllers
             string tempPath = Path.GetTempPath();
             string filePath = "~/DataFolder/";
             string filePathArchive = filePath + "Archive/";
-            // Standardize filenames
-            string fileExt = Path.GetExtension(uploadFile.FileName).ToLower();
-            var fileName = dbType + "_DataBase" + fileExt;
-            var fileNameArchive = dbType + "_DataBaseArchive" + fileExt;
-            var fileNameTemp = dbType + "_DBUploaded" + DateTime.Now.ToString("yyyy-MM-dd--HH-mm-ss") + fileExt;
-
             if (!(dbType == null || dbType == ""))
             {
                 filePath += dbType + "/";
                 filePathArchive += dbType + "/";
                 //TODO: create folder if doesnt exist
             }
+            // Standardize filenames
+            var fileName = dbType + "_DataBase" + fileExt;
+            var fileNameArchive = dbType + "_DataBaseArchive" + DateTime.Now.ToString("yyyy-MM-dd--HH-mm-ss") + fileExt;
+            var fileNameTemp = dbType + "_DBUploaded" + DateTime.Now.ToString("yyyy-MM-dd--HH-mm-ss") + fileExt;
+
             //Return Location&filename strings of Temporary DB--current DB--Archive DB 
             string saveTempPath = Path.Combine(tempPath, fileNameTemp);
             string savePath = Path.Combine(Server.MapPath(filePath), fileName);
             string saveArchivePath = Path.Combine(Server.MapPath(filePathArchive), fileNameArchive);
 
-            string[] filePaths = {saveTempPath,savePath,saveArchivePath};
+            string[] filePaths = { saveArchivePath, savePath, saveTempPath };
             return filePaths;
         }
 
         [HttpPost]
-        public ActionResult Testing(HttpPostedFileBase file)//, string dbType)
+        public Boolean UploadData(string dbFilePath)
         {
-            String filePath = "c:\\temp\\";
-            String filePathArchive = "C:\\temp\\MobileAPI\\";
-            // Standardize filename
-            var fileName = file.FileName;
-            var fileNameArchive = "_DataBaseArchive"+fileName;
+            string sSheetName = "Sheet1";
+            string sConnection = null;
+            DataTable dtTablesList = default(DataTable);
+            OleDbCommand oleExcelCommand = default(OleDbCommand);
+            OleDbDataReader oleExcelReader = default(OleDbDataReader);
+            OleDbConnection oleExcelConnection = default(OleDbConnection);
+            IList<KeyValuePair<String, Int32>> idNamePair = new List<KeyValuePair<String, Int32>>();//Need to have id as number because names are way too long
+            //Int32 currentId = 0;
+            //////////////////////Int32 uniqueIdNum = 1;
 
-
-            
-            // Archive current file and store new file (~/DataFolder/*Archive*/*dbType*)
-            var path = Path.Combine(filePath, fileName);
-            var pathArchive = Path.Combine(filePathArchive, fileNameArchive);
             try
             {
-                System.IO.File.Copy(path, pathArchive);
-            }
-            catch(IOException e)
-            {
-                Debug.WriteLine("failed to save or copy  " + e);
-            }
-            file.SaveAs(path);
+                sConnection = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + dbFilePath + ";Extended Properties=\"Excel 12.0;HDR=No;IMEX=1\"";
+                ///////sConnection = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + appRoot + "/DataFolder/WoodyPlant/WoodyPlant_DataBase.xlsx" + ";Extended Properties=\"Excel 12.0;HDR=No;IMEX=1\"";
 
-            return RedirectToAction("Index");
+                oleExcelConnection = new OleDbConnection(sConnection);
+                oleExcelConnection.Open();
+                dtTablesList = oleExcelConnection.GetSchema("Tables");
+                int attribCount=0;
+
+                if (dtTablesList.Rows.Count > 0)
+                {
+                    sSheetName = dtTablesList.Rows[0]["TABLE_NAME"].ToString();
+                }
+
+                dtTablesList.Clear();
+                dtTablesList.Dispose();
+
+
+                if (!string.IsNullOrEmpty(sSheetName))
+                {
+
+                    oleExcelCommand = oleExcelConnection.CreateCommand();
+                    oleExcelCommand.CommandText = "Select * From [" + sSheetName + "]";
+                    oleExcelCommand.CommandType = CommandType.Text;
+                    oleExcelReader = oleExcelCommand.ExecuteReader();
+                    attribCount = oleExcelReader.FieldCount;
+                    string[] plantAttribs = new string[attribCount];
+                    woodyPlantCollection = new WoodyPlant[attribCount];
+
+
+                        WoodyPlant newPlant = new WoodyPlant();
+                    var firstRecord = true;
+                    while (oleExcelReader.Read())
+                    {
+                        for (int i = 0; i < attribCount; i++)
+                        {
+                            if (firstRecord)
+                            {
+                                plantAttribs[i] = oleExcelReader.GetValue(i).ToString();
+                            }
+                            else
+                            {
+                                if (plantAttribs[i] == "plant_imported_id")
+                                {
+                                    newPlant.GetType().GetProperty(plantAttribs[i]).SetValue(newPlant, Convert.ToInt32(oleExcelReader.GetValue(0)), null);
+                                }
+                                else
+                                {
+                                    string plantAttrib = plantAttribs[i];
+                                    string plantAtrribVal = oleExcelReader.GetValue(i).ToString();
+                                    newPlant.GetType().GetProperty(plantAttrib).SetValue(newPlant, plantAtrribVal, null);
+                                    woodyPlantCollection[i]=newPlant;
+                                }
+                            }
+
+
+                        }
+                        firstRecord = false;
+                    }
+
+                    oleExcelReader.Close();
+                }
+                oleExcelConnection.Close();
+
+                for (int i = 0; i < attribCount; i++)
+                {
+                woodyDb.Plants.Add(woodyPlantCollection[i]);
+                woodyDb.SaveChanges();
+                Debug.WriteLine("{0}: {1}", woodyPlantCollection[i].plant_id, woodyPlantCollection[i].scientificNameWeber);
+                /////////////////////uniqueIdNum++;
+
+                }
+            }
+            catch (Exception e)
+            {
+
+                oleExcelReader.Close();
+                oleExcelConnection.Close();
+                Debug.WriteLine("{0}: {1}", e.Message);
+                return false;
+            }
+
+
+            JavaScriptSerializer systemSerializer = new JavaScriptSerializer();
+            systemSerializer.MaxJsonLength = Int32.MaxValue;
+
+            return true;
         }
     }
 }
