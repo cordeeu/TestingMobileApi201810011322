@@ -43,7 +43,9 @@ namespace MobileApi.Controllers
                     ////////////////uploadFile.SaveAs(dbSavePaths[2]); //create TEMP file
                     uploadFile.SaveAs(dbFilePaths[0]); //create ARCHIVE file
                     //////////////System.IO.File.Copy(dbSavePaths[1], dbSavePaths[0], true); //copy current DB to archive folder
-                    uploadSuccess=UploadData(dbFilePaths[0]);
+                    //uploadSuccess=UploadData(dbFilePaths[0]);
+                    BaseController bs = new BaseController();
+                    bs.UploadData();
                 }
                 catch (IOException e)
                 {
@@ -246,5 +248,20 @@ namespace MobileApi.Controllers
 
             return true;
         }
+
+        [HttpPost]
+        public Boolean RemoveAllData(WoodyPlantsMobileApiContext woodyDbRemove)
+        {
+            try
+            {
+                foreach (var entity in woodyDbRemove.Plants)
+                    woodyDbRemove.Plants.Remove(entity);
+                woodyDbRemove.SaveChanges();
+                return true;
+            }
+            catch
+            { return false; }
+        }
+
     }
 }

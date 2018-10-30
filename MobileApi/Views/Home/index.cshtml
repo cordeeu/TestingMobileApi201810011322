@@ -57,6 +57,19 @@
         <button onclick="errorMessageShow()">TestingShowBasicError</button>
     </div>
 
+    <br><br><br><br>
+    <div style="margin-bottom:30px">
+        <h2>DElete TESTING</h2>
+        <p>Upload database file:</p>
+        <!--using (Html.BeginForm("UploadData", "api", FormMethod.Get, new { enctype = "multipart/form-data" }))-->
+        @using (Html.BeginForm("RemoveAllData", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+
+            <br>
+            <input type="submit" value="TESTdelete" onclick="errorMessageShow()" />
+        }
+    </div>
+
     <script>
         function errorMessageShow() {
             var x = document.getElementById("errorBasic");
