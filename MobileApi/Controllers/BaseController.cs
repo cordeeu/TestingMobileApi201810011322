@@ -1360,8 +1360,12 @@ namespace MobileApi.Controllers
                     oleExcelReader = oleExcelCommand.ExecuteReader();
 
                     var firstRecord = true;
+                    int j = 0;
                     while (oleExcelReader.Read())
                     {
+                        if (j == 199)
+                            Debug.WriteLine("j :" + j);
+                        j++;
                         if (!firstRecord)
                         {
                             /*

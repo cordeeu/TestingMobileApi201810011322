@@ -328,6 +328,8 @@
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
+    <Compile Include="Controllers\UploadController.cs" />
     <Compile Include="Controllers\MessyController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\WebMethodAttribute.cs" />
@@ -377,6 +379,8 @@
     <Content Include="DataFolder\woody_plant_db_June_2018.xlsx" />
     <None Include="README.md" />
     <None Include="Properties\PublishProfiles\MobileApiPublish.pubxml" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Views\Home\index.cshtml" />
     <Content Include="Scripts\app.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -431,6 +435,7 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Messy.cshtml" />
+    <Content Include="Views\Upload\SuckIt.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

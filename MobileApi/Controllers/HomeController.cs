@@ -18,11 +18,12 @@ namespace MobileApi.Controllers
         HttpPostedFileBase uploadFile;
         public WoodyPlantsMobileApiContext woodyDb = new WoodyPlantsMobileApiContext();
         public WoodyPlant[] woodyPlantCollection;
+        private string uploadStatus;
        
 
         public ActionResult Index()
         {
-            ViewBag.Title = "Home Page";
+            ViewBag.Title = "From C#";
             // System.Web.Mvc.Controller
             return View();
         }
@@ -31,7 +32,7 @@ namespace MobileApi.Controllers
         public ActionResult UploadFiles(HttpPostedFileBase uploadFile, string dbType)
         {
 
-
+            /*
             this.uploadFile = uploadFile;//maybe shouldnt be using a global variable?
             Boolean uploadSuccess=false;
             if (DBFile_Verify()){
@@ -65,7 +66,9 @@ namespace MobileApi.Controllers
             ///////////////baseControllerUploadData();
 
             // redirect back to the index action to show the form once again
-            return RedirectToAction("Index");
+            */
+            return new JsonResult { Data = "random" };
+            //return RedirectToAction("Index");
         }
 
         [HttpGet]
