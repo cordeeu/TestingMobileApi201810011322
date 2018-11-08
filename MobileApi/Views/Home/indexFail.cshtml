@@ -1,0 +1,20 @@
+﻿    <div style="margin-bottom:30px">
+    <h2>Mobile Database API</h2>
+    <p>Upload Database File:</p>
+    @*using (Html.BeginForm("UploadData", "api", FormMethod.Get, new { enctype = "multipart/form-data" }))*@
+    @using (Html.BeginForm("UploadFiles", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <input type="file" name="uploadFile" />
+        <input type="radio" name="dbType" value="WoodyPlant" />
+        <text>Woody Plant </text>
+        <input type="radio" name="dbType" value="Wetland" />
+        <text>Wetland </text>
+        <br>
+        <input type="submit" value="Upload" />
+
+    }
+    <br /><br />
+    <div>
+        <p id="errorBasic" style="color:red"><b>*Upload FAILURE: </b>Database uploads must use the template format</p>
+    </div>
+

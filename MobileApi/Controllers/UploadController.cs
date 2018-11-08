@@ -16,10 +16,14 @@ namespace MobileApi.Controllers
     public class UploadController : Controller
     {
         HttpPostedFileBase uploadFile;
-        string uploadFileArchivePath; //set these under assigndbifilesavepaths instead.....
-        string fileCurrentPath;
+        private string uploadFileArchivePath; //set these under assigndbifilesavepaths instead.....
+        private string fileCurrentPath;
 
-
+        /*public UploadController(HttpPostedFileBase uploadFile, string dbType)
+        {
+            this.uploadFile = uploadFile;
+            this.uploadFileArchivePath
+        }*/
 
         public ActionResult Index()
         {
@@ -35,7 +39,6 @@ namespace MobileApi.Controllers
             return View();
         }
 
-
         [HttpGet]
         public ActionResult ErrorMessageIndex()
         {
@@ -44,12 +47,27 @@ namespace MobileApi.Controllers
             return RedirectToAction("indexErrorMessage");
         }
 
+        [HttpGet]
+        public ActionResult TestingMeDumbFace(string url, string fullPathWhereToSave)
+        {
+            /*DownloadController doubleDs = new DownloadController(url, fullPathWhereToSave);
+
+            
+            doubleDs._fullPathWhereToSave= doubleDs.suckIT()+"\\cunt.txt";
+            doubleDs.StartDownload(100);
+            */
+
+            //doubleDs.suckITSave();
+            return new JsonResult { Data = "random" };
+            //return RedirectToAction("~/home/index");
+        }
 
         [HttpPost]
         public ActionResult UploadFiles(HttpPostedFileBase uploadFile, string dbType)
         {
+            
             this.uploadFile = uploadFile;//maybe shouldnt be using a global variable?
-           /* Boolean uploadSuccess=false;
+            Boolean uploadSuccess=false;
             string[] dbFilePaths=AssignDBFileSavePaths(dbType, Path.GetExtension(uploadFile.FileName).ToLower());
 
             if (DBFile_Verify()){
@@ -94,8 +112,8 @@ namespace MobileApi.Controllers
                 {
                     System.IO.File.Delete(this.uploadFileArchivePath);
                 }
-            }*/
-
+            }
+            
             return new JsonResult { Data = "random" };
             // redirect back to the index action to show the form once again
             //return RedirectToAction("Index");
