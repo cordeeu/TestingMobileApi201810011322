@@ -23,6 +23,8 @@ namespace MobileApi.Controllers
         private string uploadFileArchivePath;
         private string uploadFilePath;
 
+        //public string UploadStatus { get => uploadStatus; }
+
         public ActionResult Index()
         {
             ViewBag.Title = "From C#";
@@ -45,8 +47,8 @@ namespace MobileApi.Controllers
         [HttpPost]
         public ActionResult UploadFiles(HttpPostedFileBase uploadFile, string dbType)
         {
-                this.uploadFile = uploadFile;
-                bool uploadSuccess = false;
+            this.uploadFile = uploadFile;
+            bool uploadSuccess = false;
 
             try
             {
@@ -62,6 +64,7 @@ namespace MobileApi.Controllers
                         {
                             case "WoodyPlant":
                                 uploadSuccess = UploadWoodyData(dbFilePaths[0]);
+                                //uploadSuccess = Testing(dbFilePaths[0]);
                                 break;
                             case "Wetland":
                                 //TODO: create UploadWetlandData(dbfilepaths[0]);
@@ -84,7 +87,8 @@ namespace MobileApi.Controllers
                 }
                 else
                 {
-                    //TODO: return "empty or incorrect file extension" to view or just basic FAIL....i guess
+                    //ERROR Status
+                    this.uploadStatus = "Empty or Incorrect file extension";
                     return RedirectToAction("IndexFail");
                 }
 
@@ -95,8 +99,9 @@ namespace MobileApi.Controllers
             }
             if (uploadSuccess)
             {
-                //uploadFile.SaveAs(dbFilePaths[1]); //create LiveDatabase file
-                //TODO: return a successful dude
+                //SuccessMessage: return a successful dude
+                this.uploadStatus = "Upload Successful";
+                System.IO.File.Copy(uploadFileArchivePath, uploadFilePath, true);
                 return RedirectToAction("IndexSuccess");
 
             }
@@ -107,20 +112,20 @@ namespace MobileApi.Controllers
                 {
                     System.IO.File.Delete(this.uploadFileArchivePath);
                 }
-            return RedirectToAction("IndexFail");
+                return RedirectToAction("IndexFail");
             }
-           // return RedirectToAction("Index");
+            // return RedirectToAction("Index");
         }
 
         [HttpGet]
         public Boolean DBFile_Verify()
         {
             Boolean fileOK = false;
-            if (uploadFile != null&&uploadFile.ContentLength>0)
+            if (uploadFile != null && uploadFile.ContentLength > 0)
             {
                 String fileExtension = Path.GetExtension(uploadFile.FileName).ToLower();
                 String[] allowedExtensions =
-                    {".xlsx",".txt"};
+                    {".xlsx",".txt", ".csv"};
                 for (int i = 0; i < allowedExtensions.Length; i++)
                 {
                     if (fileExtension == allowedExtensions[i])
@@ -132,13 +137,13 @@ namespace MobileApi.Controllers
             }
 
 
-                return fileOK;
+            return fileOK;
         }
 
         [HttpPost]
         public ActionResult RevertDatabase(string dbType)
         {
-            string[] dbSavePaths = AssignDBFileSavePaths(dbType,".xlsx");
+            string[] dbSavePaths = AssignDBFileSavePaths(dbType, ".xlsx");
             try
             {
                 System.IO.File.Copy(dbSavePaths[2], dbSavePaths[1], true); //copy current DB to archive folder
@@ -154,7 +159,7 @@ namespace MobileApi.Controllers
         }
 
         [HttpGet]
-        public string[] AssignDBFileSavePaths(string dbType,string fileExt)
+        public string[] AssignDBFileSavePaths(string dbType, string fileExt)
         {
             /*  assumed:  
              *     dbType does not include '/'
@@ -187,8 +192,8 @@ namespace MobileApi.Controllers
             string savePath = Path.Combine(Server.MapPath(filePath), fileName);
             string saveArchivePath = Path.Combine(Server.MapPath(filePathArchive), fileNameArchive);
             //Assign Global Variables Archive and Main Database file
-            this.uploadFileArchivePath=saveArchivePath;
-            this.uploadFilePath=savePath;
+            this.uploadFileArchivePath = saveArchivePath;
+            this.uploadFilePath = savePath;
 
             string[] filePaths = { saveArchivePath, savePath, saveTempPath };
             return filePaths;
@@ -241,20 +246,20 @@ namespace MobileApi.Controllers
                     string[] plantAttribs = new string[attribCount];
 
                     var firstRecord = true;
-                    int test = 0;
-                    
-                        
-                    while (oleExcelReader.Read()!=false)
+                    int debugCounter = 0;
+
+
+                    while (oleExcelReader.Read())
                     {
-                      
+
                         var newPlant = new WoodyPlant();
-                        if (test++ == 198)
-                            Console.Write(test);
+                        if (debugCounter++ == 190)
+                            Console.Write(debugCounter);
 
                         for (int i = 0; i < attribCount; i++)
                         {
                             if (i == 49)
-                                Console.Write(test);
+                                Console.Write(debugCounter);
                             if (firstRecord)
                             {
                                 plantAttribs[i] = oleExcelReader.GetValue(i).ToString();
@@ -263,6 +268,7 @@ namespace MobileApi.Controllers
                             {
                                 if (plantAttribs[i] == "plant_imported_id")
                                 {
+                                    var theDude = oleExcelReader.GetValue(i);
                                     newPlant.GetType().GetProperty(plantAttribs[i]).SetValue(newPlant, Convert.ToInt32(oleExcelReader.GetValue(i)), null);
                                 }
                                 else
@@ -276,12 +282,12 @@ namespace MobileApi.Controllers
 
                         }
                         uploadSuccess = false;
-                        if(!firstRecord)
+                        if (!firstRecord)
                             plantCollection.Add(newPlant);
                         uploadSuccess = true;
                         firstRecord = false;
                     }
-                    
+
 
                     oleExcelReader.Close();
                 }
@@ -296,15 +302,23 @@ namespace MobileApi.Controllers
                 oleExcelReader.Close();
                 oleExcelConnection.Close();
                 Debug.WriteLine("{0}: {1}", e.Message);
-                //return false;
+                //uploadSuccess = false;
+                return false;
             }
 
             if (uploadSuccess)
             {
-                RemoveAllData(plantDb);
-                foreach (var entity in plantCollection)
-                    plantDb.Plants.Add(entity);
-                plantDb.SaveChanges();
+                int yelpMe = plantDb.Plants.AddRange(plantCollection).Count();
+                if (yelpMe > 0)
+                {
+                    int flippyCup = plantDb.Plants.RemoveRange(plantDb.Plants).Count();
+                    plantDb.SaveChanges();
+                }
+                else
+                {
+                    //TODO: create message about why failed to return
+                    uploadSuccess = false;
+                }
             }
 
             JavaScriptSerializer systemSerializer = new JavaScriptSerializer();
@@ -318,8 +332,9 @@ namespace MobileApi.Controllers
         {
             try
             {
-                foreach (var entity in woodyDbRemove.Plants)
-                    woodyDbRemove.Plants.Remove(entity);
+                //////////////////foreach (var entity in woodyDbRemove.Plants)
+                ///////////////woodyDbRemove.Plants.Remove(entity);
+                int flippyCup = woodyDbRemove.Plants.RemoveRange(woodyDbRemove.Plants).Count();
                 woodyDbRemove.SaveChanges();
                 return true;
             }
