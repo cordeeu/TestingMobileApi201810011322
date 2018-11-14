@@ -1,0 +1,62 @@
+﻿<div style="margin-bottom:30px">
+    <h2>Mobile Database API</h2>
+    <p>Upload Database File:</p>
+    @*using (Html.BeginForm("UploadData", "api", FormMethod.Get, new { enctype = "multipart/form-data" }))  */@
+        @using (Html.BeginForm("UploadFiles", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <input type="file" name="uploadFile" />
+            <input type="radio" name="dbType" value="WoodyPlant" />
+            <text>Woody Plant </text>
+            <input type="radio" name="dbType" value="Wetland" />
+            <text>Wetland </text>
+            <br>
+            <input type="submit" value="Upload" />
+
+        }*@
+</div>
+<br /><br />
+
+<div class="row">
+    <section>
+        <form method="post" enctype="multipart/form-data"
+              asp-controller="UploadFiles" asp-action="Index">
+            <div class="form-group">
+                <div class="col-md-10">
+                    <p>Download Template:</p>
+                    <input id="api_template" type="text" name="fullpathWhereToSave" value="C:\Temp\MobileAPI\flexnext.txt" /> <!--remove MULTIPLE for single file upload-->
+                    <input id="api_template02" type="text" name="pearlMan" value="C:\_Projects\TestingMobileApi201810011322\MobileApi\DataFolder\Archive\Wetland\SadBearBiPolar.txt"/> <!--remove MULTIPLE for single file upload-->
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-10">
+                    <input type="submit" value="Upload" onclick="doSuckIt()" />
+                </div>
+            </div>
+        </form>
+    </section>
+</div>
+
+<script>
+        function doSuckIt() {
+            @*string getFile = $('api_tempate02').val;
+            string saveFile = $('api_tempate').val;*@
+
+            $.ajax({
+                    type: "GET",
+                    url: "/Download/PretendConstructor", // the method we are calling
+                    contentType: "application/json; charset=utf-8",
+                    @*data: { url: getFile, fullPathWhereToSave: saveFile},*@
+                data: { url: $('api_tempate02').val, fullPathWhereToSave: $('api_tempate').val},
+                    dataType: "json",
+                    success: function (msg) {
+                        console.log("WIN :" + $('api_tempate02').val + "  ailfay :" + $('api_tempate').val);
+                    },
+                    error: function (msg) {
+                        console.log("FAIL :" + $('api_tempate02').val + "  ailfay :" + $('api_tempate').val);
+                        //console.log(msg);
+                    }
+                });
+
+        }
+</script>
+

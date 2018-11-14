@@ -27,19 +27,31 @@ namespace MobileApi.Controllers
 
         public ActionResult Index()
         {
-            ViewBag.Title = "From C#";
+            ViewBag.Title = "Home";
             // System.Web.Mvc.Controller
             return View();
         }
         public ActionResult IndexSuccess()
         {
-            ViewBag.Title = "From C#";
+            ViewBag.Title = "Success";
             // System.Web.Mvc.Controller
             return View();
         }
         public ActionResult IndexFail()
         {
-            ViewBag.Title = "From C#";
+            ViewBag.Title = "Fail";
+            // System.Web.Mvc.Controller
+            return View();
+        }
+        public ActionResult Messy()
+        {
+            ViewBag.Title = "Messy";
+            // System.Web.Mvc.Controller
+            return View();
+        }
+        public ActionResult IndexBackup()
+        {
+            ViewBag.Title = "BackUp";
             // System.Web.Mvc.Controller
             return View();
         }

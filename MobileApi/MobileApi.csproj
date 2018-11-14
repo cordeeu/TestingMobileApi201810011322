@@ -439,11 +439,11 @@
     <Content Include="Views\Home\indexBackup.cshtml" />
     <Content Include="Views\Home\indexSuccess.cshtml" />
     <Content Include="Views\Home\indexFail.cshtml" />
+    <Content Include="Views\Download\indexDownload.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Resources\Images\Wetlands\" />
-    <Folder Include="Views\Download\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\fonts\glyphicons-halflings-regular.woff" />

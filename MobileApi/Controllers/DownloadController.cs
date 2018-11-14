@@ -25,18 +25,22 @@ namespace MobileApi.Controllers
 
 
         // GET: Download
-        public ActionResult Index()
+        public ActionResult IndexDownload()
         {
+            ViewBag.Title = "DownloadTesting";
             return View();
         }
-        
-        public DownloadController(string url, string fullPathWhereToSave)
+
+
+        [HttpGet]
+        public void PretendConstructor(string url, string fullPathWhereToSave)
         {
             if (string.IsNullOrEmpty(url)) throw new ArgumentNullException("url");
             if (string.IsNullOrEmpty(fullPathWhereToSave)) throw new ArgumentNullException("fullPathWhereToSave");
 
             this._url = url;
             this._fullPathWhereToSave = fullPathWhereToSave;
+
         }
 
         public bool StartDownload(int timeout)
