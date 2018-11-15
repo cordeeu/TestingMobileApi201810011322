@@ -211,6 +211,46 @@ namespace MobileApi.Controllers
             return filePaths;
         }
 
+        public string[] AssignImageFileSavePaths(string dbType, string fileExt)
+        {
+            /*  assumed:  
+             *     dbType does not include '/'
+             *     a folder named *dbType* exists
+             *     File must be .jpg...
+             *     
+             *  not accounted for: 
+             *     what to do with "new" or "undefined" dbType (undefined drops into route of filePath)
+             *     error messages
+            */
+
+            // Set Paths
+            string tempPath = Path.GetTempPath();
+            string filePath = "~/DataFolder/";
+            string filePathArchive = filePath + "Archive/";
+            if (!(dbType == null || dbType == ""))
+            {
+                filePath += dbType + "/";
+                filePathArchive += dbType + "/";
+                //TODO: create folder if doesnt exist
+            }
+            // Standardize filenames
+            var fileName = dbType + "_DataBase" + fileExt;
+            var fileNameArchive = dbType + "_DataBaseArchive" + DateTime.Now.ToString("yyyy-MM-dd--HH-mm-ss") + fileExt;
+            var fileNameTemp = dbType + "_DBUploaded" + DateTime.Now.ToString("yyyy-MM-dd--HH-mm-ss") + fileExt;
+
+
+            //Return Location&filename strings of Temporary DB--current DB--Archive DB 
+            string saveTempPath = Path.Combine(tempPath, fileNameTemp);
+            string savePath = Path.Combine(Server.MapPath(filePath), fileName);
+            string saveArchivePath = Path.Combine(Server.MapPath(filePathArchive), fileNameArchive);
+            //Assign Global Variables Archive and Main Database file
+            this.uploadFileArchivePath = saveArchivePath;
+            this.uploadFilePath = savePath;
+
+            string[] filePaths = { saveArchivePath, savePath, saveTempPath };
+            return filePaths;
+        }
+
         [HttpPost]
         public Boolean UploadWoodyData(string dbFilePath)
         {
@@ -352,6 +392,38 @@ namespace MobileApi.Controllers
             }
             catch
             { return false; }
+        }
+
+        public List<string> GetAllWoodyImageNames()
+        {
+            List<string> imageNamesDB =new List<string>();
+            WoodyPlantsMobileApiContext plantDb = new WoodyPlantsMobileApiContext();
+            foreach (var plant in plantDb.Plants)
+            {
+                List<string> names =plant.imageNames.Split(',').ToList<string>();
+                foreach (var name in names)
+                    imageNamesDB.Add(name.Trim());
+            }
+            return imageNamesDB;
+        }
+
+        [HttpPost]
+        public void Balls()
+        {
+            string[] randomNames = {"abies_arizonica_1","abies_arizonica_2","abies_arizonica_3","abies_arizonica_4","yucca_glauca_1","yucca_glauca_2","yucca_glauca_3","yucca_glauca_4","shitsgigs"};
+            bool thereQuestion;
+            List<string> tits =GetAllWoodyImageNames();
+            foreach (string name in randomNames)
+            {
+                thereQuestion = false;
+                if (!tits.Contains(name))
+                    break;
+                
+                thereQuestion = true;
+            }
+
+            int i = 1;
+
         }
 
     }

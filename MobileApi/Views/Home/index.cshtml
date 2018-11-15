@@ -11,8 +11,17 @@
         <text>Wetland </text>
         <br>
         <input type="submit" value="Upload" />
-
     }
     </div>
     <br /><br />
-
+    <p>sit upon your face</p>
+    @using (Html.BeginForm("Balls", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <input type="file" name="uploadFile" />
+        <input type="radio" name="dbType" value="WoodyPlant" />
+        <text>Woody Plant </text>
+        <input type="radio" name="dbType" value="Wetland" />
+        <text>Wetland </text>
+        <br>
+        <input type="submit" value="Upload" />
+    }
