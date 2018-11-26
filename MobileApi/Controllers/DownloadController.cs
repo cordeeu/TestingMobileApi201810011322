@@ -40,6 +40,9 @@ namespace MobileApi.Controllers
 
             this._url = url;
             this._fullPathWhereToSave = fullPathWhereToSave;
+            int i = 1;
+
+
 
         }
 

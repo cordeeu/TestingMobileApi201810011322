@@ -23,8 +23,8 @@
             <div class="form-group">
                 <div class="col-md-10">
                     <p>Download Template:</p>
-                    <input id="api_template" type="text" name="fullpathWhereToSave" value="C:\Temp\MobileAPI\flexnext.txt" /> <!--remove MULTIPLE for single file upload-->
-                    <input id="api_template02" type="text" name="pearlMan" value="C:\_Projects\TestingMobileApi201810011322\MobileApi\DataFolder\Archive\Wetland\SadBearBiPolar.txt"/> <!--remove MULTIPLE for single file upload-->
+                    <input id="save_to" type="text" name="fullpathWhereToSave" value="C:\Temp\MobileAPI\flexnext.txt" /> <!--remove MULTIPLE for single file upload-->
+                    <input id="get_file" type="text" name="pearlMan" value="C:\_Projects\TestingMobileApi201810011322\MobileApi\DataFolder\Archive\Wetland\SadBearBiPolar.txt" /> <!--remove MULTIPLE for single file upload-->
                 </div>
             </div>
             <div class="form-group">
@@ -37,26 +37,28 @@
 </div>
 
 <script>
-        function doSuckIt() {
-            @*string getFile = $('api_tempate02').val;
-            string saveFile = $('api_tempate').val;*@
+    function doSuckIt() {
+        var saveFile = document.getElementById('save_to').getAttribute('value');
+        var getFile = "";document.getElementById('get_file').getAttribute('value');
+        if (getFile == "" || saveFile == "") { console.log("kissmydickholewithaprickhole") }
+        else {
+
+            console.log("getFile: " + getFile + "    saveFile: " + saveFile);
 
             $.ajax({
-                    type: "GET",
-                    url: "/Download/PretendConstructor", // the method we are calling
-                    contentType: "application/json; charset=utf-8",
-                    @*data: { url: getFile, fullPathWhereToSave: saveFile},*@
-                data: { url: $('api_tempate02').val, fullPathWhereToSave: $('api_tempate').val},
-                    dataType: "json",
-                    success: function (msg) {
-                        console.log("WIN :" + $('api_tempate02').val + "  ailfay :" + $('api_tempate').val);
-                    },
-                    error: function (msg) {
-                        console.log("FAIL :" + $('api_tempate02').val + "  ailfay :" + $('api_tempate').val);
-                        //console.log(msg);
-                    }
-                });
-
+                type: "GET",
+                url: "/Download/PretendConstructor", // the method we are calling
+                contentType: "application/json; charset=utf-8",
+                data: { url: getFile, fullPathWhereToSave: saveFile },
+                dataType: "json",
+                success: function (msg) {
+                    console.log("WIN :" + $('api_tempate02').val + "  ailfay :" + $('api_tempate').val);
+                },
+                error: function (msg) {
+                    console.log("FAIL :" + $('api_tempate02').val + "  ailfay :" + $('api_tempate').val);
+                }
+            });
         }
+    }
 </script>
 
