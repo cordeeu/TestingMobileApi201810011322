@@ -1,30 +1,41 @@
-﻿using MobileApi.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.OleDb;
-using System.Data.SqlClient;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.ComponentModel;
+using System.IO;
+using System.Net;
+using System.Threading;
+using System.Windows.Forms;
+using MobileApi.Models;
+using System.IO.Compression;
+using System.Diagnostics;
+using System.Data;
+using System.Data.OleDb;
 using System.Web.Script.Serialization;
-using System.Web.UI.WebControls;
 
 namespace MobileApi.Controllers
 {
     public class HomeController : Controller
     {
+        //Variables
         private HttpPostedFileBase uploadFile;
         public WoodyPlantsMobileApiContext woodyDb = new WoodyPlantsMobileApiContext();
         public WoodyPlant[] woodyPlantCollection;
-        private string uploadStatus;
+        private string uploadStatus; //TODO: send a success/ErrorMessage to this file can use to fail out of any other method
         private string uploadFileArchivePath;
         private string uploadFilePath;
 
         //public string UploadStatus { get => uploadStatus; }
+        public HomeController()
+        {
+            this.uploadStatus = "Started";
+            string routeSavePath = "~/DataFolder/";
+            this.uploadFileArchivePath = routeSavePath;
+            this.uploadFilePath = routeSavePath;
 
+        }
         public ActionResult Index()
         {
             ViewBag.Title = "Home";
@@ -57,6 +68,58 @@ namespace MobileApi.Controllers
         }
 
         [HttpPost]
+        public ActionResult UploadImages(HttpPostedFileBase uploadFile, string dbType)
+        {
+            string fileExt = Path.GetExtension(uploadFile.FileName).ToLower();
+            if (fileExt == ".zip")
+                {
+                    string[] dbFilePaths = AssignDBFileSavePaths(dbType, fileExt);
+                    uploadFile.SaveAs(dbFilePaths[0]);
+                   //ZipFile.ExtractToDirectory(dbFilePaths[0], dbFilePaths[1]);
+                    string zipPath = dbFilePaths[0];
+
+                //Console.WriteLine("Provide path where to extract the zip file:");
+                //string extractPath = Console.ReadLine();
+
+                // Normalizes the path.
+                string extractPath = dbFilePaths[1]; // Path.GetFullPath(extractPath);
+                //string extractPath = Path.GetFullPath(dbFilePaths[1]); // Path.GetFullPath(extractPath);
+
+                // Ensures that the last character on the extraction path
+                // is the directory separator char. 
+                // Without this, a malicious zip file could try to traverse outside of the expected
+                // extraction path.
+                if (!extractPath.EndsWith(Path.DirectorySeparatorChar.ToString()))
+                    extractPath += Path.DirectorySeparatorChar;
+
+                using (ZipArchive archive = ZipFile.OpenRead(zipPath))
+                {
+                    foreach (ZipArchiveEntry entry in archive.Entries)
+                    {
+                        if (entry.FullName.EndsWith(".txt", StringComparison.OrdinalIgnoreCase))
+                        {
+                            // Gets the full path to ensure that relative segments are removed.
+                            string destinationPath = Path.GetFullPath(Path.Combine(extractPath, entry.Name));
+
+                            // Ordinal match is safest, case-sensitive volumes can be mounted within volumes that
+                            // are case-insensitive.
+                            if (destinationPath.StartsWith(extractPath, StringComparison.Ordinal))
+                                entry.ExtractToFile(destinationPath);
+                        }
+                    }
+                }
+
+
+
+            }
+
+
+
+            return RedirectToAction("Index");
+
+        }
+
+        [HttpPost]
         public ActionResult UploadFiles(HttpPostedFileBase uploadFile, string dbType)
         {
             this.uploadFile = uploadFile;
@@ -65,8 +128,6 @@ namespace MobileApi.Controllers
             try
             {
                 string[] dbFilePaths = AssignDBFileSavePaths(dbType, Path.GetExtension(uploadFile.FileName).ToLower());
-
-
                 if (DBFile_Verify())
                 {
                     try
@@ -84,7 +145,6 @@ namespace MobileApi.Controllers
                             default:
                                 break;
                         }
-
                     }
                     catch (IOException e)
                     {
@@ -94,7 +154,6 @@ namespace MobileApi.Controllers
                         }
                         Debug.WriteLine("failed to save or copy upload " + e);
                         return RedirectToAction("IndexFail");
-
                     }
                 }
                 else
@@ -103,7 +162,6 @@ namespace MobileApi.Controllers
                     this.uploadStatus = "Empty or Incorrect file extension";
                     return RedirectToAction("IndexFail");
                 }
-
             }
             catch
             {
@@ -136,8 +194,7 @@ namespace MobileApi.Controllers
             if (uploadFile != null && uploadFile.ContentLength > 0)
             {
                 String fileExtension = Path.GetExtension(uploadFile.FileName).ToLower();
-                String[] allowedExtensions =
-                    {".xlsx",".txt", ".csv"};
+                String[] allowedExtensions = {".xlsx",".txt", ".csv"};
                 for (int i = 0; i < allowedExtensions.Length; i++)
                 {
                     if (fileExtension == allowedExtensions[i])
@@ -147,8 +204,6 @@ namespace MobileApi.Controllers
                     }
                 }
             }
-
-
             return fileOK;
         }
 
@@ -305,7 +360,7 @@ namespace MobileApi.Controllers
                     {
 
                         var newPlant = new WoodyPlant();
-                        if (debugCounter++ == 190)
+                        if (debugCounter++ == 198)
                             Console.Write(debugCounter);
 
                         for (int i = 0; i < attribCount; i++)
@@ -408,9 +463,9 @@ namespace MobileApi.Controllers
         }
 
         [HttpPost]
-        public void Balls()
+        public ActionResult Balls()
         {
-            string[] randomNames = {"abies_arizonica_1","abies_arizonica_2","abies_arizonica_3","abies_arizonica_4","yucca_glauca_1","yucca_glauca_2","yucca_glauca_3","yucca_glauca_4","shitsgigs"};
+            string[] randomNames = {"abies_arizonica_1","abies_arizonica_2","abies_arizonica_3","abies_arizonica_4","yucca_glauca_1","yucca_glauca_2","yucca_glauca_3","yucca_glauca_4"};
             bool thereQuestion;
             List<string> tits =GetAllWoodyImageNames();
             foreach (string name in randomNames)
@@ -424,7 +479,7 @@ namespace MobileApi.Controllers
 
             int i = 1;
 
+        return RedirectToAction("IndexSuccess");
         }
-
     }
 }

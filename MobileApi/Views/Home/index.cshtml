@@ -15,7 +15,7 @@
     </div>
     <br /><br />
     <p>sit upon your face</p>
-    @using (Html.BeginForm("Balls", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    @using (Html.BeginForm("UploadImages", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
     {
         <input type="file" name="uploadFile" />
         <input type="radio" name="dbType" value="WoodyPlant" />
