@@ -29,6 +29,14 @@ namespace MobileApi.Controllers
         }
 
 
+        [HttpPost]
+        public ActionResult ButtonPressed(HttpPostedFileBase uploadFile, string dbType)
+        {
+            HomeController homeController = new HomeController();
+            homeController.UploadImages(uploadFile, dbType);
+
+            return RedirectToAction("../Home/Index");
+        }
         [HttpGet]
         public ActionResult ValidateKey(String key)
         {

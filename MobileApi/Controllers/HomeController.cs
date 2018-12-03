@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.Data;
 using System.Data.OleDb;
 using System.Web.Script.Serialization;
+using System.Web.Hosting;
 
 namespace MobileApi.Controllers
 {
@@ -26,6 +27,8 @@ namespace MobileApi.Controllers
         private string uploadStatus; //TODO: send a success/ErrorMessage to this file can use to fail out of any other method
         private string uploadFileArchivePath;
         private string uploadFilePath;
+        private string uploadWhat;// TODO: indicate what is being uploaded.....
+        private List<string> ImageNames;
 
         //public string UploadStatus { get => uploadStatus; }
         public HomeController()
@@ -70,53 +73,61 @@ namespace MobileApi.Controllers
         [HttpPost]
         public ActionResult UploadImages(HttpPostedFileBase uploadFile, string dbType)
         {
-            string fileExt = Path.GetExtension(uploadFile.FileName).ToLower();
-            if (fileExt == ".zip")
+            try
+            {
+                bool imageFound = false; //TODO: give feedback about file found state
+                this.uploadWhat = "image";
+                string fileExt = Path.GetExtension(uploadFile.FileName).ToLower();
+                if (fileExt == ".zip")
                 {
                     string[] dbFilePaths = AssignDBFileSavePaths(dbType, fileExt);
-                    uploadFile.SaveAs(dbFilePaths[0]);
-                   //ZipFile.ExtractToDirectory(dbFilePaths[0], dbFilePaths[1]);
+                    //Save copy to Archive File
                     string zipPath = dbFilePaths[0];
+                    uploadFile.SaveAs(zipPath);
 
-                //Console.WriteLine("Provide path where to extract the zip file:");
-                //string extractPath = Console.ReadLine();
+                    // Normalizes the path.
+                    string extractPath = dbFilePaths[1]; // Path.GetFullPath(extractPath);
 
-                // Normalizes the path.
-                string extractPath = dbFilePaths[1]; // Path.GetFullPath(extractPath);
-                //string extractPath = Path.GetFullPath(dbFilePaths[1]); // Path.GetFullPath(extractPath);
+                    /*Ensures that the last character on the extraction path 
+                     * is the directory separator char.
+                     * Without this, a malicious zip file could try to traverse outside of the expected
+                     * extraction path.
+                    */
+                    if (!extractPath.EndsWith(Path.DirectorySeparatorChar.ToString()))
+                        extractPath += Path.DirectorySeparatorChar;
 
-                // Ensures that the last character on the extraction path
-                // is the directory separator char. 
-                // Without this, a malicious zip file could try to traverse outside of the expected
-                // extraction path.
-                if (!extractPath.EndsWith(Path.DirectorySeparatorChar.ToString()))
-                    extractPath += Path.DirectorySeparatorChar;
-
-                using (ZipArchive archive = ZipFile.OpenRead(zipPath))
-                {
-                    foreach (ZipArchiveEntry entry in archive.Entries)
+                    using (ZipArchive archive = ZipFile.OpenRead(zipPath))
                     {
-                        if (entry.FullName.EndsWith(".txt", StringComparison.OrdinalIgnoreCase))
+                        foreach (ZipArchiveEntry entry in archive.Entries)
                         {
-                            // Gets the full path to ensure that relative segments are removed.
-                            string destinationPath = Path.GetFullPath(Path.Combine(extractPath, entry.Name));
-
-                            // Ordinal match is safest, case-sensitive volumes can be mounted within volumes that
-                            // are case-insensitive.
-                            if (destinationPath.StartsWith(extractPath, StringComparison.Ordinal))
-                                entry.ExtractToFile(destinationPath);
+                            if (entry.FullName.EndsWith(".txt", StringComparison.OrdinalIgnoreCase))
+                            {
+                                // Gets the full path to ensure that relative segments are removed.
+                                string destinationPath = Path.GetFullPath(Path.Combine(extractPath, entry.Name));
+                                System.IO.FileInfo file = new System.IO.FileInfo(destinationPath);
+                                file.Directory.Create();
+                                // Ordinal match is safest, case-sensitive volumes can be mounted within volumes that
+                                // are case-insensitive.
+                                if (destinationPath.StartsWith(extractPath, StringComparison.Ordinal))
+                                    entry.ExtractToFile(destinationPath, true);
+                                imageFound = true;
+                            }
                         }
                     }
+                    if (imageFound)
+                        return RedirectToAction("IndexSuccess");
+                    else
+                    {
+                        System.IO.FileInfo file = new System.IO.FileInfo(zipPath);
+                        file.Delete();
+                        return RedirectToAction("IndexFail");
+                    }
                 }
-
-
-
             }
-
-
-
+            catch (IOException e)
+            {
+            }
             return RedirectToAction("Index");
-
         }
 
         [HttpPost]
@@ -206,6 +217,12 @@ namespace MobileApi.Controllers
             }
             return fileOK;
         }
+        public bool ImageUpload_NameVerify(string fileName)
+        {
+            this.ImageNames = GetAllWoodyImageNames();
+
+            return true;
+        }
 
         [HttpPost]
         public ActionResult RevertDatabase(string dbType)
@@ -256,8 +273,9 @@ namespace MobileApi.Controllers
 
             //Return Location&filename strings of Temporary DB--current DB--Archive DB 
             string saveTempPath = Path.Combine(tempPath, fileNameTemp);
-            string savePath = Path.Combine(Server.MapPath(filePath), fileName);
-            string saveArchivePath = Path.Combine(Server.MapPath(filePathArchive), fileNameArchive);
+            //************string savePath = Path.Combine(Server.MapPath(filePath), fileName);
+            string savePath = Path.Combine(HostingEnvironment.MapPath(filePath), fileName);
+            string saveArchivePath = Path.Combine(HostingEnvironment.MapPath(filePathArchive), fileNameArchive);
             //Assign Global Variables Archive and Main Database file
             this.uploadFileArchivePath = saveArchivePath;
             this.uploadFilePath = savePath;
@@ -451,35 +469,36 @@ namespace MobileApi.Controllers
 
         public List<string> GetAllWoodyImageNames()
         {
-            List<string> imageNamesDB =new List<string>();
+            List<string> imageNamesDB = new List<string>();
             WoodyPlantsMobileApiContext plantDb = new WoodyPlantsMobileApiContext();
             foreach (var plant in plantDb.Plants)
             {
-                List<string> names =plant.imageNames.Split(',').ToList<string>();
+                List<string> names = plant.imageNames.Split(',').ToList<string>();
                 foreach (var name in names)
                     imageNamesDB.Add(name.Trim());
             }
             return imageNamesDB;
         }
 
+        
         [HttpPost]
         public ActionResult Balls()
         {
-            string[] randomNames = {"abies_arizonica_1","abies_arizonica_2","abies_arizonica_3","abies_arizonica_4","yucca_glauca_1","yucca_glauca_2","yucca_glauca_3","yucca_glauca_4"};
+            string[] randomNames = { "abies_arizonica_1", "abies_arizonica_2", "abies_arizonica_3", "abies_arizonica_4", "yucca_glauca_1", "yucca_glauca_2", "yucca_glauca_3", "yucca_glauca_4" };
             bool thereQuestion;
-            List<string> tits =GetAllWoodyImageNames();
+            List<string> tits = GetAllWoodyImageNames();
             foreach (string name in randomNames)
             {
                 thereQuestion = false;
                 if (!tits.Contains(name))
                     break;
-                
+
                 thereQuestion = true;
             }
 
             int i = 1;
 
-        return RedirectToAction("IndexSuccess");
+            return RedirectToAction("IndexSuccess");
         }
     }
 }
