@@ -1,109 +1,190 @@
-﻿using MobileApi.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.OleDb;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.ComponentModel;
+using System.IO;
+using System.Net;
+using System.Threading;
+using System.Windows.Forms;
+using MobileApi.Models;
+using System.IO.Compression;
+using System.Diagnostics;
+using System.Data;
+using System.Data.OleDb;
 using System.Web.Script.Serialization;
-using System.Web.UI.WebControls;
+using System.Web.Hosting;
 
 namespace MobileApi.Controllers
 {
     public class UploadController : Controller
     {
-        HttpPostedFileBase uploadFile;
-        private string uploadFileArchivePath; //set these under assigndbifilesavepaths instead.....
-        private string fileCurrentPath;
+        //Variables
+        private HttpPostedFileBase uploadFile;
+        public WoodyPlantsMobileApiContext woodyDb = new WoodyPlantsMobileApiContext();
+        public WoodyPlant[] woodyPlantCollection;
+        private string uploadStatus; //TODO: send a success/ErrorMessage to this file can use to fail out of any other method
+        private string uploadFileArchivePath;
+        private string uploadFilePath;
+        private string uploadWhat;// TODO: indicate what is being uploaded.....
+        private List<string> ImageNames;
 
-        /*public UploadController(HttpPostedFileBase uploadFile, string dbType)
+        //public string UploadStatus { get => uploadStatus; }
+        public UploadController()
         {
-            this.uploadFile = uploadFile;
-            this.uploadFileArchivePath
-        }*/
+            this.uploadStatus = "Started";
+            string routeSavePath = "~/DataFolder/";
+            this.uploadFileArchivePath = routeSavePath;
+            this.uploadFilePath = routeSavePath;
 
+        }
         public ActionResult Index()
         {
-            ViewBag.Title = "Home Page";
+            ViewBag.Title = "Home";
+            // System.Web.Mvc.Controller
+            return View();
+        }
+        public ActionResult IndexSuccess()
+        {
+            ViewBag.Title = "Success";
+            // System.Web.Mvc.Controller
+            return View();
+        }
+        public ActionResult IndexFail()
+        {
+            ViewBag.Title = "Fail";
+            // System.Web.Mvc.Controller
+            return View();
+        }
+        public ActionResult Messy()
+        {
+            ViewBag.Title = "Messy";
+            // System.Web.Mvc.Controller
+            return View();
+        }
+        public ActionResult IndexBackup()
+        {
+            ViewBag.Title = "BackUp";
             // System.Web.Mvc.Controller
             return View();
         }
 
-        public ActionResult ErrorIndex()
+        [HttpPost]
+        public ActionResult UploadImages(HttpPostedFileBase uploadFile, string dbType)
         {
-            ViewBag.Title = "Home Page: Error";
-            // System.Web.Mvc.Controller
-            return View();
-        }
+            try
+            {
+                bool imageFound = false; //TODO: give feedback about file found state
+                this.uploadWhat = "image";
+                string fileExt = Path.GetExtension(uploadFile.FileName).ToLower();
+                if (fileExt == ".zip")
+                {
+                    string[] dbFilePaths = AssignDBFileSavePaths(dbType, fileExt);
+                    //Save copy to Archive File
+                    string zipPath = dbFilePaths[0];
+                    uploadFile.SaveAs(zipPath);
 
-        [HttpGet]
-        public ActionResult ErrorMessageIndex()
-        {
-            ViewBag.Title = "Home Page: Error";
-            // System.Web.Mvc.Controller
-            return RedirectToAction("indexErrorMessage");
-        }
+                    // Normalizes the path.
+                    string extractPath = dbFilePaths[1]; // Path.GetFullPath(extractPath);
 
-        [HttpGet]
-        public ActionResult TestingMeDumbFace(string url, string fullPathWhereToSave)
-        {
-            /*DownloadController doubleDs = new DownloadController(url, fullPathWhereToSave);
+                    /*Ensures that the last character on the extraction path 
+                     * is the directory separator char.
+                     * Without this, a malicious zip file could try to traverse outside of the expected
+                     * extraction path.
+                    */
+                    if (!extractPath.EndsWith(Path.DirectorySeparatorChar.ToString()))
+                        extractPath += Path.DirectorySeparatorChar;
 
-            
-            doubleDs._fullPathWhereToSave= doubleDs.suckIT()+"\\cunt.txt";
-            doubleDs.StartDownload(100);
-            */
-
-            //doubleDs.suckITSave();
-            return new JsonResult { Data = "random" };
-            //return RedirectToAction("~/home/index");
+                    using (ZipArchive archive = ZipFile.OpenRead(zipPath))
+                    {
+                        foreach (ZipArchiveEntry entry in archive.Entries)
+                        {
+                            if (entry.FullName.EndsWith(".txt", StringComparison.OrdinalIgnoreCase))
+                            {
+                                // Gets the full path to ensure that relative segments are removed.
+                                string destinationPath = Path.GetFullPath(Path.Combine(extractPath, entry.Name));
+                                System.IO.FileInfo file = new System.IO.FileInfo(destinationPath);
+                                file.Directory.Create();
+                                // Ordinal match is safest, case-sensitive volumes can be mounted within volumes that
+                                // are case-insensitive.
+                                if (destinationPath.StartsWith(extractPath, StringComparison.Ordinal))
+                                    entry.ExtractToFile(destinationPath, true);
+                                imageFound = true;
+                            }
+                        }
+                    }
+                    if (imageFound)
+                        return RedirectToAction("IndexSuccess");
+                    else
+                    {
+                        System.IO.FileInfo file = new System.IO.FileInfo(zipPath);
+                        file.Delete();
+                        return RedirectToAction("IndexFail");
+                    }
+                }
+            }
+            catch (IOException e)
+            {
+            }
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
         public ActionResult UploadFiles(HttpPostedFileBase uploadFile, string dbType)
         {
-            
-            this.uploadFile = uploadFile;//maybe shouldnt be using a global variable?
-            Boolean uploadSuccess=false;
-            string[] dbFilePaths=AssignDBFileSavePaths(dbType, Path.GetExtension(uploadFile.FileName).ToLower());
+            this.uploadFile = uploadFile;
+            bool uploadSuccess = false;
 
-            if (DBFile_Verify()){
-                try
+            try
+            {
+                string[] dbFilePaths = AssignDBFileSavePaths(dbType, Path.GetExtension(uploadFile.FileName).ToLower());
+                if (DBFile_Verify())
                 {
-                    uploadFile.SaveAs(dbFilePaths[0]); //create ARCHIVE file
-                    switch (dbType)
+                    try
                     {
-                        case "WoodyPlant":
-                            uploadSuccess=UploadWoodyData(dbFilePaths[0]);
-                            break;
-                        case "Wetland":
-                            //TODO: create UploadWetlandData(dbfilepaths[0]);
-                            break;
-                        default:
-                            break;
+                        uploadFile.SaveAs(dbFilePaths[0]); //create ARCHIVE file
+                        switch (dbType)
+                        {
+                            case "WoodyPlant":
+                                uploadSuccess = UploadWoodyData(dbFilePaths[0]);
+                                //uploadSuccess = Testing(dbFilePaths[0]);
+                                break;
+                            case "Wetland":
+                                //TODO: create UploadWetlandData(dbfilepaths[0]);
+                                break;
+                            default:
+                                break;
+                        }
                     }
-
+                    catch (IOException e)
+                    {
+                        if (System.IO.File.Exists(dbFilePaths[0]))
+                        {
+                            System.IO.File.Delete(dbFilePaths[0]);
+                        }
+                        Debug.WriteLine("failed to save or copy upload " + e);
+                        return RedirectToAction("IndexFail");
+                    }
                 }
-                catch (IOException e)
+                else
                 {
-                    if (System.IO.File.Exists(dbFilePaths[0]))
-                    {
-                        System.IO.File.Delete(dbFilePaths[0]);
-                    }
-                    Debug.WriteLine("failed to save or copy upload " + e);
+                    //ERROR Status
+                    this.uploadStatus = "Empty or Incorrect file extension";
+                    return RedirectToAction("IndexFail");
                 }
             }
-            else {
-            //TODO: return "empty or incorrect file extension" to view or just basic FAIL....i guess
+            catch
+            {
+                uploadSuccess = false;
             }
-
             if (uploadSuccess)
             {
-                //TODO: return a successful dude
-                System.IO.File.Copy(dbFilePaths[2], dbFilePaths[1], true); //copy current DB to archive folder
+                //SuccessMessage: return a successful dude
+                this.uploadStatus = "Upload Successful";
+                System.IO.File.Copy(uploadFileArchivePath, uploadFilePath, true);
+                return RedirectToAction("IndexSuccess");
+
             }
             else
             {
@@ -112,21 +193,19 @@ namespace MobileApi.Controllers
                 {
                     System.IO.File.Delete(this.uploadFileArchivePath);
                 }
+                return RedirectToAction("IndexFail");
             }
-            
-            return new JsonResult { Data = "random" };
-            // redirect back to the index action to show the form once again
-            //return RedirectToAction("Index");
+            // return RedirectToAction("Index");
         }
 
-        public bool DBFile_Verify()
+        [HttpGet]
+        public Boolean DBFile_Verify()
         {
             Boolean fileOK = false;
-            if (uploadFile != null&&uploadFile.ContentLength>0)
+            if (uploadFile != null && uploadFile.ContentLength > 0)
             {
                 String fileExtension = Path.GetExtension(uploadFile.FileName).ToLower();
-                String[] allowedExtensions =
-                    {".xlsx",".txt"};
+                String[] allowedExtensions = { ".xlsx", ".txt", ".csv" };
                 for (int i = 0; i < allowedExtensions.Length; i++)
                 {
                     if (fileExtension == allowedExtensions[i])
@@ -136,15 +215,19 @@ namespace MobileApi.Controllers
                     }
                 }
             }
+            return fileOK;
+        }
+        public bool ImageUpload_NameVerify(string fileName)
+        {
+            this.ImageNames = GetAllWoodyImageNames();
 
-
-                return fileOK;
+            return true;
         }
 
         [HttpPost]
         public ActionResult RevertDatabase(string dbType)
         {
-            string[] dbSavePaths = AssignDBFileSavePaths(dbType,".xlsx");
+            string[] dbSavePaths = AssignDBFileSavePaths(dbType, ".xlsx");
             try
             {
                 System.IO.File.Copy(dbSavePaths[2], dbSavePaths[1], true); //copy current DB to archive folder
@@ -160,7 +243,7 @@ namespace MobileApi.Controllers
         }
 
         [HttpGet]
-        public string[] AssignDBFileSavePaths(string dbType,string fileExt)
+        public string[] AssignDBFileSavePaths(string dbType, string fileExt)
         {
             /*  assumed:  
              *     dbType does not include '/'
@@ -180,17 +263,62 @@ namespace MobileApi.Controllers
             {
                 filePath += dbType + "/";
                 filePathArchive += dbType + "/";
-                //TODO: create folder if doesnt exist? or return error and drop out of upload..
+                //TODO: create folder if doesnt exist
             }
             // Standardize filenames
             var fileName = dbType + "_DataBase" + fileExt;
             var fileNameArchive = dbType + "_DataBaseArchive" + DateTime.Now.ToString("yyyy-MM-dd--HH-mm-ss") + fileExt;
             var fileNameTemp = dbType + "_DBUploaded" + DateTime.Now.ToString("yyyy-MM-dd--HH-mm-ss") + fileExt;
 
+
+            //Return Location&filename strings of Temporary DB--current DB--Archive DB 
+            string saveTempPath = Path.Combine(tempPath, fileNameTemp);
+            //************string savePath = Path.Combine(Server.MapPath(filePath), fileName);
+            string savePath = Path.Combine(HostingEnvironment.MapPath(filePath), fileName);
+            string saveArchivePath = Path.Combine(HostingEnvironment.MapPath(filePathArchive), fileNameArchive);
+            //Assign Global Variables Archive and Main Database file
+            this.uploadFileArchivePath = saveArchivePath;
+            this.uploadFilePath = savePath;
+
+            string[] filePaths = { saveArchivePath, savePath, saveTempPath };
+            return filePaths;
+        }
+
+        public string[] AssignImageFileSavePaths(string dbType, string fileExt)
+        {
+            /*  assumed:  
+             *     dbType does not include '/'
+             *     a folder named *dbType* exists
+             *     File must be .jpg...
+             *     
+             *  not accounted for: 
+             *     what to do with "new" or "undefined" dbType (undefined drops into route of filePath)
+             *     error messages
+            */
+
+            // Set Paths
+            string tempPath = Path.GetTempPath();
+            string filePath = "~/DataFolder/";
+            string filePathArchive = filePath + "Archive/";
+            if (!(dbType == null || dbType == ""))
+            {
+                filePath += dbType + "/";
+                filePathArchive += dbType + "/";
+                //TODO: create folder if doesnt exist
+            }
+            // Standardize filenames
+            var fileName = dbType + "_DataBase" + fileExt;
+            var fileNameArchive = dbType + "_DataBaseArchive" + DateTime.Now.ToString("yyyy-MM-dd--HH-mm-ss") + fileExt;
+            var fileNameTemp = dbType + "_DBUploaded" + DateTime.Now.ToString("yyyy-MM-dd--HH-mm-ss") + fileExt;
+
+
             //Return Location&filename strings of Temporary DB--current DB--Archive DB 
             string saveTempPath = Path.Combine(tempPath, fileNameTemp);
             string savePath = Path.Combine(Server.MapPath(filePath), fileName);
             string saveArchivePath = Path.Combine(Server.MapPath(filePathArchive), fileNameArchive);
+            //Assign Global Variables Archive and Main Database file
+            this.uploadFileArchivePath = saveArchivePath;
+            this.uploadFilePath = savePath;
 
             string[] filePaths = { saveArchivePath, savePath, saveTempPath };
             return filePaths;
@@ -199,6 +327,7 @@ namespace MobileApi.Controllers
         [HttpPost]
         public Boolean UploadWoodyData(string dbFilePath)
         {
+            bool uploadSuccess = false;
             string sSheetName = "Sheet1";
             string sConnection = null;
             DataTable dtTablesList = default(DataTable);
@@ -208,7 +337,8 @@ namespace MobileApi.Controllers
             IList<KeyValuePair<String, Int32>> idNamePair = new List<KeyValuePair<String, Int32>>();//Need to have id as number because names are way too long
 
             WoodyPlantsMobileApiContext plantDb = new WoodyPlantsMobileApiContext();
-       
+            List<WoodyPlant> plantCollection = new List<WoodyPlant>();
+
             //Int32 currentId = 0;
             //////////////////////Int32 uniqueIdNum = 1;
 
@@ -219,8 +349,7 @@ namespace MobileApi.Controllers
                 oleExcelConnection = new OleDbConnection(sConnection);
                 oleExcelConnection.Open();
                 dtTablesList = oleExcelConnection.GetSchema("Tables");
-                int attribCount=0;
-                List<WoodyPlant> plantCollection = new List<WoodyPlant>();
+                int attribCount = 0;
 
                 if (dtTablesList.Rows.Count > 0)
                 {
@@ -242,27 +371,20 @@ namespace MobileApi.Controllers
                     string[] plantAttribs = new string[attribCount];
 
                     var firstRecord = true;
-                    int test = 0;
-                    int j = 0;
+                    int debugCounter = 0;
+
+
                     while (oleExcelReader.Read())
                     {
-                        Debug.WriteLine(j);
-                        j++;
-                        if (j == 999)
-                            Debug.WriteLine("suckit");
-                    }
-                    /*    
-                    while (oleExcelReader.Read()&&j<199)
-                    {
-                        j++;
+
                         var newPlant = new WoodyPlant();
-                        if (test++ == 198)
-                            Console.Write(test);
+                        if (debugCounter++ == 198)
+                            Console.Write(debugCounter);
 
                         for (int i = 0; i < attribCount; i++)
                         {
                             if (i == 49)
-                                Console.Write(test);
+                                Console.Write(debugCounter);
                             if (firstRecord)
                             {
                                 plantAttribs[i] = oleExcelReader.GetValue(i).ToString();
@@ -271,7 +393,8 @@ namespace MobileApi.Controllers
                             {
                                 if (plantAttribs[i] == "plant_imported_id")
                                 {
-                                    newPlant.GetType().GetProperty(plantAttribs[i]).SetValue(newPlant, Convert.ToInt32(oleExcelReader.GetValue(0)), null);
+                                    var theDude = oleExcelReader.GetValue(i);
+                                    newPlant.GetType().GetProperty(plantAttribs[i]).SetValue(newPlant, Convert.ToInt32(oleExcelReader.GetValue(i)), null);
                                 }
                                 else
                                 {
@@ -283,20 +406,19 @@ namespace MobileApi.Controllers
 
 
                         }
-                        if(!firstRecord)
+                        uploadSuccess = false;
+                        if (!firstRecord)
                             plantCollection.Add(newPlant);
+                        uploadSuccess = true;
                         firstRecord = false;
                     }
-                    */
+
 
                     oleExcelReader.Close();
                 }
                 oleExcelConnection.Close();
 
 
-                foreach (var entity in plantCollection)
-                    plantDb.Plants.Add(entity);
-                plantDb.SaveChanges();
 
             }
             catch (Exception e)
@@ -305,14 +427,29 @@ namespace MobileApi.Controllers
                 oleExcelReader.Close();
                 oleExcelConnection.Close();
                 Debug.WriteLine("{0}: {1}", e.Message);
+                //uploadSuccess = false;
                 return false;
             }
 
+            if (uploadSuccess)
+            {
+                int yelpMe = plantDb.Plants.AddRange(plantCollection).Count();
+                if (yelpMe > 0)
+                {
+                    int flippyCup = plantDb.Plants.RemoveRange(plantDb.Plants).Count();
+                    plantDb.SaveChanges();
+                }
+                else
+                {
+                    //TODO: create message about why failed to return
+                    uploadSuccess = false;
+                }
+            }
 
             JavaScriptSerializer systemSerializer = new JavaScriptSerializer();
             systemSerializer.MaxJsonLength = Int32.MaxValue;
 
-            return true;
+            return uploadSuccess;
         }
 
         [HttpPost]
@@ -320,8 +457,9 @@ namespace MobileApi.Controllers
         {
             try
             {
-                foreach (var entity in woodyDbRemove.Plants)
-                    woodyDbRemove.Plants.Remove(entity);
+                //////////////////foreach (var entity in woodyDbRemove.Plants)
+                ///////////////woodyDbRemove.Plants.Remove(entity);
+                int flippyCup = woodyDbRemove.Plants.RemoveRange(woodyDbRemove.Plants).Count();
                 woodyDbRemove.SaveChanges();
                 return true;
             }
@@ -329,5 +467,38 @@ namespace MobileApi.Controllers
             { return false; }
         }
 
+        public List<string> GetAllWoodyImageNames()
+        {
+            List<string> imageNamesDB = new List<string>();
+            WoodyPlantsMobileApiContext plantDb = new WoodyPlantsMobileApiContext();
+            foreach (var plant in plantDb.Plants)
+            {
+                List<string> names = plant.imageNames.Split(',').ToList<string>();
+                foreach (var name in names)
+                    imageNamesDB.Add(name.Trim());
+            }
+            return imageNamesDB;
+        }
+
+
+        [HttpPost]
+        public ActionResult Balls()
+        {
+            string[] randomNames = { "abies_arizonica_1", "abies_arizonica_2", "abies_arizonica_3", "abies_arizonica_4", "yucca_glauca_1", "yucca_glauca_2", "yucca_glauca_3", "yucca_glauca_4" };
+            bool thereQuestion;
+            List<string> tits = GetAllWoodyImageNames();
+            foreach (string name in randomNames)
+            {
+                thereQuestion = false;
+                if (!tits.Contains(name))
+                    break;
+
+                thereQuestion = true;
+            }
+
+            int i = 1;
+
+            return RedirectToAction("IndexSuccess");
+        }
     }
 }

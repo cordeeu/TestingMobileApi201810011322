@@ -332,6 +332,7 @@
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\DownloadController.cs" />
     <Compile Include="Controllers\UploadController.cs" />
+    <Compile Include="Controllers\UploadController_old.cs" />
     <Compile Include="Controllers\MessyController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\WebMethodAttribute.cs" />
@@ -445,6 +446,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Resources\Images\Wetlands\" />
+    <Folder Include="Views\Upload\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\fonts\glyphicons-halflings-regular.woff" />
