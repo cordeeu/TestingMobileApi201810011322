@@ -22,22 +22,27 @@ namespace MobileApi.Controllers
     {
         //Variables
         private HttpPostedFileBase uploadFile;
+        private string dbType;
         public WoodyPlantsMobileApiContext woodyDb = new WoodyPlantsMobileApiContext();
         public WoodyPlant[] woodyPlantCollection;
         private string uploadStatus; //TODO: send a success/ErrorMessage to this file can use to fail out of any other method
-        private string uploadFileArchivePath;
-        private string uploadFilePath;
+        private string fileLocation;
+        private string archiveLocation;
         private string uploadWhat;// TODO: indicate what is being uploaded.....
         private List<string> ImageNames;
 
         //public string UploadStatus { get => uploadStatus; }
         public UploadController()
         {
+            //Create routeSavePath and routeArchivePath if not exist
+            string routeSavePath = HostingEnvironment.MapPath("~/DataFolder/");
+            string routeArchivePath = routeSavePath + "Archive/";
+            DirectoryInfo di = Directory.CreateDirectory(routeSavePath);
+            di = Directory.CreateDirectory(routeArchivePath);
+            //Assign Default Variables
+            this.fileLocation = routeSavePath;
+            this.archiveLocation = routeArchivePath;
             this.uploadStatus = "Started";
-            string routeSavePath = "~/DataFolder/";
-            this.uploadFileArchivePath = routeSavePath;
-            this.uploadFilePath = routeSavePath;
-
         }
         public ActionResult Index()
         {
@@ -80,7 +85,7 @@ namespace MobileApi.Controllers
                 string fileExt = Path.GetExtension(uploadFile.FileName).ToLower();
                 if (fileExt == ".zip")
                 {
-                    string[] dbFilePaths = AssignDBFileSavePaths(dbType, fileExt);
+                    string[] dbFilePaths = AssignDBFileSavePaths(dbType, "images", fileExt);
                     //Save copy to Archive File
                     string zipPath = dbFilePaths[0];
                     uploadFile.SaveAs(zipPath);
@@ -138,8 +143,8 @@ namespace MobileApi.Controllers
 
             try
             {
-                string[] dbFilePaths = AssignDBFileSavePaths(dbType, Path.GetExtension(uploadFile.FileName).ToLower());
-                if (DBFile_Verify())
+                string[] dbFilePaths = AssignDBFileSavePaths(dbType, "data", Path.GetExtension(uploadFile.FileName).ToLower());
+                if (DataFile_Verify())
                 {
                     try
                     {
@@ -182,30 +187,29 @@ namespace MobileApi.Controllers
             {
                 //SuccessMessage: return a successful dude
                 this.uploadStatus = "Upload Successful";
-                System.IO.File.Copy(uploadFileArchivePath, uploadFilePath, true);
+                System.IO.File.Copy(fileLocation, archiveLocation, true);
                 return RedirectToAction("IndexSuccess");
 
             }
             else
             {
                 //TODO: return upload FAIL dude; file not archived.
-                if (System.IO.File.Exists(this.uploadFileArchivePath))
+                if (System.IO.File.Exists(this.fileLocation))
                 {
-                    System.IO.File.Delete(this.uploadFileArchivePath);
+                    System.IO.File.Delete(this.fileLocation);
                 }
                 return RedirectToAction("IndexFail");
             }
             // return RedirectToAction("Index");
         }
 
-        [HttpGet]
-        public Boolean DBFile_Verify()
+        public bool DataFile_Verify()
         {
             Boolean fileOK = false;
             if (uploadFile != null && uploadFile.ContentLength > 0)
             {
                 String fileExtension = Path.GetExtension(uploadFile.FileName).ToLower();
-                String[] allowedExtensions = { ".xlsx", ".txt", ".csv" };
+                String[] allowedExtensions = { ".xlsx" };
                 for (int i = 0; i < allowedExtensions.Length; i++)
                 {
                     if (fileExtension == allowedExtensions[i])
@@ -227,7 +231,7 @@ namespace MobileApi.Controllers
         [HttpPost]
         public ActionResult RevertDatabase(string dbType)
         {
-            string[] dbSavePaths = AssignDBFileSavePaths(dbType, ".xlsx");
+            string[] dbSavePaths = AssignDBFileSavePaths(dbType, "data", ".xlsx");
             try
             {
                 System.IO.File.Copy(dbSavePaths[2], dbSavePaths[1], true); //copy current DB to archive folder
@@ -242,90 +246,39 @@ namespace MobileApi.Controllers
             return RedirectToAction("Index");
         }
 
-        [HttpGet]
-        public string[] AssignDBFileSavePaths(string dbType, string fileExt)
+        public string[] AssignDBFileSavePaths(string dbTypeFolder, string attrib, string fileExt)
         {
-            /*  assumed:  
-             *     dbType does not include '/'
-             *     a folder named *dbType* exists
-             *     File must be .xlsx
-             *     
-             *  not accounted for: 
-             *     what to do with "new" or "undefined" dbType (undefined drops into route of filePath)
-             *     error messages
-            */
-
-            // Set Paths
-            string tempPath = Path.GetTempPath();
-            string filePath = "~/DataFolder/";
-            string filePathArchive = filePath + "Archive/";
-            if (!(dbType == null || dbType == ""))
+            // Append with DataBase Type Paths
+            if (!(dbTypeFolder == null || dbTypeFolder == ""))
             {
-                filePath += dbType + "/";
-                filePathArchive += dbType + "/";
-                //TODO: create folder if doesnt exist
+                this.archiveLocation += dbTypeFolder + "/";
+                this.fileLocation += dbTypeFolder + "/";
             }
+            //Create directory if not exist
+            DirectoryInfo die = Directory.CreateDirectory(archiveLocation);
+            die = Directory.CreateDirectory(fileLocation);
             // Standardize filenames
-            var fileName = dbType + "_DataBase" + fileExt;
-            var fileNameArchive = dbType + "_DataBaseArchive" + DateTime.Now.ToString("yyyy-MM-dd--HH-mm-ss") + fileExt;
-            var fileNameTemp = dbType + "_DBUploaded" + DateTime.Now.ToString("yyyy-MM-dd--HH-mm-ss") + fileExt;
-
-
-            //Return Location&filename strings of Temporary DB--current DB--Archive DB 
-            string saveTempPath = Path.Combine(tempPath, fileNameTemp);
-            //************string savePath = Path.Combine(Server.MapPath(filePath), fileName);
-            string savePath = Path.Combine(HostingEnvironment.MapPath(filePath), fileName);
-            string saveArchivePath = Path.Combine(HostingEnvironment.MapPath(filePathArchive), fileNameArchive);
+            var fileNameArchive = dbTypeFolder + "_Archive_" + attrib + DateTime.Now.ToString("yyyy-MM-dd--HH-mm-ss") + fileExt;
+            var fileName = dbTypeFolder + "_" + attrib + fileExt;
+            string saveArchivePath = Path.Combine(archiveLocation, fileNameArchive);
+            string savePath = Path.Combine(fileLocation, fileName);
             //Assign Global Variables Archive and Main Database file
-            this.uploadFileArchivePath = saveArchivePath;
-            this.uploadFilePath = savePath;
+            ///////////this.archiveLocation = saveArchivePath;
+            /////////this.fileLocation = savePath;
 
-            string[] filePaths = { saveArchivePath, savePath, saveTempPath };
+            string[] filePaths = { saveArchivePath, savePath };
             return filePaths;
         }
 
         public string[] AssignImageFileSavePaths(string dbType, string fileExt)
         {
-            /*  assumed:  
-             *     dbType does not include '/'
-             *     a folder named *dbType* exists
-             *     File must be .jpg...
-             *     
-             *  not accounted for: 
-             *     what to do with "new" or "undefined" dbType (undefined drops into route of filePath)
-             *     error messages
-            */
+            string[] names = AssignDBFileSavePaths(dbType, "images", fileExt);
 
-            // Set Paths
-            string tempPath = Path.GetTempPath();
-            string filePath = "~/DataFolder/";
-            string filePathArchive = filePath + "Archive/";
-            if (!(dbType == null || dbType == ""))
-            {
-                filePath += dbType + "/";
-                filePathArchive += dbType + "/";
-                //TODO: create folder if doesnt exist
-            }
-            // Standardize filenames
-            var fileName = dbType + "_DataBase" + fileExt;
-            var fileNameArchive = dbType + "_DataBaseArchive" + DateTime.Now.ToString("yyyy-MM-dd--HH-mm-ss") + fileExt;
-            var fileNameTemp = dbType + "_DBUploaded" + DateTime.Now.ToString("yyyy-MM-dd--HH-mm-ss") + fileExt;
-
-
-            //Return Location&filename strings of Temporary DB--current DB--Archive DB 
-            string saveTempPath = Path.Combine(tempPath, fileNameTemp);
-            string savePath = Path.Combine(Server.MapPath(filePath), fileName);
-            string saveArchivePath = Path.Combine(Server.MapPath(filePathArchive), fileNameArchive);
-            //Assign Global Variables Archive and Main Database file
-            this.uploadFileArchivePath = saveArchivePath;
-            this.uploadFilePath = savePath;
-
-            string[] filePaths = { saveArchivePath, savePath, saveTempPath };
+            string[] filePaths = { names[0], names[1]};
             return filePaths;
         }
 
-        [HttpPost]
-        public Boolean UploadWoodyData(string dbFilePath)
+        public bool UploadWoodyData(string dbFilePath)
         {
             bool uploadSuccess = false;
             string sSheetName = "Sheet1";

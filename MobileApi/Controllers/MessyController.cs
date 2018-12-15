@@ -32,9 +32,19 @@ namespace MobileApi.Controllers
         [HttpPost]
         public ActionResult ButtonPressed(HttpPostedFileBase uploadFile, string dbType)
         {
+
+            string path = "c:/temp/hemp/";
+            UploadController u = new UploadController();
+
+            //u.archiveLocation = "c:/temp/ArchiveMytits/";
+            //u.fileLocation = "c:/temp/";
+            string[] dicks = u.AssignDBFileSavePaths("smolderType", "dixonshit", ".txt");
+            //DirectoryInfo di = Directory.CreateDirectory(path);
+            //di = Directory.CreateDirectory(path+"/sendit/");
+            /*
             HomeController homeController = new HomeController();
             homeController.UploadImages(uploadFile, dbType);
-
+            */
             return RedirectToAction("../Home/Index");
         }
         [HttpGet]
@@ -114,7 +124,7 @@ namespace MobileApi.Controllers
 
             Boolean fileOK = false;
             String path = Server.MapPath("~/UploadedImages/");
-            Label label1=new Label();
+            Label label1 = new Label();
             if (fileUpload.HasFile)
             {
                 String fileExtension =
@@ -149,7 +159,7 @@ namespace MobileApi.Controllers
                 label1.Text = "Cannot accept files of this type.";
             }
 
-                return null;
+            return null;
         }
         [HttpPost]
         public ActionResult Index(HttpPostedFileBase file)

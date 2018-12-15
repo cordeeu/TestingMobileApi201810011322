@@ -37,3 +37,28 @@
     <br>
     <input type="submit" value="Messy-ButtonPressed" />
 }
+<br /><br />
+<div>
+@{
+    List<SelectListItem> listItems = new List<SelectListItem>();
+    listItems.Add(new SelectListItem
+    {
+        Text = "WoodyPlant",
+        Value = "WoodyPlant"
+
+    });
+    listItems.Add(new SelectListItem
+    {
+        Text = "Wetland",
+        Value = "Wetland",
+        Selected = true
+    });
+    listItems.Add(new SelectListItem
+    {
+        Text = "Shells",
+        Value = "Shells"
+    });
+}
+
+@Html.DropDownList("yourDropName", listItems, new { @class = "form-control" })
+    </div>

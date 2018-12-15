@@ -1,0 +1,25 @@
+﻿<div style="margin-bottom:30px">
+    <h2>Mobile Database API</h2>
+    <br /><br />
+    @*using (Html.BeginForm("ButtonPressed", "Messy", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <input type="file" name="uploadFile" />
+            <input type="radio" name="dbType" value="WoodyPlant" />
+            <text>Woody Plant </text>
+            <input type="radio" name="dbType" value="Wetland" />
+            <text>Wetland </text>
+            <br>
+            <input type="submit" value="Messy-ButtonPressed" />
+        }*@
+
+    <br />
+
+    <p>Select Database: <select id="databaseTypes"></select></p>
+    <p>Upload Database File:</p>
+    Select Data File: <input id="uploadFileSelect" type="file" />
+    @*Select Data File: <input id="uploadFileSelect" type="file" name="uploadFile" />*@
+    <button id="proccessBtn">Process</button>
+    <br />
+    <p id="errorMessage" style="color:red"></p>
+    <script src="~/Scripts/messingAround.js"></script>
+</div>
