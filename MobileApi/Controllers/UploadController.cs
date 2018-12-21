@@ -134,7 +134,15 @@ namespace MobileApi.Controllers
             }
             return RedirectToAction("Index");
         }
-
+        [HttpPost]
+        public void UncleButtz(HttpPostedFileBase uploadFile, string dbType)
+        {
+            HttpPostedFileBase nehow = uploadFile;
+            string meout = dbType;
+            int i = 1;
+            MessageBox.Show(meout + "  " + "killmemessagebox" + uploadFile.FileName);
+            //return RedirectToAction("../Home/MEssyAround");
+        }
         [HttpPost]
         public ActionResult UploadFiles(HttpPostedFileBase uploadFile, string dbType)
         {
