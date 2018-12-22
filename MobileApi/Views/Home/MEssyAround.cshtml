@@ -1,69 +1,20 @@
 ﻿<div style="margin-bottom:30px">
     <h2>Mobile Database API</h2>
     <br /><br />
-    @* PREVIOUS WORKING EXAMPLE *@
-    @*using (Html.BeginForm("ButtonPressed", "Messy", FormMethod.Post, new { enctype = "multipart/form-data" }))
-        {
-            <input type="file" name="uploadFile" />
-            <input type="radio" name="dbType" value="WoodyPlant" />
-            <text>Woody Plant </text>
-            <input type="radio" name="dbType" value="Wetland" />
-            <text>Wetland </text>
-            <br>
-            <input type="submit" value="Messy-ButtonPressed" />
-        }*@
-
-
-
 
     <p>Upload Database File:</p>
     <form id="data" method="post" enctype="multipart/form-data">
-    <p>Select Database: <select id="databaseTypes" name="dbType"></select></p>
-        @*<input id="databaseType" type="hidden" name="dbType" value="Bob">
-        <select id="databaseTypes"><option value="meis01">Mehomie01</option></select>
-        <input />*@
+        <p>Select Database: <select id="databaseTypes" name="dbType"></select></p>
         <input id="uploadFile" type="file" name="uploadFile" />
         <button id="formSubmit">Submit</button>
     </form>
-
-
-    @*<button id="proccessBtn">Process Button</button>*@
-
-    @*<form id="godkillmeForm" enctype="multipart/form-data" action="/Upload/UncleButtz" method="post">
-            <input id="file" type="file" name="file"/>
-            <input id="databaseType" name="dbType" type="hidden" value="SueACyde"/>
-            <input type="submit" value="Process"/>
-        </form>*@
-
-    @*<script>
-        $("form#data").submit(function (e) {
-            e.preventDefault();
-            var formData = new FormData(this);
-
-            $.ajax({
-                url: '/Upload/UncleButtz', // the method we are calling
-                type: 'POST',
-                data: formData,
-                success: function (data) {
-                    console.log("we made it to the land of grand")
-                    alert(data)
-                },
-                error: function (data) {
-                    console.log("failme")
-                    alert(data)
-                },
-                cache: false,
-                contentType: false,
-                processData: false
-            });
-        });
-
-    </script>*@
+    <br />
+    <br />
 
     @* ****ERROR MESSAGE HERE**** *@
     <br />
     <br />
     <p id="errorMessage" style="color:red"></p>
 
-</div>
 <script src="~/Scripts/messingAround.js"></script>
+</div>

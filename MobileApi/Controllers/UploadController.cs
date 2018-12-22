@@ -134,13 +134,67 @@ namespace MobileApi.Controllers
             }
             return RedirectToAction("Index");
         }
+
         [HttpPost]
-        public void UncleButtz(HttpPostedFileBase uploadFile, string dbType)
+        public bool UncleButtzBool(HttpPostedFileBase uploadFile, string dbType)
         {
             HttpPostedFileBase nehow = uploadFile;
             string meout = dbType;
             int i = 1;
-            MessageBox.Show(meout + "  " + "killmemessagebox" + uploadFile.FileName);
+            try
+            {
+                MessageBox.Show("dbType: " + meout + "    uploadFile.FileName equals: " + uploadFile.FileName);
+                return true;
+            }
+            catch
+            {
+                MessageBox.Show("catching air. air being failure");
+                return false;
+
+            }
+
+
+            //return RedirectToAction("../Home/MEssyAround");
+        }
+        [HttpPost]
+        public ActionResult UncleButtz(HttpPostedFileBase uploadFile, string dbType)
+        {
+            JsonResult result = new JsonResult();
+            HttpPostedFileBase nehow = uploadFile;
+            string meout = dbType;
+            int i = 1;
+            try
+            {
+                MessageBox.Show("BUTTZ      " + "dbType: " + meout + "    uploadFile.FileName equals: " + uploadFile.FileName);
+                result.Data = "dataSuccess";
+            }
+            catch
+            {
+                result.Data = "dataCatch";
+
+            }
+            //string suckitTra = result.JsonRequestBehavior.ToString();
+            //result.JsonRequestBehavior = 0;
+            //suckitTra = result.JsonRequestBehavior.ToString();
+
+            return result;
+            //return RedirectToAction("../Home/MEssyAround");
+        }
+        [HttpPost]
+        public void UncleButtzz(HttpPostedFileBase uploadFile, string dbType)
+        {
+            HttpPostedFileBase nehow = uploadFile;
+            string meout = dbType;
+            int i = 1;
+            try
+            {
+                MessageBox.Show("BUTTZZ dbType: " + meout + "    uploadFile.FileName equals: " + uploadFile.FileName);
+            }
+            catch
+            {
+                MessageBox.Show("BUTTZZ catching air. air being failure");
+
+            }
             //return RedirectToAction("../Home/MEssyAround");
         }
         [HttpPost]
@@ -282,7 +336,7 @@ namespace MobileApi.Controllers
         {
             string[] names = AssignDBFileSavePaths(dbType, "images", fileExt);
 
-            string[] filePaths = { names[0], names[1]};
+            string[] filePaths = { names[0], names[1] };
             return filePaths;
         }
 

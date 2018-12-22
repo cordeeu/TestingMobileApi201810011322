@@ -14,16 +14,16 @@
         }*@
 
 
-    <p>Select Database: <select id="databaseTypes"></select></p>
 
 
     <p>Upload Database File:</p>
     <form id="data" method="post" enctype="multipart/form-data">
-        <input type="text" name="dbType" value="Bob" />
-        <input type="file" name="uploadFile" />
-        <button>Submit</button>
+        <p>Select Database: <select id="databaseTypes" name="dbType"></select></p>
+        <input id="uploadFile" type="file" name="uploadFile" />
+        <button id="formSubmit">Submit</button>
     </form>
-
+    <br />
+    @*<button id="bringiton">BringItOnAgain</button>*@
 
     @*<button id="proccessBtn">Process Button</button>*@
 
@@ -33,30 +33,30 @@
             <input type="submit" value="Process"/>
         </form>*@
 
-    <script>
-        $("form#data").submit(function (e) {
-            e.preventDefault();
-            var formData = new FormData(this);
+    @*<script>
+            $("form#data").submit(function (e) {
+                e.preventDefault();
+                var formData = new FormData(this);
 
-            $.ajax({
-                url: '/Upload/UncleButtz', // the method we are calling
-                type: 'POST',
-                data: formData,
-                success: function (data) {
-                    console.log("we made it to the land of grand")
-                    alert(data)
-                },
-                error: function (data) {
-                    console.log("failme")
-                    alert(data)
-                },
-                cache: false,
-                contentType: false,
-                processData: false
+                $.ajax({
+                    url: '/Upload/UncleButtz', // the method we are calling
+                    type: 'POST',
+                    data: formData,
+                    success: function (data) {
+                        console.log("we made it to the land of grand")
+                        alert(data)
+                    },
+                    error: function (data) {
+                        console.log("failme")
+                        alert(data)
+                    },
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                });
             });
-        });
 
-    </script>
+        </script>*@
 
     @* ****ERROR MESSAGE HERE**** *@
     <br />
