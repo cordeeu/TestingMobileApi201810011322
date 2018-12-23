@@ -136,27 +136,6 @@ namespace MobileApi.Controllers
         }
 
         [HttpPost]
-        public bool UncleButtzBool(HttpPostedFileBase uploadFile, string dbType)
-        {
-            HttpPostedFileBase nehow = uploadFile;
-            string meout = dbType;
-            int i = 1;
-            try
-            {
-                MessageBox.Show("dbType: " + meout + "    uploadFile.FileName equals: " + uploadFile.FileName);
-                return true;
-            }
-            catch
-            {
-                MessageBox.Show("catching air. air being failure");
-                return false;
-
-            }
-
-
-            //return RedirectToAction("../Home/MEssyAround");
-        }
-        [HttpPost]
         public ActionResult UncleButtz(HttpPostedFileBase uploadFile, string dbType)
         {
             JsonResult result = new JsonResult();
@@ -180,26 +159,11 @@ namespace MobileApi.Controllers
             return result;
             //return RedirectToAction("../Home/MEssyAround");
         }
-        [HttpPost]
-        public void UncleButtzz(HttpPostedFileBase uploadFile, string dbType)
-        {
-            HttpPostedFileBase nehow = uploadFile;
-            string meout = dbType;
-            int i = 1;
-            try
-            {
-                MessageBox.Show("BUTTZZ dbType: " + meout + "    uploadFile.FileName equals: " + uploadFile.FileName);
-            }
-            catch
-            {
-                MessageBox.Show("BUTTZZ catching air. air being failure");
 
-            }
-            //return RedirectToAction("../Home/MEssyAround");
-        }
         [HttpPost]
         public ActionResult UploadFiles(HttpPostedFileBase uploadFile, string dbType)
         {
+            JsonResult result = new JsonResult();
             this.uploadFile = uploadFile;
             bool uploadSuccess = false;
 
@@ -231,7 +195,8 @@ namespace MobileApi.Controllers
                             System.IO.File.Delete(dbFilePaths[0]);
                         }
                         Debug.WriteLine("failed to save or copy upload " + e);
-                        return RedirectToAction("IndexFail");
+                        result.Data = "failed to save or copy upload " + e;
+                        return result;
                     }
                 }
                 else

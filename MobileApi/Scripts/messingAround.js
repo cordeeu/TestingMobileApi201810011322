@@ -1,5 +1,6 @@
 ﻿//var myDatabaseTypes = ["woody", "wetland"];
 var myDatabaseTypes = ["WoodyPlant", "Wetland", "testType01"];
+//var myDatabaseTypes = ["Wetland", "testType01"];
 //var myDatabaseTypes = ["woody"];
 var plantTypeValue = "";
 //var databaseTypes = document.getElementById("databaseTypes");
@@ -45,14 +46,18 @@ $("form#data").submit(function (e) {
 
 //databaseTypes.addEventListener("change", plantTypeChange);
 function plantTypeChange() {
+    var downloadTemplate = document.getElementById("downloadTemplate");
     plantTypeValue = databaseTypes.value;
-    console.log("plantTypeValue changed CANDLELIGHT to: " + plantTypeValue)
+    downloadTemplate.href = "../Datafolder/"+plantTypeValue+"/Template.xlsx";
+    console.log(downloadTemplate)
+    console.log("plantTypeValue changed smankdlight to: " + plantTypeValue)
 }
 
 
 window.onload = function () {
     console.log("window.onload START")
     var databaseTypes = document.getElementById("databaseTypes");
+    var downloadTemplate = document.getElementById("downloadTemplate");
     databaseTypes.addEventListener("change", plantTypeChange);
     for (i = 0; i < databaseTypeList.length; i++) {
         for (k = 0; k < myDatabaseTypes.length; k++) {
@@ -62,6 +67,8 @@ window.onload = function () {
         }
     };
     plantTypeValue = databaseTypes.value;
+    downloadTemplate.href = "../Datafolder/" + plantTypeValue + "/Template.xlsx";
+
     console.log("window.onload END")
 };
 
@@ -87,3 +94,4 @@ function displayErrorMessage(error) {
     }
     console.log("displayErrorMessage (): ..END.." + error)
 }
+
