@@ -202,6 +202,7 @@ namespace MobileApi.Controllers
         {
             this.uploadFile = uploadFile;
             bool uploadSuccess = false;
+            JsonResult result = new JsonResult();
 
             try
             {
@@ -230,15 +231,21 @@ namespace MobileApi.Controllers
                         {
                             System.IO.File.Delete(dbFilePaths[0]);
                         }
-                        Debug.WriteLine("failed to save or copy upload " + e);
-                        return RedirectToAction("IndexFail");
+                        string status = "failed to save or copy upload " + e;
+                        Debug.WriteLine(status);
+                        result.Data = status;
+                        //return RedirectToAction("IndexFail");
+                        return result;
                     }
                 }
                 else
                 {
                     //ERROR Status
-                    this.uploadStatus = "Empty or Incorrect file extension";
-                    return RedirectToAction("IndexFail");
+                    string status = "Empty or Incorrect file extension";
+                    Debug.WriteLine(status);
+                    result.Data = status;
+                    //return RedirectToAction("IndexFail");
+                    return result;
                 }
             }
             catch

@@ -1,0 +1,12 @@
+﻿body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: Arial,Verdana, Geneva, Tahoma, sans-serif;
+}
+
+h4 {
+    background-color: white;
+    text-decoration: underline;
+    color: black;
+    border-bottom-width: thick;
+    /*border-bottom:1px solid black;*/
+}
