@@ -1,5 +1,5 @@
-﻿//var myDatabaseTypes = ["woody", "wetland"];
-var myDatabaseTypes = ["WoodyPlant", "Wetland", "testType01"];
+﻿//var myDatabaseTypes = ["WoodyPlant", "Wetland", "testType01"];
+var myDatabaseTypes = ["WoodyPlant", "Wetland"];
 //var myDatabaseTypes = ["Wetland", "testType01"];
 //var myDatabaseTypes = ["woody"];
 var plantTypeValue = "";
@@ -48,7 +48,7 @@ $("form#data").submit(function (e) {
 function plantTypeChange() {
     var downloadTemplate = document.getElementById("downloadTemplate");
     plantTypeValue = databaseTypes.value;
-    downloadTemplate.href = "../Datafolder/"+plantTypeValue+"/Template.xlsx";
+    downloadTemplate.href = "../Datafolder/" + plantTypeValue + "/Template.xlsx";
     console.log(downloadTemplate)
     console.log("plantTypeValue changed smankdlight to: " + plantTypeValue)
 }
@@ -56,18 +56,23 @@ function plantTypeChange() {
 
 window.onload = function () {
     console.log("window.onload START")
-    var databaseTypes = document.getElementById("databaseTypes");
+    var databaseTypeTemplate = document.getElementById("databaseTypes");
+    databaseTypeTemplate.addEventListener("change", plantTypeChange);
+    var databaseTypes = document.getElementsByClassName("databaseTypes");
+    console.log(databaseTypes);
     var downloadTemplate = document.getElementById("downloadTemplate");
-    databaseTypes.addEventListener("change", plantTypeChange);
-    for (i = 0; i < databaseTypeList.length; i++) {
-        for (k = 0; k < myDatabaseTypes.length; k++) {
-            if (Object.values(databaseTypeList[i]).indexOf(myDatabaseTypes[k]) > -1) {
-                databaseTypes.innerHTML += "<option value=" + databaseTypeList[i].value + ">" + databaseTypeList[i].display + "</option>";
-            }
-        }
+    for (j = 0; j < databaseTypes.length;j++){
+        for (i = 0; i < databaseTypeList.length; i++) {
+            for (k = 0; k < myDatabaseTypes.length; k++) {
+                if (Object.values(databaseTypeList[i]).indexOf(myDatabaseTypes[k]) > -1) {
+                    databaseTypes[j].innerHTML += "<option value=" + databaseTypeList[i].value + ">" + databaseTypeList[i].display + "</option>";
+                };
+            };
+        };
     };
-    plantTypeValue = databaseTypes.value;
+    plantTypeValue = databaseTypeTemplate.value;
     downloadTemplate.href = "../Datafolder/" + plantTypeValue + "/Template.xlsx";
+    //urlExists(downloadTemplate.href)
 
     console.log("window.onload END")
 };
@@ -92,6 +97,22 @@ function displayErrorMessage(error) {
             errorMessage.innerHTML = status + error
             break;
     }
+
+    errorMessage.innerHTML+="<p>TIPS<li>remember this one</li><li>Remember this one </li></p>"
     console.log("displayErrorMessage (): ..END.." + error)
 }
 
+//function urlExists(url, callback) {
+//    var xhr = new XMLHttpRequest();
+//    xhr.onreadystatechange = function () {
+//        if (xhr.readyState === 4) {
+//            callback(xhr.status < 400);
+//        }
+//    };
+//    xhr.open('HEAD', url);
+//    xhr.send();
+//}
+
+//urlExists(someUrl, function (exists) {
+//    console.log('"%s" exists?', someUrl, exists);
+//});
