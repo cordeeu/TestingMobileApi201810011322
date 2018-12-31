@@ -78,8 +78,10 @@ window.onload = function () {
 };
 
 function displayErrorMessage(error) {
-    console.log("displayErrorMessage (): ..START.." + error)
+    //console.log("displayErrorMessage (): ..START.." + error)
     var status = "Status: ";
+    errorMessage.setAttribute("class", "failStatus")
+
     switch (error) {
         case "dataSuccess":
             errorMessage.innerHTML = status + error
@@ -98,8 +100,8 @@ function displayErrorMessage(error) {
             break;
     }
 
-    errorMessage.innerHTML+="<p>TIPS<li>remember this one</li><li>Remember this one </li></p>"
-    console.log("displayErrorMessage (): ..END.." + error)
+    errorMessage.innerHTML += "<p><li text-decoration: underline>TIPS:</li><li>Database uploads must use the template format</li><li>Be sure to delete ALL Empty Rows including trailing Rows</li><li>The plant_imported_id column cannot contain a blank or non-Integer value</li></p > "
+    //console.log("displayErrorMessage (): ..END.." + error)
 }
 
 //function urlExists(url, callback) {

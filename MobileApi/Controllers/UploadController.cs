@@ -174,8 +174,8 @@ namespace MobileApi.Controllers
                 {
                     try
                     {
-                        uploadFile.SaveAs("nonsense"); //create ARCHIVE file
-                        //uploadFile.SaveAs(dbFilePaths[0]); //create ARCHIVE file
+                        //uploadFile.SaveAs("nonsense"); //create ARCHIVE file
+                        uploadFile.SaveAs(dbFilePaths[0]); //create ARCHIVE file
                         switch (dbType)
                         {
                             case "WoodyPlant":
