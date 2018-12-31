@@ -242,15 +242,8 @@ namespace MobileApi.Controllers
                 else
                 {
                     //ERROR Status
-<<<<<<< HEAD
-                    string status = "Empty or Incorrect file extension";
-                    Debug.WriteLine(status);
-                    result.Data = status;
-                    //return RedirectToAction("IndexFail");
-=======
                     this.uploadStatus = "Empty or Incorrect file extension";
                     result.Data = "File Type incorrect";
->>>>>>> b854282037521d8fed227c904cca8a10796892f7
                     return result;
                 }
             }
