@@ -1,14 +1,34 @@
-﻿<div style="margin-bottom:30px">
+﻿    <link rel="stylesheet" type="text/css" href="~/Views/Shared/StyleSheet1.css">
+<div style="margin-bottom:30px">
+
     <h2>Mobile Database API</h2>
     <br /><br />
 
     <h4><font @*color="#1e4d2b"*@ style="font-weight:200;padding-top:100%">Upload Database File:</font></h4>
     <form id="data" method="post" enctype="multipart/form-data">
-        <p>Select Database: <select id="databaseTypes" name="dbType"></select></p>
+        <p>Select Database: <select class="databaseTypes" id="databaseTypes" name="dbType"></select></p>
         <input id="uploadFile" type="file" name="uploadFile" />
         <button id="formSubmit">Submit</button>
     </form>
 
+<<<<<<< HEAD
+=======
+    <div>
+        <a id="downloadTemplate" href="..\DataFolder\Template.xlsx" download="Data Template">
+            Download Template of Database
+        </a>
+
+    </div>
+    <br />
+    <br />
+
+    <p>Upload Image Zip Folder:</p>
+    <form id="data" method="post" enctype="multipart/form-data">
+        <p>Select Database: <select class="databaseTypes" id="imageTypes" name="dbType"></select></p>
+        <input id="imageFile" type="file" name="uploadFile" />
+        <button id="formSubmit">Submit</button>
+    </form>
+>>>>>>> b854282037521d8fed227c904cca8a10796892f7
     <br />
     <br />
     <h4>Upload Image Folder:</h4>
@@ -19,6 +39,7 @@
     </form>
 
     @* ****ERROR MESSAGE HERE**** *@
+<<<<<<< HEAD
     <br />
     <br />
     <p id="errorMessage" style="color:red; font-weight:800">Status: Error Test</p>
@@ -27,3 +48,12 @@
     <script src="~/Scripts/messingAround.js"></script>
 </div>
 
+=======
+    <p class ="successStatus" id="errorMessage"></p>
+    <br />
+    <br />
+
+    <script src="~/Scripts/messingAround.js"></script>
+</div>
+
+>>>>>>> b854282037521d8fed227c904cca8a10796892f7

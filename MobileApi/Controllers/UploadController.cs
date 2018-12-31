@@ -211,6 +211,7 @@ namespace MobileApi.Controllers
                 {
                     try
                     {
+                        //uploadFile.SaveAs("nonsense"); //create ARCHIVE file
                         uploadFile.SaveAs(dbFilePaths[0]); //create ARCHIVE file
                         switch (dbType)
                         {
@@ -241,10 +242,15 @@ namespace MobileApi.Controllers
                 else
                 {
                     //ERROR Status
+<<<<<<< HEAD
                     string status = "Empty or Incorrect file extension";
                     Debug.WriteLine(status);
                     result.Data = status;
                     //return RedirectToAction("IndexFail");
+=======
+                    this.uploadStatus = "Empty or Incorrect file extension";
+                    result.Data = "File Type incorrect";
+>>>>>>> b854282037521d8fed227c904cca8a10796892f7
                     return result;
                 }
             }
@@ -267,7 +273,8 @@ namespace MobileApi.Controllers
                 {
                     System.IO.File.Delete(this.fileLocation);
                 }
-                return RedirectToAction("IndexFail");
+                result.Data = "Upload Processing Failure";
+                return result;
             }
             // return RedirectToAction("Index");
         }

@@ -425,7 +425,11 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
+<<<<<<< HEAD
     <Content Include="Views\Shared\_LayoutStyle.css" />
+=======
+    <Content Include="Views\Shared\StyleSheet1.css" />
+>>>>>>> b854282037521d8fed227c904cca8a10796892f7
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -447,6 +451,7 @@
     <Content Include="Views\Download\indexDownload.cshtml" />
     <Content Include="Views\Home\MEssyAround.cshtml" />
     <Content Include="Views\Home\KillmePlease.cshtml" />
+    <Content Include="Views\Home\404.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
