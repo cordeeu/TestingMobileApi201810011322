@@ -52,27 +52,27 @@ function plantTypeChange() {
 }
 
 
-window.onload = function () {
-    console.log("window.onload STARTnFart")
-    var databaseTypeTemplate = document.getElementById("databaseTypes");
-    databaseTypeTemplate.addEventListener("change", plantTypeChange);
-    var databaseTypes = document.getElementsByClassName("databaseTypes");
-    console.log(databaseTypes);
-    var downloadTemplate = document.getElementById("downloadTemplate");
-    for (j = 0; j < databaseTypes.length; j++) {
-        for (i = 0; i < databaseTypeList.length; i++) {
-            for (k = 0; k < myDatabaseTypes.length; k++) {
-                if (Object.values(databaseTypeList[i]).indexOf(myDatabaseTypes[k]) > -1) {
-                    databaseTypes[j].innerHTML += "<option value=" + databaseTypeList[i].value + ">" + databaseTypeList[i].display + "</option>";
-                };
-            };
-        };
-    };
-    plantTypeValue = databaseTypeTemplate.value;
-    downloadTemplate.href = "../Datafolder/" + plantTypeValue + "/Template.xlsx";
-    //urlExists(downloadTemplate.href)
-    console.log("window.onload END")
-};
+//window.onload = function () {
+//    console.log("window.onload STARTnShart")
+//    var databaseTypeTemplate = document.getElementById("databaseTypes");
+//    databaseTypeTemplate.addEventListener("change", plantTypeChange);
+//    var databaseTypes = document.getElementsByClassName("databaseTypes");
+//    console.log(databaseTypes);
+//    var downloadTemplate = document.getElementById("downloadTemplate");
+//    for (j = 0; j < databaseTypes.length; j++) {
+//        for (i = 0; i < databaseTypeList.length; i++) {
+//            for (k = 0; k < myDatabaseTypes.length; k++) {
+//                if (Object.values(databaseTypeList[i]).indexOf(myDatabaseTypes[k]) > -1) {
+//                    databaseTypes[j].innerHTML += "<option value=" + databaseTypeList[i].value + ">" + databaseTypeList[i].display + "</option>";
+//                };
+//            };
+//        };
+//    };
+//    plantTypeValue = databaseTypeTemplate.value;
+//    downloadTemplate.href = "../Datafolder/" + plantTypeValue + "/Template.xlsx";
+//    //urlExists(downloadTemplate.href)
+//    console.log("window.onload ENDnBend")
+//};
 
 function displayErrorMessage(error) {
     //console.log("displayErrorMessage (): ..START.." + error)
