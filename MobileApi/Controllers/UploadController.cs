@@ -36,7 +36,7 @@ namespace MobileApi.Controllers
         {
             //Create routeSavePath and routeArchivePath if not exist
             string routeSavePath = HostingEnvironment.MapPath("~/DataFolder/");
-            string routeArchivePath = routeSavePath + "Archive/";
+            string routeArchivePath = routeSavePath + "Archive\\";
             DirectoryInfo di = Directory.CreateDirectory(routeSavePath);
             di = Directory.CreateDirectory(routeArchivePath);
             //Assign Default Variables
@@ -255,8 +255,10 @@ namespace MobileApi.Controllers
             {
                 //SuccessMessage: return a successful dude
                 this.uploadStatus = "Upload Successful";
-                System.IO.File.Copy(fileLocation, archiveLocation, true);
-                return RedirectToAction("IndexSuccess");
+                //System.IO.File.Copy(fileLocation, archiveLocation, true);
+                System.IO.File.Copy(archiveLocation, fileLocation, true);
+                result.Data = "Upload Successful";
+                return result;
 
             }
             else
@@ -320,8 +322,8 @@ namespace MobileApi.Controllers
             // Append with DataBase Type Paths
             if (!(dbTypeFolder == null || dbTypeFolder == ""))
             {
-                this.archiveLocation += dbTypeFolder + "/";
-                this.fileLocation += dbTypeFolder + "/";
+                this.archiveLocation += dbTypeFolder + "\\";
+                this.fileLocation += dbTypeFolder + "\\";
             }
             //Create directory if not exist
             DirectoryInfo die = Directory.CreateDirectory(archiveLocation);
@@ -332,8 +334,8 @@ namespace MobileApi.Controllers
             string saveArchivePath = Path.Combine(archiveLocation, fileNameArchive);
             string savePath = Path.Combine(fileLocation, fileName);
             //Assign Global Variables Archive and Main Database file
-            ///////////this.archiveLocation = saveArchivePath;
-            /////////this.fileLocation = savePath;
+            this.archiveLocation = saveArchivePath;
+            this.fileLocation = savePath;
 
             string[] filePaths = { saveArchivePath, savePath };
             return filePaths;

@@ -36,12 +36,12 @@ $("form#data").submit(function (e) {
             //alert(data)
             //window.location.replace('messyaround')
             document.getElementById("uploadFile").value = "";
-            displayErrorMessage("Successful");
+            displayStatusMessage("Successful");
         },
         error: function (data) {
             console.log("failme")
             //alert(data)
-            displayErrorMessage("ajaxFail")
+            displayStatusMessage("ajaxFail")
         },
         cache: false,
         contentType: false,
@@ -73,7 +73,7 @@ window.onload = function () {
     //document.getElementById("databaseType").value = plantTypeValue;
 };
 
-function displayErrorMessage(error) {
+function displayStatusMessage(error) {
     console.log("error" + error)
     switch (error) {
         case "woody":

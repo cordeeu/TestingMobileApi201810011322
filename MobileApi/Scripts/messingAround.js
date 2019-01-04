@@ -1,5 +1,5 @@
-//var myDatabaseTypes = ["woody", "wetland"];
-var myDatabaseTypes = ["WoodyPlant", "Wetland", "testType01"];
+var myDatabaseTypes = ["woody", "wetland"];
+//var myDatabaseTypes = ["WoodyPlant", "Wetland", "testType01"];
 //var myDatabaseTypes = ["woody"];
 var plantTypeValue = "";
 //var databaseTypes = document.getElementById("databaseTypes");
@@ -30,10 +30,10 @@ $("form#data").submit(function (e) {
         data: formData,
         success: function (data) {
             document.getElementById("uploadFile").value = "";
-            displayErrorMessage(data);
+            displayStatusMessage(data);
         },
         error: function (data) {
-            displayErrorMessage("ajaxFail")
+            displayStatusMessage("ajaxFail")
         },
         cache: false,
         contentType: false,
@@ -74,7 +74,7 @@ function plantTypeChange() {
 //    console.log("window.onload ENDnBend")
 //};
 
-function displayErrorMessage(error) {
+function displayStatusMessage(error) {
     //console.log("displayErrorMessage (): ..START.." + error)
     var status = "Status: ";
     errorMessage.setAttribute("class", "failStatus")
