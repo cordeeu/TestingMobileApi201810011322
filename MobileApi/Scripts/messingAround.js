@@ -1,8 +1,61 @@
-var myDatabaseTypes = ["woody", "wetland"];
-//var myDatabaseTypes = ["WoodyPlant", "Wetland", "testType01"];
-//var myDatabaseTypes = ["woody"];
+var myDatabaseTypes = ["WoodyPlant", "Wetland", "testType01"];
 var plantTypeValue = "";
-//var databaseTypes = document.getElementById("databaseTypes");
+var statusMessage;
+statusMessage = document.getElementById("resultMessage");
+window.onload = function () {
+    console.log("window.onload START")
+    //statusMessage = document.getElementById("resultMessage");
+    console.log(statusMessage);
+
+    var databaseTypeTemplate = document.getElementById("databaseTypes");
+    databaseTypeTemplate.addEventListener("change", plantTypeChange);
+    var databaseTypes = document.getElementsByClassName("databaseTypes");
+
+    var formButton = document.getElementById("formSubmit");
+    formButton.addEventListener("click", dataFormSubmit);
+    console.log(formButton);
+
+    console.log(databaseTypes);
+    var downloadTemplate = document.getElementById("downloadTemplate");
+    for (j = 0; j < databaseTypes.length; j++) {
+        for (i = 0; i < databaseTypeList.length; i++) {
+            for (k = 0; k < myDatabaseTypes.length; k++) {
+                if (Object.values(databaseTypeList[i]).indexOf(myDatabaseTypes[k]) > -1) {
+                    databaseTypes[j].innerHTML += "<option value=" + databaseTypeList[i].value + ">" + databaseTypeList[i].display + "</option>";
+                };
+            };
+        };
+    };
+    plantTypeValue = databaseTypeTemplate.value;
+    downloadTemplate.href = "../Datafolder/" + plantTypeValue + "/Template.xlsx";
+    //urlExists(downloadTemplate.href)
+    console.log("window.onload END")
+};
+
+//TESTING**********************
+var statusResultMessage = [
+    {
+        "status": "successStatus",
+        "message": "Unknown Success",
+    }
+];
+console.log(statusResultMessage)
+
+var formTestButton = document.getElementById("formImageSubmit");
+formTestButton.addEventListener("click", testingSubmit);
+function testingSubmit() {
+    statusMessage.setAttribute("class", statusResultMessage[0].status)
+    console.log(statusResultMessage.status)
+    console.log(statusResultMessage.message)
+    statusMessage.innerHTML = "Status Test: "
+    statusMessage.innerHTML += statusResultMessage[0].message;
+    console.log(statusMessage)
+    console.log("weinittowinit")
+}
+
+
+//TESTING**********************
+
 var databaseTypeList = [
     {
         "value": "WoodyPlant",
@@ -17,32 +70,32 @@ var databaseTypeList = [
         "display": "Test type 01",
     }
 ];
-var errorMessage = document.getElementById("errorMessage");
-
-$("form#data").submit(function (e) {
+//var statusMessage = document.getElementById("errorMessage");
+function dataFormSubmit() {
     console.log("$FORM#DATA_START")
-    e.preventDefault();
+    $("form#data").submit(function (e) {
+        e.preventDefault();
 
-    var formData = new FormData(this);
-    $.ajax({
-        url: '/Upload/UploadFiles', // the method we are calling
-        type: 'POST',
-        data: formData,
-        success: function (data) {
-            document.getElementById("uploadFile").value = "";
-            displayStatusMessage(data);
-        },
-        error: function (data) {
-            displayStatusMessage("ajaxFail")
-        },
-        cache: false,
-        contentType: false,
-        processData: false
+        var formData = new FormData(this);
+        $.ajax({
+            url: '/Upload/UploadFiles', // the method we are calling
+            type: 'POST',
+            data: formData,
+            success: function (data) {
+                document.getElementById("uploadFile").value = "";
+                displayStatusMessage(data);
+                //testingSubmit();
+            },
+            error: function (data) {
+                displayStatusMessage("ajaxFail")
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+        console.log("$FORM#DATA_END")
     });
-    console.log("$FORM#DATA_END")
-});
-
-
+}
 //databaseTypes.addEventListener("change", plantTypeChange);
 function plantTypeChange() {
     plantTypeValue = databaseTypes.value;
@@ -52,52 +105,31 @@ function plantTypeChange() {
 }
 
 
-//window.onload = function () {
-//    console.log("window.onload STARTnShart")
-//    var databaseTypeTemplate = document.getElementById("databaseTypes");
-//    databaseTypeTemplate.addEventListener("change", plantTypeChange);
-//    var databaseTypes = document.getElementsByClassName("databaseTypes");
-//    console.log(databaseTypes);
-//    var downloadTemplate = document.getElementById("downloadTemplate");
-//    for (j = 0; j < databaseTypes.length; j++) {
-//        for (i = 0; i < databaseTypeList.length; i++) {
-//            for (k = 0; k < myDatabaseTypes.length; k++) {
-//                if (Object.values(databaseTypeList[i]).indexOf(myDatabaseTypes[k]) > -1) {
-//                    databaseTypes[j].innerHTML += "<option value=" + databaseTypeList[i].value + ">" + databaseTypeList[i].display + "</option>";
-//                };
-//            };
-//        };
-//    };
-//    plantTypeValue = databaseTypeTemplate.value;
-//    downloadTemplate.href = "../Datafolder/" + plantTypeValue + "/Template.xlsx";
-//    //urlExists(downloadTemplate.href)
-//    console.log("window.onload ENDnBend")
-//};
 
 function displayStatusMessage(error) {
     //console.log("displayErrorMessage (): ..START.." + error)
     var status = "Status: ";
-    errorMessage.setAttribute("class", "failStatus")
+    statusMessage.setAttribute("class", "failStatus")
 
     switch (error) {
         case "dataSuccess":
-            errorMessage.innerHTML = status + error
+            statusMessage.innerHTML = status + error
             break;
         case "dataCatch":
-            errorMessage.innerHTML = status + error
+            statusMessage.innerHTML = status + error
             break;
         case "Successful":
-            errorMessage.innerHTML = status + error
+            statusMessage.innerHTML = status + error
             break;
         case "ajaxFail":
-            errorMessage.innerHTML = status + error
+            statusMessage.innerHTML = status + error
             break;
         default:
-            errorMessage.innerHTML = status + error
+            statusMessage.innerHTML = status + error
             break;
     }
 
-    errorMessage.innerHTML += "<p><li text-decoration: underline>TIPS:</li><li>Database uploads must use the template format</li><li>Be sure to delete ALL Empty Rows including trailing Rows</li><li>The plant_imported_id column cannot contain a blank or non-Integer value</li></p > "
+    statusMessage.innerHTML += "<p><li text-decoration: underline>TIPS:</li><li>Database uploads must use the template format</li><li>Be sure to delete ALL Empty Rows including trailing Rows</li><li>The plant_imported_id column cannot contain a blank or non-Integer value</li></p > "
     //console.log("displayErrorMessage (): ..END.." + error)
 }
 

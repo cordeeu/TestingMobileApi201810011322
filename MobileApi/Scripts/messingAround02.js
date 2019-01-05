@@ -19,7 +19,7 @@ var databaseTypeList = [
     }
 ];
 //var uploadFileSelect = document.getElementById("uploadFileSelect");
-var errorMessage = document.getElementById("errorMessage");
+var statusMessage = document.getElementById("errorMessage");
 //var form = document.getElementById("godkillmeForm"); // You need to use standard javascript object here
 
 $("form#data").submit(function (e) {
@@ -77,19 +77,19 @@ function displayStatusMessage(error) {
     console.log("error" + error)
     switch (error) {
         case "woody":
-            errorMessage.innerHTML = "ERROR: you messed up, woody: " + error
+            statusMessage.innerHTML = "ERROR: you messed up, woody: " + error
             break;
         case "wetland":
-            errorMessage.innerHTML = "you messed up, wetlandy: " + error
+            statusMessage.innerHTML = "you messed up, wetlandy: " + error
             break;
         case "Successful":
-            errorMessage.innerHTML = error
+            statusMessage.innerHTML = error
             break;
         case "ajaxFail":
-            errorMessage.innerHTML = "ERROR: Processing Error: " + error
+            statusMessage.innerHTML = "ERROR: Processing Error: " + error
             break;
         default:
-            errorMessage.innerHTML = "Default ERROR: Processing Error: " + error
+            statusMessage.innerHTML = "Default ERROR: Processing Error: " + error
             break;
     }
 }
