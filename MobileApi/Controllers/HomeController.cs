@@ -57,6 +57,12 @@ namespace MobileApi.Controllers
             // System.Web.Mvc.Controller
             return View();
         }
+        public ActionResult RevertTesting()
+        {
+            ViewBag.Title = "BackUp";
+            // System.Web.Mvc.Controller
+            return View();
+        }
 
     }
 }

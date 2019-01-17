@@ -1,4 +1,5 @@
-var myDatabaseTypes = ["WoodyPlant", "Wetland", "testType01"];
+//var myDatabaseTypes = ["WoodyPlant", "Wetland", "testType01"];
+var myDatabaseTypes = ["WoodyPlant", "testType01"];
 var plantTypeValue = "";
 var statusMessage;
 statusMessage = document.getElementById("resultMessage");

@@ -384,6 +384,7 @@
     <None Include="Properties\PublishProfiles\MobileApiPublish.pubxml" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
+    <Content Include="Scripts\revertTesting.js" />
     <Content Include="Scripts\messingAround_please.js" />
     <Content Include="Scripts\messingAround02.js" />
     <Content Include="Scripts\messingAround.js" />
@@ -449,6 +450,7 @@
     <Content Include="Views\Home\MEssyAround.cshtml" />
     <Content Include="Views\Home\KillmePlease.cshtml" />
     <Content Include="Views\Home\404.cshtml" />
+    <Content Include="Views\Home\RevertTesting.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

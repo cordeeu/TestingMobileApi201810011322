@@ -1,10 +1,11 @@
 ﻿<div style="margin-bottom:30px">
     @*<script src="~/Scripts/messingAround_please.js"></script>*@
     <h2>Mobile Database API</h2>
+    <h3>Revert Testing</h3>
     <br /><br />
     <h4>Upload Database File:</h4>
     <form id="data" method="post" enctype="multipart/form-data">
-        <p>Select Database: <select class="databaseTypes" id="databaseTypes" name="dbType"></select></p>
+        <p>Select Database: <select class="databaseTypes" id="databaseTypes" name="dbType"><option value="Woody">Woody</option></select></p>
         <input id="uploadFile" type="file" name="uploadFile" />
         <button id="formSubmit">Submit</button>
     </form>
@@ -14,12 +15,7 @@
         </a>
     </div>
     <br /><br />
-    <p>Upload Image Zip Folder:</p>
-    <form id="dataImage" method="post" enctype="multipart/form-data">
-        <p>Select Database: <select class="databaseTypes" id="imageTypes" name="dbType"></select></p>
-        <input id="imageFile" type="file" name="uploadFile" />
-        <button id="formImageSubmit">Submit</button>
-    </form>
+    
     @* ****ERROR MESSAGE HERE**** *@
     <br />
     <br />
@@ -28,4 +24,4 @@
     <br />
 
 </div>
-<script src="~/Scripts/messingAround.js"></script>
+<script src="~/Scripts/revertTesting.js"></script>

@@ -30,12 +30,13 @@ namespace MobileApi.Controllers
         private string archiveLocation;
         private string uploadWhat;// TODO: indicate what is being uploaded.....
         private List<string> ImageNames;
+        private string routeSavePath;
 
         //public string UploadStatus { get => uploadStatus; }
         public UploadController()
         {
             //Create routeSavePath and routeArchivePath if not exist
-            string routeSavePath = HostingEnvironment.MapPath("~/DataFolder/");
+            this.routeSavePath = HostingEnvironment.MapPath("~/DataFolder/");
             string routeArchivePath = routeSavePath + "Archive\\";
             DirectoryInfo di = Directory.CreateDirectory(routeSavePath);
             di = Directory.CreateDirectory(routeArchivePath);
@@ -135,68 +136,6 @@ namespace MobileApi.Controllers
             return RedirectToAction("Index");
         }
 
-        [HttpPost]
-        public bool UncleButtzBool(HttpPostedFileBase uploadFile, string dbType)
-        {
-            HttpPostedFileBase nehow = uploadFile;
-            string meout = dbType;
-            int i = 1;
-            try
-            {
-                MessageBox.Show("dbType: " + meout + "    uploadFile.FileName equals: " + uploadFile.FileName);
-                return true;
-            }
-            catch
-            {
-                MessageBox.Show("catching air. air being failure");
-                return false;
-
-            }
-
-
-            //return RedirectToAction("../Home/MEssyAround");
-        }
-        [HttpPost]
-        public ActionResult UncleButtz(HttpPostedFileBase uploadFile, string dbType)
-        {
-            JsonResult result = new JsonResult();
-            HttpPostedFileBase nehow = uploadFile;
-            string meout = dbType;
-            int i = 1;
-            try
-            {
-                MessageBox.Show("BUTTZ      " + "dbType: " + meout + "    uploadFile.FileName equals: " + uploadFile.FileName);
-                result.Data = "dataSuccess";
-            }
-            catch
-            {
-                result.Data = "dataCatch";
-
-            }
-            //string suckitTra = result.JsonRequestBehavior.ToString();
-            //result.JsonRequestBehavior = 0;
-            //suckitTra = result.JsonRequestBehavior.ToString();
-
-            return result;
-            //return RedirectToAction("../Home/MEssyAround");
-        }
-        [HttpPost]
-        public void UncleButtzz(HttpPostedFileBase uploadFile, string dbType)
-        {
-            HttpPostedFileBase nehow = uploadFile;
-            string meout = dbType;
-            int i = 1;
-            try
-            {
-                MessageBox.Show("BUTTZZ dbType: " + meout + "    uploadFile.FileName equals: " + uploadFile.FileName);
-            }
-            catch
-            {
-                MessageBox.Show("BUTTZZ catching air. air being failure");
-
-            }
-            //return RedirectToAction("../Home/MEssyAround");
-        }
         [HttpPost]
         public ActionResult UploadFiles(HttpPostedFileBase uploadFile, string dbType)
         {
@@ -523,6 +462,23 @@ namespace MobileApi.Controllers
             int i = 1;
 
             return RedirectToAction("IndexSuccess");
+        }
+        [HttpPost]
+        public ActionResult GetPreviousDataFiles()
+        //public ActionResult GetPreviousDataFiles(string dbType)
+        {
+            string path = routeSavePath +"Archive"+"\\WoodyPlant";
+            JsonResult result = new JsonResult();
+            DirectoryInfo d = new DirectoryInfo(path);
+            FileInfo[] Files = d.GetFiles("*.xlsx");
+            string str = "";
+            foreach (FileInfo file in Files)
+            {
+                str+="{\"name\":\""+file.Name+"\",\"";
+            }
+            result.Data = str;
+            return result;
+
         }
     }
 }
