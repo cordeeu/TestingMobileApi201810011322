@@ -464,21 +464,45 @@ namespace MobileApi.Controllers
             return RedirectToAction("IndexSuccess");
         }
         [HttpPost]
-        public ActionResult GetPreviousDataFiles()
+        public ActionResult GetPreviousDataFiles(string dbType)
         //public ActionResult GetPreviousDataFiles(string dbType)
         {
+            string suckit = dbType;
             string path = routeSavePath +"Archive"+"\\WoodyPlant";
+            JsonResult result = new JsonResult();
+            DirectoryInfo d = new DirectoryInfo(path);
+            FileInfo[] Files = d.GetFiles("*.xlsx");
+            string str = "[";
+            foreach (FileInfo file in Files)
+            {
+                str += "{\"name\":\"" + file.Name + "\",";
+                str += "\"date\":\"" + file.CreationTime + "\"},";
+            }
+            str += "]";
+            result.Data = "killmeNOWchristonastick";
+            //MessageBox.Show(result.Data.ToString());
+            result.Data = str;
+
+            return result;
+
+        }
+        [HttpPost]
+        public void GetPreviousDataFilesVoid()
+        //public ActionResult GetPreviousDataFiles(string dbType)
+        {
+            string path = routeSavePath + "Archive" + "\\WoodyPlant";
             JsonResult result = new JsonResult();
             DirectoryInfo d = new DirectoryInfo(path);
             FileInfo[] Files = d.GetFiles("*.xlsx");
             string str = "";
             foreach (FileInfo file in Files)
             {
-                str+="{\"name\":\""+file.Name+"\",\"";
+                str += "{\"name\":\"" + file.Name + "\",";
+                str += "\"date\":\""+file.CreationTime+"\"}";
             }
             result.Data = str;
-            return result;
-
+            result.Data = "killmeNOW";
+            MessageBox.Show("killmeVoid");
         }
     }
 }

@@ -1,5 +1,5 @@
-//var myDatabaseTypes = ["WoodyPlant", "Wetland", "testType01"];
-var myDatabaseTypes = ["WoodyPlant", "testType01"];
+var myDatabaseTypes = ["WoodyPlant", "Wetland", "testType01"];
+//var myDatabaseTypes = ["WoodyPlant", "testType01"];
 var plantTypeValue = "";
 var statusMessage;
 statusMessage = document.getElementById("resultMessage");
@@ -69,7 +69,7 @@ var databaseTypeList = [
     {
         "value": "testType01",
         "display": "Test type 01",
-    }
+    },
 ];
 //var statusMessage = document.getElementById("errorMessage");
 function dataFormSubmit() {
@@ -83,12 +83,16 @@ function dataFormSubmit() {
             type: 'POST',
             data: formData,
             success: function (data) {
+
                 document.getElementById("uploadFile").value = "";
+                console.log("TiMESuck: " + new Date().toUTCString())
+                console.log(data)
                 displayStatusMessage(data);
                 //testingSubmit();
             },
             error: function (data) {
                 displayStatusMessage("ajaxFail")
+                console.log("TiMEfail: " + new Date().toUTCString())
             },
             cache: false,
             contentType: false,

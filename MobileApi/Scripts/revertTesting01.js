@@ -15,7 +15,7 @@ var aValue = [
     {
         "value": "testType01",
         "display": "Test type 01",
-    },
+    }
 ];
 
 window.onload = function () {
@@ -26,7 +26,6 @@ window.onload = function () {
 }
 //var statusMessage = document.getElementById("errorMessage");
 function dataFormSubmit() {
-    var killmerhonda = "1515";
     console.log("$FORM#DATA_START00010101")
     $("form#data").submit(function (e) {
         e.preventDefault();
@@ -34,14 +33,13 @@ function dataFormSubmit() {
 
         var formData = new FormData(this);
         $.ajax({
-            //url: '/Upload/UploadFiles', // the method we are calling
             url: '/Upload/GetPreviousDataFiles', // the method we are calling
-            type: 'POST',
+            type: 'GET',
             data: formData,
-            //dataType: 'json',
+            dataType: 'json',
             success: function (data) {
+                console.log("success")
                 //displayStatusMessage(data);
-                console.log("SUCCESS: " + killmerhonda + new Date().toUTCString())
                 console.log(data);
                 //testingSubmit();
             },
@@ -49,7 +47,7 @@ function dataFormSubmit() {
                 console.log("error in subbing")
                 console.log(data);
                 killMeSenseless(data);
-                console.log("TiMESTAMP: " + killmerhonda + new Date().toUTCString())
+                console.log("TiMESTAMP: " + new Date().toUTCString())
             },
             cache: false,
             contentType: false,

@@ -384,6 +384,7 @@
     <None Include="Properties\PublishProfiles\MobileApiPublish.pubxml" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
+    <Content Include="Scripts\revertTesting01.js" />
     <Content Include="Scripts\revertTesting.js" />
     <Content Include="Scripts\messingAround_please.js" />
     <Content Include="Scripts\messingAround02.js" />
