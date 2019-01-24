@@ -468,7 +468,8 @@ namespace MobileApi.Controllers
         //public ActionResult GetPreviousDataFiles(string dbType)
         {
             string suckit = dbType;
-            string path = routeSavePath +"Archive"+"\\WoodyPlant";
+            dbType = "WoodyPlant";
+            string path = routeSavePath +"Archive"+"\\"+dbType;
             JsonResult result = new JsonResult();
             DirectoryInfo d = new DirectoryInfo(path);
             FileInfo[] Files = d.GetFiles("*.xlsx");
@@ -479,8 +480,7 @@ namespace MobileApi.Controllers
                 str += "\"date\":\"" + file.CreationTime + "\"},";
             }
             str += "]";
-            result.Data = "killmeNOWchristonastick";
-            //MessageBox.Show(result.Data.ToString());
+            //MessageBox.Show(suckit);
             result.Data = str;
 
             return result;
