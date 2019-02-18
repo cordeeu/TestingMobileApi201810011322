@@ -468,7 +468,7 @@ namespace MobileApi.Controllers
         //public ActionResult GetPreviousDataFiles(string dbType)
         {
             string suckit = dbType;
-            dbType = "WoodyPlant";
+            //dbType = "WoodyPlant";
             string path = routeSavePath +"Archive"+"\\"+dbType;
             JsonResult result = new JsonResult();
             DirectoryInfo d = new DirectoryInfo(path);
@@ -480,7 +480,7 @@ namespace MobileApi.Controllers
                 str += "\"date\":\"" + file.CreationTime + "\"},";
             }
             str += "]";
-            //MessageBox.Show(suckit);
+            MessageBox.Show(suckit);
             result.Data = str;
 
             return result;
@@ -502,6 +502,19 @@ namespace MobileApi.Controllers
             }
             result.Data = str;
             result.Data = "killmeNOW";
+            MessageBox.Show("killmeVoid");
+        }
+        [HttpPost]
+        public ActionResult testingDuplicatingJS()
+        {
+            JsonResult result = new JsonResult();
+
+            MessageBox.Show("killmeVoid");
+            return result;
+        }
+        [HttpPost]
+        public void testingDuplicatingJSVoid()
+        {
             MessageBox.Show("killmeVoid");
         }
     }

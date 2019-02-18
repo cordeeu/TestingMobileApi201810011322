@@ -1,6 +1,6 @@
-//var myDatabaseTypes = ["WoodyPlant", "Wetland", "testType01"];
+var myDatabaseTypes = ["WoodyPlant", "Wetland", "testType01"];
 //var myDatabaseTypes = ["WoodyPlant", "testType01"];
-var myDatabaseTypes = ["testType01", "WoodyPlant"];
+//var myDatabaseTypes = ["testType01", "WoodyPlant"];
 var plantTypeValue = "";
 var statusMessage;
 var dbTypeSelected;
@@ -26,22 +26,37 @@ var databaseTypeList = [
     },
 ];
 
-
-
 window.onload = function () {
     //oldDataFiles = document.getElementsByClassName("oldDataFiles");
+    showOldDataFiles();
+
+    //$("form#data").submit(runSubmit());
+    $("form#data").submit(function (e) {
+        e.preventDefault();
+
+        var formData = new FormData(this);
+        $.ajax({
+            //url: '/Upload/UploadFiles', // the method we are calling
+            url: '/Upload/GetPreviousDataFiles', // the method we are calling
+            type: 'POST',
+            data: formData,
+            dataType: 'json',
+            success: function () { console.log("SUCCESS: " + new Date().toUTCString()) },
+            error: function () { console.log("erroring in subbing") },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+        console.log("ENDOFWATCH:" + new Date().toUTCString())
+    });
+
     console.log("oldDataFiles")
     console.log(oldDataFiles)
 
-    formButton = document.getElementById("formSubmit");
-    formButton.addEventListener("click", dataFormSubmit);
+    //formButton = document.getElementById("formSubmit");
+    //formButton.addEventListener("click", dataFormSubmit);
+
     var databaseTypes = document.getElementsByClassName("databaseTypes");
-
-    console.log("click FOrm");
-    console.log(formButton);
-
-
-
     for (j = 0; j < databaseTypes.length; j++) {
         for (i = 0; i < databaseTypeList.length; i++) {
             for (k = 0; k < myDatabaseTypes.length; k++) {
@@ -52,42 +67,10 @@ window.onload = function () {
         };
     };
 
-    console
     dbTypeSelected = document.getElementById("dbTypeID");
     console.log(dbTypeSelected.value)
     console.log(dbTypeSelected)
     console.log(oldDataFiles)
-    var smallsvile = "woody";
-    $.ajax({
-        //url: '/Upload/UploadFiles', // the method we are calling
-        url: '/Upload/GetPreviousDataFiles', // the method we are calling
-        type: 'POST',
-        //data: dbType = dbTypeSelected.value,
-        contentType: "application/json; charset=utf-8",
-        data: {dbType:smallsvile},
-        dataType: 'json',
-        success: function (bob) {
-            //displayStatusMessage(data);
-            //console.log("bob");
-            //console.log(bob);
-            //oldDataFilesList = bob;
-            //console.log("oldDataFilesList");
-            console.log(oldDataFilesList);
-
-            showOldDataFiles();
-            //testingSubmit();
-        },
-        error: function (data) {
-            console.log("error in subbing")
-            console.log(data);
-            killMeSenseless(data);
-            console.log("TiMESTAMP: " + killmerhonda + new Date().toUTCString())
-        },
-        cache: false,
-        contentType: false,
-        processData: false
-    });
-
 }
 
 function showOldDataFiles() {
@@ -103,47 +86,25 @@ function showOldDataFiles() {
 
     console.log("showingolddatafilesEND")
 }
-//var statusMessage = document.getElementById("errorMessage");
-function dataFormSubmit() {
-    var killmerhonda = "1515";
-    console.log("$FORM#DATA_START00010101")
-    $("form#data").submit(function (e) {
-        e.preventDefault();
-        console.log(formButton)
 
-        var formData = new FormData(this);
-        $.ajax({
-            //url: '/Upload/UploadFiles', // the method we are calling
-            url: '/Upload/GetPreviousDataFiles', // the method we are calling
-            type: 'POST',
-            data: formData,
-            //dataType: 'json',
-            success: function (data) {
-                //displayStatusMessage(data);
-                console.log("SUCCESS: " + killmerhonda + new Date().toUTCString())
-                console.log(data);
-                //testingSubmit();
-            },
-            error: function (data) {
-                console.log("error in subbing")
-                console.log(data);
-                killMeSenseless(data);
-                console.log("TiMESTAMP: " + killmerhonda + new Date().toUTCString())
-            },
-            cache: false,
-            contentType: false,
-            processData: false
-        });
-        console.log("$FORM#DATA_END")
-    });
-}
-function killMeSenseless(data) {
+//function runSubmit() {
+//    console.log("killmepleasejesus")
 
-    console.log("killmesenslesSTart")
-    console.log(data)
-    console.log("KIllmesenslessEND")
-}
-function aFunction(aInput) {
-    aValue = aInput;
-}
+//        //e.preventDefault();
 
+//        var formData = new FormData();
+//        $.ajax({
+//            //url: '/Upload/UploadFiles', // the method we are calling
+//            url: '/Upload/testingDuplicatingJSVoid', // the method we are calling
+//            type: 'POST',
+//            data: formData,
+//            //dataType: 'json',
+//            success: function () { console.log("SUCCESS: " + new Date().toUTCString()) },
+//            error: function () { console.log("erroring in subbing") },
+//            cache: false,
+//            contentType: false,
+//            processData: false
+//        });
+//        console.log("ENDOFWATCH:" + new Date().toUTCString())
+
+//}
