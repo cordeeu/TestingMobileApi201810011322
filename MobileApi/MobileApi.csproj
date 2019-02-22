@@ -347,6 +347,7 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
+    <Compile Include="Models\DataBaseInputFile.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Flower.cs" />
     <Compile Include="Models\IdentityModels.cs" />

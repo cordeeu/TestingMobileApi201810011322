@@ -41,8 +41,18 @@ window.onload = function () {
             type: 'POST',
             data: formData,
             dataType: 'json',
-            success: function () { console.log("SUCCESS: " + new Date().toUTCString()) },
-            error: function () { console.log("erroring in subbing") },
+            success: function () {
+                //alert(data)
+                alert("success Alert message")
+                document.write("success document.write message")
+                console.log("SUCCESS: " + new Date().toUTCString())
+            },
+            error: function () {
+                //alert(data)
+                alert("error Alert message")
+                document.write("error document.write message")
+                console.log("erroring in subbing")
+            },
             cache: false,
             contentType: false,
             processData: false

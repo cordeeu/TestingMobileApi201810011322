@@ -468,41 +468,75 @@ namespace MobileApi.Controllers
         //public ActionResult GetPreviousDataFiles(string dbType)
         {
             string suckit = dbType;
-            //dbType = "WoodyPlant";
+            string str = "[";
             string path = routeSavePath +"Archive"+"\\"+dbType;
             JsonResult result = new JsonResult();
             DirectoryInfo d = new DirectoryInfo(path);
-            FileInfo[] Files = d.GetFiles("*.xlsx");
-            string str = "[";
-            foreach (FileInfo file in Files)
+
+            try
             {
-                str += "{\"name\":\"" + file.Name + "\",";
-                str += "\"date\":\"" + file.CreationTime + "\"},";
+            FileInfo[] Files = d.GetFiles("*.xlsx");
+                foreach (FileInfo file in Files)
+                {
+                    str += "{\"name\":\"" + file.Name + "\",";
+                    str += "\"date\":\"" + file.CreationTime + "\"},";
+                }
+                if (Files.Length==0) {
+                    result.Data = "No Files Found";
+                    return result;
+                }
+            }
+            catch (Exception e) {
+
+                result.Data = "No Files Found </b>" + e;
+                return result;
             }
             str += "]";
-            MessageBox.Show(suckit);
+            //MessageBox.Show(dbType);
             result.Data = str;
 
             return result;
 
         }
-        [HttpPost]
-        public void GetPreviousDataFilesVoid()
+        public ActionResult GetPreviousDataFilesTest(string dbType)
         //public ActionResult GetPreviousDataFiles(string dbType)
         {
-            string path = routeSavePath + "Archive" + "\\WoodyPlant";
+            string suckit = dbType;
+            string str = "[";
+            string path = routeSavePath + "Archive" + "\\" + dbType;
             JsonResult result = new JsonResult();
             DirectoryInfo d = new DirectoryInfo(path);
-            FileInfo[] Files = d.GetFiles("*.xlsx");
-            string str = "";
-            foreach (FileInfo file in Files)
+            var dbFileList = new List<DataBaseInputFile>();
+
+            try
             {
-                str += "{\"name\":\"" + file.Name + "\",";
-                str += "\"date\":\""+file.CreationTime+"\"}";
+                FileInfo[] Files = d.GetFiles("*.xlsx");
+                foreach (FileInfo file in Files)
+                {
+                    DataBaseInputFile dbFile = new DataBaseInputFile();
+                    dbFile.Name = file.Name;
+                    dbFile.Date = file.CreationTime.ToString();
+                    dbFileList.Add(dbFile);
+                }
+                if (Files.Length == 0)
+                {
+                    result.Data = "No Files Found";
+                    return result;
+                }
             }
-            result.Data = str;
-            result.Data = "killmeNOW";
-            MessageBox.Show("killmeVoid");
+            catch (Exception e)
+            {
+
+                result.Data = "No Files Found </b>" + e;
+                return result;
+            }
+            str += "]";
+            //MessageBox.Show(dbType);
+            result.Data = dbFileList;
+            
+
+            return result;
+
         }
         [HttpPost]
         public ActionResult testingDuplicatingJS()
