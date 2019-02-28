@@ -1,16 +1,15 @@
+console.log("hariecarie")
 var myDatabaseTypes = ["WoodyPlant", "Wetland", "testType01"];
 //var myDatabaseTypes = ["WoodyPlant", "testType01"];
 //var myDatabaseTypes = ["testType01", "WoodyPlant"];
-var plantTypeValue = "";
-var statusMessage;
-var dbTypeSelected;
-var formButton;
-var oldDataFilesList;
-
-oldDataFilesList = [{ "name": "WoodyPlant_Archive_data2019-01-03--14-24-50.xlsx", "date": "03-Jan-19 14:24:50" }, { "name": "WoodyPlant_Archive_data2019-01-03--14-29-34.xlsx", "date": "03-Jan-19 14:29:34" }, { "name": "WoodyPlant_Archive_data2019-01-03--14-30-46.xlsx", "date": "03-Jan-19 14:30:46" }, { "name": "WoodyPlant_Archive_data2019-01-03--14-36-56.xlsx", "date": "03-Jan-19 14:36:56" }, { "name": "WoodyPlant_Archive_data2019-01-03--14-39-21.xlsx", "date": "03-Jan-19 14:39:21" }, { "name": "WoodyPlant_Archive_data2019-01-10--12-45-21.xlsx", "date": "10-Jan-19 12:45:21" },]
 var oldDataFiles = document.getElementById("oldDataFiles");
-console.log("oldDataFiles")
-console.log(oldDataFiles)
+//var databaseTypes = document.getElementsByClassName("databaseTypes");
+var databaseTypes = document.getElementById("dbTypeID");
+databaseTypes.addEventListener("change", getOldFiles);
+var downloadTemplate = document.getElementById("downloadTemplate");
+var statusMessage = document.getElementById("resultMessage");
+console.log(downloadTemplate)
+
 var databaseTypeList = [
     {
         "value": "WoodyPlant",
@@ -27,94 +26,84 @@ var databaseTypeList = [
 ];
 
 window.onload = function () {
-    //oldDataFiles = document.getElementsByClassName("oldDataFiles");
-    showOldDataFiles();
-
-    //$("form#data").submit(runSubmit());
-    $("form#data").submit(function (e) {
-        e.preventDefault();
-
-        var formData = new FormData(this);
-        $.ajax({
-            //url: '/Upload/UploadFiles', // the method we are calling
-            url: '/Upload/GetPreviousDataFiles', // the method we are calling
-            type: 'POST',
-            data: formData,
-            dataType: 'json',
-            success: function () {
-                //alert(data)
-                alert("success Alert message")
-                document.write("success document.write message")
-                console.log("SUCCESS: " + new Date().toUTCString())
-            },
-            error: function () {
-                //alert(data)
-                alert("error Alert message")
-                document.write("error document.write message")
-                console.log("erroring in subbing")
-            },
-            cache: false,
-            contentType: false,
-            processData: false
-        });
-        console.log("ENDOFWATCH:" + new Date().toUTCString())
-    });
-
-    console.log("oldDataFiles")
-    console.log(oldDataFiles)
-
-    //formButton = document.getElementById("formSubmit");
-    //formButton.addEventListener("click", dataFormSubmit);
-
-    var databaseTypes = document.getElementsByClassName("databaseTypes");
-    for (j = 0; j < databaseTypes.length; j++) {
-        for (i = 0; i < databaseTypeList.length; i++) {
-            for (k = 0; k < myDatabaseTypes.length; k++) {
-                if (Object.values(databaseTypeList[i]).indexOf(myDatabaseTypes[k]) > -1) {
-                    databaseTypes[j].innerHTML += "<option value=" + databaseTypeList[i].value + ">" + databaseTypeList[i].display + "</option>";
-                };
+    //POPULATE DATABASE TYPES
+    for (i = 0; i < databaseTypeList.length; i++) {
+        for (k = 0; k < myDatabaseTypes.length; k++) {
+            if (Object.values(databaseTypeList[i]).indexOf(myDatabaseTypes[k]) > -1) {
+                databaseTypes.innerHTML += "<option value=" + databaseTypeList[i].value + ">" + databaseTypeList[i].display + "</option>";
             };
         };
     };
-
-    dbTypeSelected = document.getElementById("dbTypeID");
-    console.log(dbTypeSelected.value)
-    console.log(dbTypeSelected)
-    console.log(oldDataFiles)
+    getOldFiles();
 }
 
-function showOldDataFiles() {
-    console.log("showingolddatafiles")
-    console.log(oldDataFilesList.length)
-    console.log(oldDataFiles)
-
+function showOldDataFiles(oldDataFilesListFound) {
+    var oldDataFilesList = oldDataFilesListFound
+    oldDataFiles.innerHTML = "";
     for (i = 0; i < oldDataFilesList.length; i++) {
-        console.log(oldDataFilesList[i].name)
-        console.log(oldDataFilesList[i].date)
-        oldDataFiles.innerHTML += "<option value=" + oldDataFilesList[i].name + ">" + oldDataFilesList[i].date + "</option>";
+        //console.log(oldDataFilesList[i].Name)
+        //console.log(oldDataFilesList[i].Date)
+        oldDataFiles.innerHTML += "<option value=" + oldDataFilesList[i].Name + ">" + oldDataFilesList[i].Date + "</option>";
     };
-
-    console.log("showingolddatafilesEND")
 }
 
-//function runSubmit() {
-//    console.log("killmepleasejesus")
+function getOldFiles() {
+    var dbTypeOptions = document.getElementById("dbTypeID");
+    var dbTypeSelected = dbTypeOptions.value;
+    downloadTemplate.href = "../Datafolder/" + dbTypeSelected + "/Template.xlsx";
+    $.ajax({
+        url: '/Upload/GetPreviousDataFiles',
+        type: 'POST',
+        data: { "dbType": dbTypeSelected },
+        dataType: 'json',
+        success: function (data) {
+            showOldDataFiles(data)
+            console.log("GetPreviousdataFiles SUCCESS: " + new Date().toUTCString())
+        },
+        error: function (data) {
+            alert("Get Files Method Not Retrieved              " + data)
+        },
+    });
+}
 
-//        //e.preventDefault();
+function displayStatusMessage(error) {
+    console.log("displayErrorMessage (): ..START.." + error)
+    var status = "Status: ";
+    statusMessage.setAttribute("class", "failStatus")
 
-//        var formData = new FormData();
-//        $.ajax({
-//            //url: '/Upload/UploadFiles', // the method we are calling
-//            url: '/Upload/testingDuplicatingJSVoid', // the method we are calling
-//            type: 'POST',
-//            data: formData,
-//            //dataType: 'json',
-//            success: function () { console.log("SUCCESS: " + new Date().toUTCString()) },
-//            error: function () { console.log("erroring in subbing") },
-//            cache: false,
-//            contentType: false,
-//            processData: false
-//        });
-//        console.log("ENDOFWATCH:" + new Date().toUTCString())
+    switch (error) {
+        case "dataSuccess":
+            statusMessage.innerHTML = status + error
+            break;
+        case "dataCatch":
+            statusMessage.innerHTML = status + error
+            break;
+        case "Successful":
+            statusMessage.innerHTML = status + error
+            break;
+        case "ajaxFail":
+            statusMessage.innerHTML = status + error
+            break;
+        default:
+            statusMessage.innerHTML = status + error
+            break;
+    }
 
-//}
+    statusMessage.innerHTML += "<p><li text-decoration: underline>TIPS:</li><li>Database uploads must use the template format</li><li>Be sure to delete ALL Empty Rows including trailing Rows</li><li>The plant_imported_id column cannot contain a blank or non-Integer value</li></p > "
+    //console.log("displayErrorMessage (): ..END.." + error)
+}
+
+
+
+// OLD code
+//POPULATE DATABASE TYPES
+//////for (j = 0; j < databaseTypes.length; j++) {
+//////    for (i = 0; i < databaseTypeList.length; i++) {
+//////        for (k = 0; k < myDatabaseTypes.length; k++) {
+//////            if (Object.values(databaseTypeList[i]).indexOf(myDatabaseTypes[k]) > -1) {
+//////                databaseTypes[j].innerHTML += "<option value=" + databaseTypeList[i].value + ">" + databaseTypeList[i].display + "</option>";
+//////            };
+//////        };
+//////    };
+//////};
+

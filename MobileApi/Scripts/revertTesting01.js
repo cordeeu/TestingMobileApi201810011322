@@ -5,6 +5,9 @@ var plantTypeValue = "";
 var statusMessage;
 var dbTypeSelected;
 var formButton;
+
+
+
 //var oldDataFilesList01;
 //oldDataFilesList01 = [{ "name": "WoodyPlant_Archive_data2019-01-03--14-24-50.xlsx", "date": "03-Jan-19 14:24:50" }, { "name": "WoodyPlant_Archive_data2019-01-03--14-29-34.xlsx", "date": "03-Jan-19 14:29:34" }, { "name": "WoodyPlant_Archive_data2019-01-03--14-30-46.xlsx", "date": "03-Jan-19 14:30:46" }, { "name": "WoodyPlant_Archive_data2019-01-03--14-36-56.xlsx", "date": "03-Jan-19 14:36:56" }, { "name": "WoodyPlant_Archive_data2019-01-03--14-39-21.xlsx", "date": "03-Jan-19 14:39:21" }, { "name": "WoodyPlant_Archive_data2019-01-10--12-45-21.xlsx", "date": "10-Jan-19 12:45:21" },]
 //var oldDataFilesList03 = [{ "name": "WoodyPlant_Archive_data2019-01-03--14-24-50.xlsx", "date": "03-Jan-19 14:24:50" }, { "name": "WoodyPlant_Archive_data2019-01-03--14-29-34.xlsx", "date": "03-Jan-19 14:29:34" }, { "name": "WoodyPlant_Archive_data2019-01-03--14-30-46.xlsx", "date": "03-Jan-19 14:30:46" }, { "name": "WoodyPlant_Archive_data2019-01-03--14-36-56.xlsx", "date": "03-Jan-19 14:36:56" }, { "name": "WoodyPlant_Archive_data2019-01-03--14-39-21.xlsx", "date": "03-Jan-19 14:39:21" }, { "name": "WoodyPlant_Archive_data2019-01-10--12-45-21.xlsx", "date": "10-Jan-19 12:45:21" },]
@@ -26,8 +29,12 @@ var databaseTypeList = [
     },
 ];
 
+//var killMeTender = document.getElementById("killME")
+//killMeTender.addEventListener("click", getOldFiles())
 window.onload = function () {
     //POPULATE DATABASE TYPES
+    console.log(killMeTender);
+    console.log("where are we");
     var databaseTypes = document.getElementsByClassName("databaseTypes");
     for (j = 0; j < databaseTypes.length; j++) {
         for (i = 0; i < databaseTypeList.length; i++) {
@@ -45,6 +52,7 @@ window.onload = function () {
 
     //$("form#data").submit(runSubmit());
     $("form#data").submit(function (e) {
+        console.log("startofsubmit")
         e.preventDefault();
 
         var formData = new FormData(this);
@@ -78,7 +86,8 @@ window.onload = function () {
 }
 
 function showOldDataFiles(oldDataFilesListFound) {
-    var oldDataFilesList=oldDataFilesListFound
+    var oldDataFilesList = oldDataFilesListFound
+    console.log("showolddatafails")
     //var oldDataFilesList = oldDataFilesList03;
 
     oldDataFiles.innerHTML = "";
@@ -86,31 +95,30 @@ function showOldDataFiles(oldDataFilesListFound) {
 
     for (i = 0; i < oldDataFilesList.length; i++) {
         console.log(oldDataFilesList[i].Name)
-        console.log(oldDataFilesList[i].Date)
+        console.log(oldDataFilesList[i].ate)
         oldDataFiles.innerHTML += "<option value=" + oldDataFilesList[i].Name + ">" + oldDataFilesList[i].Date + "</option>";
     };
 
     console.log("showingolddatafilesEND")
 }
 
-//function runSubmit() {
-//    console.log("killmepleasejesus")
+function getOldFiles(someValue) {
+    console.log("getOldYeller a sleeping dog lying ")
+    var typeSelect = document.getElementById("dbTypeID");
+    //var grabIt = /*{ 'dbType': typeSelect.value }*/
 
-//        //e.preventDefault();
+    //$.ajax({
+    //    //url: '/Upload/UploadFiles', // the method we are calling
+    //    url: '/Upload/GetPreviousDataFilesTest', // the method we are calling
+    //    type: 'POST',
+    //    data: { 'dbType': typeSelect.value },
+    //    //dataType: 'json',
+    //    success: function () { console.log("SUCCESS: " + new Date().toUTCString()) },
+    //    error: function () { console.log("erroring in subbing") },
+    //    cache: false,
+    //    contentType: false,
+    //    processData: false
+    //});
+}
 
-//        var formData = new FormData();
-//        $.ajax({
-//            //url: '/Upload/UploadFiles', // the method we are calling
-//            url: '/Upload/testingDuplicatingJSVoid', // the method we are calling
-//            type: 'POST',
-//            data: formData,
-//            //dataType: 'json',
-//            success: function () { console.log("SUCCESS: " + new Date().toUTCString()) },
-//            error: function () { console.log("erroring in subbing") },
-//            cache: false,
-//            contentType: false,
-//            processData: false
-//        });
-//        console.log("ENDOFWATCH:" + new Date().toUTCString())
 
-//}

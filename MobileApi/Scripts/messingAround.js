@@ -42,8 +42,8 @@ var statusResultMessage = [
 ];
 console.log(statusResultMessage)
 
-var formTestButton = document.getElementById("formImageSubmit");
-formTestButton.addEventListener("click", testingSubmit);
+var killMeTender = document.getElementById("formImageSubmit");
+killMeTender.addEventListener("click", testingSubmit);
 function testingSubmit() {
     statusMessage.setAttribute("class", statusResultMessage[0].status)
     console.log(statusResultMessage.status)

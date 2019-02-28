@@ -463,43 +463,8 @@ namespace MobileApi.Controllers
 
             return RedirectToAction("IndexSuccess");
         }
-        [HttpPost]
+        
         public ActionResult GetPreviousDataFiles(string dbType)
-        //public ActionResult GetPreviousDataFiles(string dbType)
-        {
-            string suckit = dbType;
-            string str = "[";
-            string path = routeSavePath +"Archive"+"\\"+dbType;
-            JsonResult result = new JsonResult();
-            DirectoryInfo d = new DirectoryInfo(path);
-
-            try
-            {
-            FileInfo[] Files = d.GetFiles("*.xlsx");
-                foreach (FileInfo file in Files)
-                {
-                    str += "{\"name\":\"" + file.Name + "\",";
-                    str += "\"date\":\"" + file.CreationTime + "\"},";
-                }
-                if (Files.Length==0) {
-                    result.Data = "No Files Found";
-                    return result;
-                }
-            }
-            catch (Exception e) {
-
-                result.Data = "No Files Found </b>" + e;
-                return result;
-            }
-            str += "]";
-            //MessageBox.Show(dbType);
-            result.Data = str;
-
-            return result;
-
-        }
-        public ActionResult GetPreviousDataFilesTest(string dbType)
-        //public ActionResult GetPreviousDataFiles(string dbType)
         {
             string suckit = dbType;
             string str = "[";

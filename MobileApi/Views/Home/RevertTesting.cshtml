@@ -6,17 +6,18 @@
     <h4>Upload Database File:</h4>
     <form id="data" method="post" enctype="multipart/form-data">
         <p>Select Database: <select class="databaseTypes" id="dbTypeID" name="dbType"></select></p>
+        @*<p>Select Database: <select class="databaseTypes" id="dbTypeID" name="dbType" onchange="getOldFiles()"></select></p>*@
         <p>Select Database: <select id="oldDataFiles" name="oldDataFile"></select></p>
         @*<input id="uploadFile" type="file" name="uploadFile" />*@
         <button id="formSubmit">Get Previous Files</button>
     </form>
     <div>
-        <a id="downloadTemplate" href="..\DataFolder\Template.xlsx" download="Data Template">
+        <a id="downloadTemplate" download="Data Template">
             Download Template of Database
         </a>
     </div>
     <br /><br />
-     
+
     @* ****ERROR MESSAGE HERE**** *@
     <br />
     <br />
@@ -25,4 +26,6 @@
     <br />
 
 </div>
-<script src="~/Scripts/revertTesting01.js"></script>
+
+
+<script src="~/Scripts/revertTesting.js"></script>
