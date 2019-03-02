@@ -3,6 +3,20 @@ var myDatabaseTypes = ["WoodyPlant", "Wetland", "testType01"];
 var plantTypeValue = "";
 var statusMessage;
 statusMessage = document.getElementById("resultMessage");
+var databaseTypeList = [
+    {
+        "value": "WoodyPlant",
+        "display": "Woody Plants",
+    },
+    {
+        "value": "Wetland",
+        "display": "Wetlands",
+    },
+    {
+        "value": "testType01",
+        "display": "Test type 01",
+    },
+];
 window.onload = function () {
     console.log("window.onload START")
     //statusMessage = document.getElementById("resultMessage");
@@ -55,22 +69,8 @@ function testingSubmit() {
 }
 
 
-//TESTING**********************
+//TESTINGEND**********************
 
-var databaseTypeList = [
-    {
-        "value": "WoodyPlant",
-        "display": "Woody Plants",
-    },
-    {
-        "value": "Wetland",
-        "display": "Wetlands",
-    },
-    {
-        "value": "testType01",
-        "display": "Test type 01",
-    },
-];
 //var statusMessage = document.getElementById("errorMessage");
 function dataFormSubmit() {
     console.log("$FORM#DATA_START")

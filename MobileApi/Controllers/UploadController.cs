@@ -466,8 +466,6 @@ namespace MobileApi.Controllers
         
         public ActionResult GetPreviousDataFiles(string dbType)
         {
-            string suckit = dbType;
-            string str = "[";
             string path = routeSavePath + "Archive" + "\\" + dbType;
             JsonResult result = new JsonResult();
             DirectoryInfo d = new DirectoryInfo(path);
@@ -485,23 +483,19 @@ namespace MobileApi.Controllers
                 }
                 if (Files.Length == 0)
                 {
-                    result.Data = "No Files Found";
-                    return result;
+                    return new HttpStatusCodeResult(410, "No Files Found");
                 }
             }
             catch (Exception e)
             {
-
-                result.Data = "No Files Found </b>" + e;
-                return result;
+                //return new HttpStatusCodeResult(410, "im a cunt");
+                //return new HttpStatusCodeResult(410, e.ToString());
+                string me = "Files Not Found  "+e.ToString().Substring(0,50)+"...";
+                return new HttpStatusCodeResult(410, me);
+                //return result;
             }
-            str += "]";
-            //MessageBox.Show(dbType);
             result.Data = dbFileList;
-            
-
             return result;
-
         }
         [HttpPost]
         public ActionResult testingDuplicatingJS()

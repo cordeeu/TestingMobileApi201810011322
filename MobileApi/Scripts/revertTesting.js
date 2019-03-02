@@ -1,15 +1,11 @@
-console.log("hariecarie")
-var myDatabaseTypes = ["WoodyPlant", "Wetland", "testType01"];
+//var downloadTemplate = document.getElementById("downloadTemplate");
 //var myDatabaseTypes = ["WoodyPlant", "testType01"];
 //var myDatabaseTypes = ["testType01", "WoodyPlant"];
+var myDatabaseTypes = ["WoodyPlant", "Wetland", "testType01"];
 var oldDataFiles = document.getElementById("oldDataFiles");
-//var databaseTypes = document.getElementsByClassName("databaseTypes");
 var databaseTypes = document.getElementById("dbTypeID");
 databaseTypes.addEventListener("change", getOldFiles);
-var downloadTemplate = document.getElementById("downloadTemplate");
 var statusMessage = document.getElementById("resultMessage");
-console.log(downloadTemplate)
-
 var databaseTypeList = [
     {
         "value": "WoodyPlant",
@@ -35,14 +31,13 @@ window.onload = function () {
         };
     };
     getOldFiles();
+    dataFormSubmit();
 }
 
 function showOldDataFiles(oldDataFilesListFound) {
     var oldDataFilesList = oldDataFilesListFound
     oldDataFiles.innerHTML = "";
     for (i = 0; i < oldDataFilesList.length; i++) {
-        //console.log(oldDataFilesList[i].Name)
-        //console.log(oldDataFilesList[i].Date)
         oldDataFiles.innerHTML += "<option value=" + oldDataFilesList[i].Name + ">" + oldDataFilesList[i].Date + "</option>";
     };
 }
@@ -50,7 +45,7 @@ function showOldDataFiles(oldDataFilesListFound) {
 function getOldFiles() {
     var dbTypeOptions = document.getElementById("dbTypeID");
     var dbTypeSelected = dbTypeOptions.value;
-    downloadTemplate.href = "../Datafolder/" + dbTypeSelected + "/Template.xlsx";
+    //downloadTemplate.href = "../Datafolder/" + dbTypeSelected + "/Template.xlsx";
     $.ajax({
         url: '/Upload/GetPreviousDataFiles',
         type: 'POST',
@@ -58,52 +53,58 @@ function getOldFiles() {
         dataType: 'json',
         success: function (data) {
             showOldDataFiles(data)
-            console.log("GetPreviousdataFiles SUCCESS: " + new Date().toUTCString())
+            displayStatusMessage("success", "Archive Data Files Available");
+            //alert(data)
         },
-        error: function (data) {
-            alert("Get Files Method Not Retrieved              " + data)
-        },
+        error: function (xhr, httpStatusMessage, customErrorMessage) {
+            oldDataFiles.innerHTML = "";
+            alert(customErrorMessage);
+            displayStatusMessage(xhr.status, customErrorMessage);
+
+        }
     });
 }
 
-function displayStatusMessage(error) {
-    console.log("displayErrorMessage (): ..START.." + error)
-    var status = "Status: ";
-    statusMessage.setAttribute("class", "failStatus")
-
-    switch (error) {
-        case "dataSuccess":
-            statusMessage.innerHTML = status + error
+function displayStatusMessage(xhr, status) {
+    switch (xhr) {
+        case "success":
+            statusMessage.setAttribute("class", "successStatus")
+            statusMessage.innerHTML = "Status: " + status;
             break;
-        case "dataCatch":
-            statusMessage.innerHTML = status + error
-            break;
-        case "Successful":
-            statusMessage.innerHTML = status + error
-            break;
-        case "ajaxFail":
-            statusMessage.innerHTML = status + error
+        case 410:
+            statusMessage.setAttribute("class", "failStatus")
+            statusMessage.innerHTML = "Status: " + status;
             break;
         default:
-            statusMessage.innerHTML = status + error
+            statusMessage.setAttribute("class", "")
+            statusMessage.innerHTML = status + " " + xhr;
             break;
     }
-
-    statusMessage.innerHTML += "<p><li text-decoration: underline>TIPS:</li><li>Database uploads must use the template format</li><li>Be sure to delete ALL Empty Rows including trailing Rows</li><li>The plant_imported_id column cannot contain a blank or non-Integer value</li></p > "
-    //console.log("displayErrorMessage (): ..END.." + error)
 }
 
+function dataFormSubmit() {
+    console.log("titsMcgee")
+    $("form#data").submit(function (e) {
+        e.preventDefault();
 
-
-// OLD code
-//POPULATE DATABASE TYPES
-//////for (j = 0; j < databaseTypes.length; j++) {
-//////    for (i = 0; i < databaseTypeList.length; i++) {
-//////        for (k = 0; k < myDatabaseTypes.length; k++) {
-//////            if (Object.values(databaseTypeList[i]).indexOf(myDatabaseTypes[k]) > -1) {
-//////                databaseTypes[j].innerHTML += "<option value=" + databaseTypeList[i].value + ">" + databaseTypeList[i].display + "</option>";
-//////            };
-//////        };
-//////    };
-//////};
-
+        var formData = new FormData(this);
+        console.log(formData)
+        $.ajax({
+            url: '/Upload/UploadFiles',
+            type: 'POST',
+            data: formData,
+            success: function (data) {
+                console.log(data)
+                displayStatusMessage("success", data);
+            },
+            error: function (data) {
+                displayStatusMessage("ajaxFail")
+                console.log("TiMEfail: " + new Date().toUTCString())
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+        console.log("$FORM#DATA_END")
+    });
+}
