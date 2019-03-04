@@ -479,6 +479,8 @@ namespace MobileApi.Controllers
                     DataBaseInputFile dbFile = new DataBaseInputFile();
                     dbFile.Name = file.Name;
                     dbFile.Date = file.CreationTime.ToString();
+                    dbFile.RootFolder= file.DirectoryName;
+                    dbFile.PathName = file.FullName;
                     dbFileList.Add(dbFile);
                 }
                 if (Files.Length == 0)

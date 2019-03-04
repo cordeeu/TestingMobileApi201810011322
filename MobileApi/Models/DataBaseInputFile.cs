@@ -11,6 +11,6 @@ namespace MobileApi.Models
         public string Date { get; set; }
         public string Type { get; set; }
         public string RootFolder { get; set; }
+        public string PathName { get; set; }
     }
-
 }

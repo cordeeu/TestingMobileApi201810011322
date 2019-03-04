@@ -6,6 +6,7 @@ var oldDataFiles = document.getElementById("oldDataFiles");
 var databaseTypes = document.getElementById("dbTypeID");
 databaseTypes.addEventListener("change", getOldFiles);
 var statusMessage = document.getElementById("resultMessage");
+var FilePath;
 var databaseTypeList = [
     {
         "value": "WoodyPlant",
@@ -53,6 +54,8 @@ function getOldFiles() {
         dataType: 'json',
         success: function (data) {
             showOldDataFiles(data)
+
+            console.log(data)
             displayStatusMessage("success", "Archive Data Files Available");
             //alert(data)
         },
@@ -83,16 +86,16 @@ function displayStatusMessage(xhr, status) {
 }
 
 function dataFormSubmit() {
-    console.log("titsMcgee")
     $("form#data").submit(function (e) {
         e.preventDefault();
 
         var formData = new FormData(this);
         console.log(formData)
         $.ajax({
-            url: '/Upload/UploadFiles',
+            url: '/Upload/UploadWoodyData',
             type: 'POST',
-            data: formData,
+            data: { "dbFilePath" },
+            //data: formData,
             success: function (data) {
                 console.log(data)
                 displayStatusMessage("success", data);
