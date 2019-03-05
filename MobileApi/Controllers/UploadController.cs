@@ -239,21 +239,23 @@ namespace MobileApi.Controllers
         }
 
         [HttpPost]
-        public ActionResult RevertDatabase(string dbType)
+        public ActionResult RevertDatabase(string oldDataFile, string dbType)
         {
-            string[] dbSavePaths = AssignDBFileSavePaths(dbType, "data", ".xlsx");
-            try
+            JsonResult result = new JsonResult();
+            result.Data = "Fail";
+            bool uploadSuccess = false;
+            if (dbType.Equals("WoodyPlant"))
             {
-                System.IO.File.Copy(dbSavePaths[2], dbSavePaths[1], true); //copy current DB to archive folder
+                uploadSuccess = UploadWoodyData(oldDataFile);
             }
-            catch (IOException e)
+            if (uploadSuccess)
             {
-                Debug.WriteLine("failed to save or copy  " + e);
+                result.Data = "Database successfully reverted";
             }
-
-
-
-            return RedirectToAction("Index");
+            else {
+                return new HttpStatusCodeResult(410, "Database NOT reverted");
+            }
+            return result;
         }
 
         public string[] AssignDBFileSavePaths(string dbTypeFolder, string attrib, string fileExt)
@@ -387,7 +389,11 @@ namespace MobileApi.Controllers
             catch (Exception e)
             {
 
-                oleExcelReader.Close();
+                try
+                {
+                    oleExcelReader.Close();
+                }
+                catch { };
                 oleExcelConnection.Close();
                 Debug.WriteLine("{0}: {1}", e.Message);
                 //uploadSuccess = false;
@@ -463,7 +469,7 @@ namespace MobileApi.Controllers
 
             return RedirectToAction("IndexSuccess");
         }
-        
+
         public ActionResult GetPreviousDataFiles(string dbType)
         {
             string path = routeSavePath + "Archive" + "\\" + dbType;
@@ -479,7 +485,7 @@ namespace MobileApi.Controllers
                     DataBaseInputFile dbFile = new DataBaseInputFile();
                     dbFile.Name = file.Name;
                     dbFile.Date = file.CreationTime.ToString();
-                    dbFile.RootFolder= file.DirectoryName;
+                    dbFile.RootFolder = file.DirectoryName;
                     dbFile.PathName = file.FullName;
                     dbFileList.Add(dbFile);
                 }
@@ -490,9 +496,7 @@ namespace MobileApi.Controllers
             }
             catch (Exception e)
             {
-                //return new HttpStatusCodeResult(410, "im a cunt");
-                //return new HttpStatusCodeResult(410, e.ToString());
-                string me = "Files Not Found  "+e.ToString().Substring(0,50)+"...";
+                string me = "Files Not Found  " + e.ToString().Substring(0, 50) + "...";
                 return new HttpStatusCodeResult(410, me);
                 //return result;
             }

@@ -1,79 +1,36 @@
-﻿
-<div style="margin-bottom:30px">
+﻿<div style="margin-bottom:30px">
+    @*<script src="~/Scripts/messingAround_please.js"></script>*@
     <h2>Mobile Database API</h2>
-    <p>Test a button</p>
-    @using (Html.BeginForm("GetPreviousDataFiles", "Upload", FormMethod.Get, new { enctype = "multipart/form-data" }))
-    {
-        <input type="file" name="uploadFile" />
-        <input type="radio" name="dbType" value="WoodyPlant" />
-        <text>Woody Plant </text>
-        <input type="radio" name="dbType" value="Wetland" />
-        <text>Wetland </text>
-        <br>
-        <input type="submit" value="TestMeRhonda" />
-    }
-    </br>
-    </br>
-    </br>
-    <p>Upload Database File:</p>
-    @*using (Html.BeginForm("UploadData", "api", FormMethod.Get, new { enctype = "multipart/form-data" }))*@
-    @using (Html.BeginForm("UploadFiles", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
-    {
-        <input type="file" name="uploadFile" />
-        <input type="radio" name="dbType" value="WoodyPlant" />
-        <text>Woody Plant </text>
-        <input type="radio" name="dbType" value="Wetland" />
-        <text>Wetland </text>
-        <br>
-        <input type="submit" value="Upload" />
-    }
-</div>
-<br /><br />
-<p>Home/Upload</p>
-@using (Html.BeginForm("UploadImages", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
-{
-    <input type="file" name="uploadFile" />
-    <input type="radio" name="dbType" value="WoodyPlant" />
-    <text>Woody Plant </text>
-    <input type="radio" name="dbType" value="Wetland" />
-    <text>Wetland </text>
+    <br /><br />
+    <h4>Upload Database File:</h4>
+    <form id="data" method="get" enctype="multipart/form-data">
+        <p>Select Database: <select class="databaseTypes" id="databaseTypes" name="dbType"></select></p>
+        <input id="uploadFile" type="file" name="uploadFile" />
+        <button id="formSubmit">Submit</button>
+    </form>
     <br>
-    <input type="submit" value="Home-UploadImages" />
-}
-<br /><br />
-<p>Messy/ButtonPressed</p>
-@using (Html.BeginForm("ButtonPressed", "Messy", FormMethod.Post, new { enctype = "multipart/form-data" }))
-{
-    <input type="file" name="uploadFile" />
-    <input type="radio" name="dbType" value="WoodyPlant" />
-    <text>Woody Plant </text>
-    <input type="radio" name="dbType" value="Wetland" />
-    <text>Wetland </text>
-    <br>
-    <input type="submit" value="Messy-ButtonPressed" />
-}
-<br /><br />
-<div>
-@{
-    List<SelectListItem> listItems = new List<SelectListItem>();
-    listItems.Add(new SelectListItem
-    {
-        Text = "WoodyPlant",
-        Value = "WoodyPlant"
-
-    });
-    listItems.Add(new SelectListItem
-    {
-        Text = "Wetland",
-        Value = "Wetland",
-        Selected = true
-    });
-    listItems.Add(new SelectListItem
-    {
-        Text = "Shells",
-        Value = "Shells"
-    });
-}
-
-@Html.DropDownList("yourDropName", listItems, new { @class = "form-control" })
+    <div>
+        <a id="downloadTemplate" href="..\DataFolder\Template.xlsx" download="Data Template">
+            Download Template of Database
+        </a>
+        <br />
+        <a id="downloadTemplate" href="..\home\reverttesting">
+            Revert to Old version
+        </a>
     </div>
+    <br /><br />
+    <h4>Upload Image Zip Folder:</h4>
+    <form id="dataImage" method="post" enctype="multipart/form-data">
+        <p>Select Database: <select class="databaseTypes" id="imageTypes" name="dbType"></select></p>
+        <input id="imageFile" type="file" name="uploadFile" />
+        <button id="formImageSubmit">Submit</button>
+    </form>
+    @* ****ERROR MESSAGE HERE**** *@
+    <br />
+    <br />
+    <p class="statusMessage" id="resultMessage"></p>
+    <br />
+    <br />
+
+</div>
+<script src="~/Scripts/messingAround.js"></script>

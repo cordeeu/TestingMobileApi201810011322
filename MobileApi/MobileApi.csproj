@@ -454,6 +454,7 @@
     <Content Include="Views\Home\KillmePlease.cshtml" />
     <Content Include="Views\Home\404.cshtml" />
     <Content Include="Views\Home\RevertTesting.cshtml" />
+    <Content Include="Views\Home\index - Copy.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

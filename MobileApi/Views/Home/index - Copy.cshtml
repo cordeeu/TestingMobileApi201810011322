@@ -1,0 +1,79 @@
+﻿
+<div style="margin-bottom:30px">
+    <h2>Mobile Database API</h2>
+    <p>Test a button</p>
+    @using (Html.BeginForm("GetPreviousDataFiles", "Upload", FormMethod.Get, new { enctype = "multipart/form-data" }))
+    {
+        <input type="file" name="uploadFile" />
+        <input type="radio" name="dbType" value="WoodyPlant" />
+        <text>Woody Plant </text>
+        <input type="radio" name="dbType" value="Wetland" />
+        <text>Wetland </text>
+        <br>
+        <input type="submit" value="TestMeRhonda" />
+    }
+    </br>
+    </br>
+    </br>
+    <p>Upload Database File:</p>
+    @*using (Html.BeginForm("UploadData", "api", FormMethod.Get, new { enctype = "multipart/form-data" }))*@
+    @using (Html.BeginForm("UploadFiles", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <input type="file" name="uploadFile" />
+        <input type="radio" name="dbType" value="WoodyPlant" />
+        <text>Woody Plant </text>
+        <input type="radio" name="dbType" value="Wetland" />
+        <text>Wetland </text>
+        <br>
+        <input type="submit" value="Upload" />
+    }
+</div>
+<br /><br />
+<p>Home/Upload</p>
+@using (Html.BeginForm("UploadImages", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <input type="file" name="uploadFile" />
+    <input type="radio" name="dbType" value="WoodyPlant" />
+    <text>Woody Plant </text>
+    <input type="radio" name="dbType" value="Wetland" />
+    <text>Wetland </text>
+    <br>
+    <input type="submit" value="Home-UploadImages" />
+}
+<br /><br />
+<p>Messy/ButtonPressed</p>
+@using (Html.BeginForm("ButtonPressed", "Messy", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <input type="file" name="uploadFile" />
+    <input type="radio" name="dbType" value="WoodyPlant" />
+    <text>Woody Plant </text>
+    <input type="radio" name="dbType" value="Wetland" />
+    <text>Wetland </text>
+    <br>
+    <input type="submit" value="Messy-ButtonPressed" />
+}
+<br /><br />
+<div>
+@{
+    List<SelectListItem> listItems = new List<SelectListItem>();
+    listItems.Add(new SelectListItem
+    {
+        Text = "WoodyPlant",
+        Value = "WoodyPlant"
+
+    });
+    listItems.Add(new SelectListItem
+    {
+        Text = "Wetland",
+        Value = "Wetland",
+        Selected = true
+    });
+    listItems.Add(new SelectListItem
+    {
+        Text = "Shells",
+        Value = "Shells"
+    });
+}
+
+@Html.DropDownList("yourDropName", listItems, new { @class = "form-control" })
+    </div>

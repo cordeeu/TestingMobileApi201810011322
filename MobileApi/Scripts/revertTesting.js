@@ -1,3 +1,4 @@
+console.log("killme")
 //var downloadTemplate = document.getElementById("downloadTemplate");
 //var myDatabaseTypes = ["WoodyPlant", "testType01"];
 //var myDatabaseTypes = ["testType01", "WoodyPlant"];
@@ -35,11 +36,12 @@ window.onload = function () {
     dataFormSubmit();
 }
 
-function showOldDataFiles(oldDataFilesListFound) {
-    var oldDataFilesList = oldDataFilesListFound
+function showOldDataFiles(oldDataFilesList) {
+    //var oldDataFilesList = oldDataFilesListFound
+    console.log(oldDataFiles)
     oldDataFiles.innerHTML = "";
     for (i = 0; i < oldDataFilesList.length; i++) {
-        oldDataFiles.innerHTML += "<option value=" + oldDataFilesList[i].Name + ">" + oldDataFilesList[i].Date + "</option>";
+        oldDataFiles.innerHTML += "<option value=" + oldDataFilesList[i].PathName + ">" + oldDataFilesList[i].Date + "</option>";
     };
 }
 
@@ -92,22 +94,24 @@ function dataFormSubmit() {
         var formData = new FormData(this);
         console.log(formData)
         $.ajax({
-            url: '/Upload/UploadWoodyData',
+            url: '/Upload/RevertDatabase',
             type: 'POST',
-            data: { "dbFilePath" },
-            //data: formData,
+            data: formData,
+            //data: { "dbFilePath": oldDataFiles.value},
             success: function (data) {
                 console.log(data)
                 displayStatusMessage("success", data);
             },
-            error: function (data) {
-                displayStatusMessage("ajaxFail")
-                console.log("TiMEfail: " + new Date().toUTCString())
+            error: function (xhr, httpStatusMessage, customErrorMessage) {
+                oldDataFiles.innerHTML = "";
+                alert(customErrorMessage);
+                displayStatusMessage(xhr.status, customErrorMessage);
+
             },
             cache: false,
             contentType: false,
             processData: false
         });
-        console.log("$FORM#DATA_END")
+        console.log("suicide is for winners")
     });
 }
